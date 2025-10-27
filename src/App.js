@@ -22,6 +22,7 @@ import EventDetail from './pages/EventDetail';
 import Messages from './pages/Messages';
 import Conversation from './pages/Conversation';
 import ResearchLibrary from './pages/library/ResearchLibrary';
+import PaperDetail from './pages/library/PaperDetail';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
@@ -93,6 +94,8 @@ function App() {
             <Route path="/events/:eventId" element={<EventDetail />} />
 
             <Route path="/library" element={<ResearchLibrary />} />
+
+            <Route path="/library/:paperId" element={<PaperDetail />} />
 
             <Route path="/messages" element={
               <ProtectedRoute>

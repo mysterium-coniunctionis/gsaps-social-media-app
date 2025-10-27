@@ -10,6 +10,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 
 // Pages
 import Home from './pages/Home';
+import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -48,7 +49,12 @@ function App() {
         <Container maxWidth="lg">
           <Routes>
             <Route path="/" element={<Home />} />
-            
+            <Route path="/feed" element={
+              <ProtectedRoute>
+                <Feed />
+              </ProtectedRoute>
+            } />
+
             <Route path="/login" element={
               currentUser ? <Navigate to="/" /> : <Login />
             } />

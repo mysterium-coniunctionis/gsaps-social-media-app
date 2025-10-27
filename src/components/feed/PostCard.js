@@ -1,0 +1,412 @@
+import React, { useState } from 'react';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardActions,
+  Avatar,
+  IconButton,
+  Typography,
+  Box,
+  Chip,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Collapse,
+  Divider,
+  Button
+} from '@mui/material';
+import {
+  Favorite as FavoriteIcon,
+  FavoriteBorder as FavoriteBorderIcon,
+  Comment as CommentIcon,
+  Share as ShareIcon,
+  Bookmark as BookmarkIcon,
+  BookmarkBorder as BookmarkBorderIcon,
+  MoreVert as MoreVertIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+  Report as ReportIcon,
+  Verified as VerifiedIcon
+} from '@mui/icons-material';
+import { formatDistanceToNow } from 'date-fns';
+import CommentSection from './CommentSection';
+
+/**
+ * PostCard Component - Displays a single post with all engagement features
+ * Modern design with glassmorphism and smooth animations
+ */
+const PostCard = ({
+  post,
+  onLike,
+  onComment,
+  onShare,
+  onBookmark,
+  onDelete,
+  currentUserId = 'current-user'
+}) => {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [showComments, setShowComments] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+
+  const isOwnPost = post.author.id === currentUserId;
+  const menuOpen = Boolean(anchorEl);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLike = () => {
+    onLike(post.id);
+  };
+
+  const handleCommentClick = () => {
+    setShowComments(!showComments);
+  };
+
+  const handleShare = () => {
+    onShare(post.id);
+    // TODO: Show share dialog
+  };
+
+  const handleBookmark = () => {
+    onBookmark(post.id);
+  };
+
+  const handleDelete = () => {
+    if (window.confirm('Are you sure you want to delete this post?')) {
+      onDelete(post.id);
+    }
+    handleMenuClose();
+  };
+
+  const formatTimestamp = (date) => {
+    try {
+      return formatDistanceToNow(new Date(date), { addSuffix: true });
+    } catch {
+      return 'recently';
+    }
+  };
+
+  return (
+    <Card
+      elevation={isHovered ? 8 : 2}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      sx={{
+        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+        transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+        borderRadius: 2,
+        overflow: 'visible',
+        position: 'relative',
+        '&:hover': {
+          '& .post-actions': {
+            opacity: 1
+          }
+        }
+      }}
+    >
+      {/* Header with Author Info */}
+      <CardHeader
+        avatar={
+          <Avatar
+            src={post.author.avatar}
+            alt={post.author.name}
+            sx={{
+              width: 48,
+              height: 48,
+              border: '2px solid',
+              borderColor: 'primary.main',
+              cursor: 'pointer',
+              transition: 'transform 0.2s',
+              '&:hover': {
+                transform: 'scale(1.1)'
+              }
+            }}
+          >
+            {post.author.name.charAt(0)}
+          </Avatar>
+        }
+        action={
+          <IconButton
+            onClick={handleMenuOpen}
+            size="small"
+            sx={{
+              opacity: isHovered ? 1 : 0.6,
+              transition: 'opacity 0.2s'
+            }}
+          >
+            <MoreVertIcon />
+          </IconButton>
+        }
+        title={
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+            <Typography variant="subtitle1" fontWeight="bold">
+              {post.author.name}
+            </Typography>
+            {post.author.verified && (
+              <Tooltip title="Verified">
+                <VerifiedIcon color="primary" sx={{ fontSize: 18 }} />
+              </Tooltip>
+            )}
+          </Box>
+        }
+        subheader={
+          <Box>
+            <Typography variant="body2" color="text.secondary">
+              @{post.author.username}
+              {post.author.credentials && ` • ${post.author.credentials}`}
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              {formatTimestamp(post.timestamp)}
+            </Typography>
+          </Box>
+        }
+        sx={{ pb: 1 }}
+      />
+
+      {/* Post Content */}
+      <CardContent sx={{ pt: 0, pb: 1 }}>
+        <Typography
+          variant="body1"
+          sx={{
+            whiteSpace: 'pre-wrap',
+            lineHeight: 1.6,
+            mb: post.tags?.length > 0 ? 2 : 0
+          }}
+        >
+          {post.content}
+        </Typography>
+
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 1 }}>
+            {post.tags.map((tag) => (
+              <Chip
+                key={tag}
+                label={`#${tag}`}
+                size="small"
+                variant="outlined"
+                clickable
+                sx={{
+                  fontSize: '0.75rem',
+                  height: 24,
+                  '&:hover': {
+                    bgcolor: 'primary.main',
+                    color: 'primary.contrastText'
+                  }
+                }}
+              />
+            ))}
+          </Box>
+        )}
+
+        {/* Images */}
+        {post.images && post.images.length > 0 && (
+          <Box
+            sx={{
+              mt: 2,
+              display: 'grid',
+              gridTemplateColumns: post.images.length === 1 ? '1fr' : 'repeat(2, 1fr)',
+              gap: 1,
+              borderRadius: 2,
+              overflow: 'hidden'
+            }}
+          >
+            {post.images.map((image, index) => (
+              <Box
+                key={index}
+                component="img"
+                src={image}
+                alt={`Post image ${index + 1}`}
+                sx={{
+                  width: '100%',
+                  height: post.images.length === 1 ? 'auto' : 200,
+                  objectFit: 'cover',
+                  cursor: 'pointer',
+                  transition: 'transform 0.2s',
+                  '&:hover': {
+                    transform: 'scale(1.02)'
+                  }
+                }}
+              />
+            ))}
+          </Box>
+        )}
+      </CardContent>
+
+      <Divider />
+
+      {/* Engagement Stats */}
+      <Box
+        sx={{
+          px: 2,
+          py: 1,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          bgcolor: 'action.hover'
+        }}
+      >
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Typography variant="caption" color="text.secondary">
+            <strong>{post.likes}</strong> {post.likes === 1 ? 'like' : 'likes'}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            <strong>{post.comments}</strong> {post.comments === 1 ? 'comment' : 'comments'}
+          </Typography>
+          <Typography variant="caption" color="text.secondary">
+            <strong>{post.shares}</strong> {post.shares === 1 ? 'share' : 'shares'}
+          </Typography>
+        </Box>
+      </Box>
+
+      <Divider />
+
+      {/* Action Buttons */}
+      <CardActions
+        className="post-actions"
+        sx={{
+          px: 2,
+          py: 1,
+          display: 'flex',
+          justifyContent: 'space-around',
+          opacity: 1,
+          transition: 'opacity 0.2s'
+        }}
+      >
+        <Tooltip title={post.isLiked ? 'Unlike' : 'Like'}>
+          <Button
+            size="small"
+            startIcon={
+              post.isLiked ? (
+                <FavoriteIcon sx={{ color: 'error.main' }} />
+              ) : (
+                <FavoriteBorderIcon />
+              )
+            }
+            onClick={handleLike}
+            sx={{
+              textTransform: 'none',
+              minWidth: 'auto',
+              px: 2,
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: 'error.lighter',
+                transform: 'scale(1.05)'
+              }
+            }}
+          >
+            <Typography variant="body2" fontWeight={post.isLiked ? 'bold' : 'normal'}>
+              Like
+            </Typography>
+          </Button>
+        </Tooltip>
+
+        <Tooltip title="Comment">
+          <Button
+            size="small"
+            startIcon={<CommentIcon />}
+            onClick={handleCommentClick}
+            sx={{
+              textTransform: 'none',
+              minWidth: 'auto',
+              px: 2,
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: 'primary.lighter',
+                transform: 'scale(1.05)'
+              }
+            }}
+          >
+            <Typography variant="body2">Comment</Typography>
+          </Button>
+        </Tooltip>
+
+        <Tooltip title="Share">
+          <Button
+            size="small"
+            startIcon={<ShareIcon />}
+            onClick={handleShare}
+            sx={{
+              textTransform: 'none',
+              minWidth: 'auto',
+              px: 2,
+              transition: 'all 0.2s',
+              '&:hover': {
+                bgcolor: 'success.lighter',
+                transform: 'scale(1.05)'
+              }
+            }}
+          >
+            <Typography variant="body2">Share</Typography>
+          </Button>
+        </Tooltip>
+
+        <Tooltip title={post.isBookmarked ? 'Remove bookmark' : 'Bookmark'}>
+          <IconButton
+            size="small"
+            onClick={handleBookmark}
+            sx={{
+              transition: 'all 0.2s',
+              '&:hover': {
+                transform: 'scale(1.1)'
+              }
+            }}
+          >
+            {post.isBookmarked ? (
+              <BookmarkIcon color="warning" />
+            ) : (
+              <BookmarkBorderIcon />
+            )}
+          </IconButton>
+        </Tooltip>
+      </CardActions>
+
+      {/* Comments Section */}
+      <Collapse in={showComments}>
+        <Divider />
+        <CommentSection postId={post.id} onComment={onComment} />
+      </Collapse>
+
+      {/* More Options Menu */}
+      <Menu
+        anchorEl={anchorEl}
+        open={menuOpen}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right'
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right'
+        }}
+      >
+        {isOwnPost ? (
+          [
+            <MenuItem key="edit" onClick={handleMenuClose}>
+              <EditIcon sx={{ mr: 1, fontSize: 20 }} />
+              Edit post
+            </MenuItem>,
+            <MenuItem key="delete" onClick={handleDelete} sx={{ color: 'error.main' }}>
+              <DeleteIcon sx={{ mr: 1, fontSize: 20 }} />
+              Delete post
+            </MenuItem>
+          ]
+        ) : (
+          <MenuItem onClick={handleMenuClose}>
+            <ReportIcon sx={{ mr: 1, fontSize: 20 }} />
+            Report post
+          </MenuItem>
+        )}
+      </Menu>
+    </Card>
+  );
+};
+
+export default PostCard;

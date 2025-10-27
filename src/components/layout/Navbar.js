@@ -15,6 +15,7 @@ import {
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
+  DynamicFeed as FeedIcon,
   Groups as GroupsIcon,
   Event as EventIcon,
   People as PeopleIcon,
@@ -71,6 +72,7 @@ const Navbar = () => {
 
   const navItems = [
     { label: 'Home', path: '/', icon: <HomeIcon /> },
+    { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
     { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },
     { label: 'Groups', path: '/groups', icon: <GroupsIcon />, protected: true },
     { label: 'Events', path: '/events', icon: <EventIcon /> },

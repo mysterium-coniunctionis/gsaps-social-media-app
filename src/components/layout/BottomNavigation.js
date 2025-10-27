@@ -6,7 +6,7 @@ import {
   Badge
 } from '@mui/material';
 import {
-  Home as HomeIcon,
+  DynamicFeed as FeedIcon,
   Groups as GroupsIcon,
   Event as EventIcon,
   People as PeopleIcon,
@@ -26,7 +26,7 @@ const BottomNavigation = () => {
   // Sync active tab with current route
   useEffect(() => {
     const path = location.pathname;
-    if (path === '/') setValue(0);
+    if (path === '/feed' || path === '/') setValue(0);
     else if (path.startsWith('/members')) setValue(1);
     else if (path.startsWith('/groups')) setValue(2);
     else if (path.startsWith('/events')) setValue(3);
@@ -38,7 +38,7 @@ const BottomNavigation = () => {
 
     switch(newValue) {
       case 0:
-        navigate('/');
+        navigate('/feed');
         break;
       case 1:
         navigate('/members');
@@ -75,8 +75,8 @@ const BottomNavigation = () => {
         showLabels
       >
         <BottomNavigationAction
-          label="Home"
-          icon={<HomeIcon />}
+          label="Feed"
+          icon={<FeedIcon />}
         />
         <BottomNavigationAction
           label="Members"

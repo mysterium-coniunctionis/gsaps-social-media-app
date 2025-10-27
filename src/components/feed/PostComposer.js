@@ -21,6 +21,7 @@ import {
   AttachFile as AttachFileIcon,
   Public as PublicIcon
 } from '@mui/icons-material';
+import MentionInput from '../common/MentionInput';
 
 /**
  * PostComposer Component - Create new posts with rich features
@@ -31,6 +32,7 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
   const [images, setImages] = useState([]);
   const [tags, setTags] = useState([]);
   const [tagInput, setTagInput] = useState('');
+  const [mentionedUsers, setMentionedUsers] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const fileInputRef = useRef(null);
@@ -52,14 +54,23 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
     onSubmit({
       content: content.trim(),
       images,
-      tags
+      tags,
+      mentions: mentionedUsers
     });
 
     // Reset form
     setContent('');
     setImages([]);
     setTags([]);
+    setMentionedUsers([]);
     setError('');
+  };
+
+  const handleMentionSelect = (user) => {
+    // Add user to mentioned users list if not already there
+    if (!mentionedUsers.find(u => u.id === user.id)) {
+      setMentionedUsers([...mentionedUsers, user]);
+    }
   };
 
   const handleImageSelect = (event) => {
@@ -106,6 +117,7 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
         setContent('');
         setImages([]);
         setTags([]);
+        setMentionedUsers([]);
         setError('');
         onClose();
       }
@@ -172,16 +184,15 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
           </Alert>
         )}
 
-        {/* Content Input */}
-        <TextField
+        {/* Content Input with Mentions */}
+        <MentionInput
           autoFocus
-          fullWidth
-          multiline
-          minRows={4}
-          maxRows={8}
-          placeholder="What's on your mind?"
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={setContent}
+          onMentionSelect={handleMentionSelect}
+          placeholder="What's on your mind?"
+          rows={4}
+          maxLength={MAX_CONTENT_LENGTH}
           variant="standard"
           InputProps={{
             disableUnderline: true,
@@ -193,21 +204,13 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
           sx={{ mb: 2 }}
         />
 
-        {/* Character Count */}
-        {contentLength > 0 && (
+        {/* Progress Bar for content length */}
+        {contentLength > 0 && isNearLimit && (
           <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-              <Typography
-                variant="caption"
-                color={isNearLimit ? 'error' : 'text.secondary'}
-              >
-                {contentLength} / {MAX_CONTENT_LENGTH}
-              </Typography>
-            </Box>
             <LinearProgress
               variant="determinate"
               value={Math.min(contentProgress, 100)}
-              color={isNearLimit ? 'error' : 'primary'}
+              color="error"
               sx={{ height: 2, borderRadius: 1 }}
             />
           </Box>

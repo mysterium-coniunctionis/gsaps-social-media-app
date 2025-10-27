@@ -27,5 +27,8 @@ export {
   useToast,
 } from './Toast';
 
+// Mention Input
+export { default as MentionInput } from './MentionInput';
+
 // Loading Spinner (if exists)
 export { default as LoadingSpinner } from './LoadingSpinner';

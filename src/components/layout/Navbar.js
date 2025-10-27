@@ -26,6 +26,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';
+import NotificationCenter from '../notifications/NotificationCenter';
 
 /**
  * Main navigation bar component
@@ -129,6 +130,9 @@ const Navbar = () => {
         <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
           {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
+
+        {/* Notification Center (only for logged-in users) */}
+        {currentUser && <NotificationCenter />}
 
         {/* User Menu or Login Button */}
         {currentUser ? (

@@ -17,8 +17,6 @@ import {
   Button
 } from '@mui/material';
 import {
-  Favorite as FavoriteIcon,
-  FavoriteBorder as FavoriteBorderIcon,
   Comment as CommentIcon,
   Share as ShareIcon,
   Bookmark as BookmarkIcon,
@@ -31,6 +29,8 @@ import {
 } from '@mui/icons-material';
 import { formatDistanceToNow } from 'date-fns';
 import CommentSection from './CommentSection';
+import ReactionButton from '../reactions/ReactionButton';
+import ReactionsSummary from '../reactions/ReactionsSummary';
 
 /**
  * PostCard Component - Displays a single post with all engagement features
@@ -38,7 +38,7 @@ import CommentSection from './CommentSection';
  */
 const PostCard = ({
   post,
-  onLike,
+  onReaction,
   onComment,
   onShare,
   onBookmark,
@@ -60,8 +60,8 @@ const PostCard = ({
     setAnchorEl(null);
   };
 
-  const handleLike = () => {
-    onLike(post.id);
+  const handleReactionChange = (reactionType) => {
+    onReaction(post.id, reactionType);
   };
 
   const handleCommentClick = () => {
@@ -252,16 +252,23 @@ const PostCard = ({
           bgcolor: 'action.hover'
         }}
       >
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Typography variant="caption" color="text.secondary">
-            <strong>{post.likes}</strong> {post.likes === 1 ? 'like' : 'likes'}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            <strong>{post.comments}</strong> {post.comments === 1 ? 'comment' : 'comments'}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            <strong>{post.shares}</strong> {post.shares === 1 ? 'share' : 'shares'}
-          </Typography>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          {/* Reactions Summary */}
+          {post.reactions && post.reactions.length > 0 && (
+            <ReactionsSummary reactions={post.reactions} />
+          )}
+
+          {/* Comment and Share counts */}
+          {post.comments > 0 && (
+            <Typography variant="caption" color="text.secondary">
+              <strong>{post.comments}</strong> {post.comments === 1 ? 'comment' : 'comments'}
+            </Typography>
+          )}
+          {post.shares > 0 && (
+            <Typography variant="caption" color="text.secondary">
+              <strong>{post.shares}</strong> {post.shares === 1 ? 'share' : 'shares'}
+            </Typography>
+          )}
         </Box>
       </Box>
 
@@ -279,34 +286,15 @@ const PostCard = ({
           transition: 'opacity 0.2s'
         }}
       >
-        <Tooltip title={post.isLiked ? 'Unlike' : 'Like'}>
-          <Button
-            size="small"
-            startIcon={
-              post.isLiked ? (
-                <FavoriteIcon sx={{ color: 'error.main' }} />
-              ) : (
-                <FavoriteBorderIcon />
-              )
-            }
-            onClick={handleLike}
-            sx={{
-              textTransform: 'none',
-              minWidth: 'auto',
-              px: 2,
-              transition: 'all 0.2s',
-              '&:hover': {
-                bgcolor: 'error.lighter',
-                transform: 'scale(1.05)'
-              }
-            }}
-          >
-            <Typography variant="body2" fontWeight={post.isLiked ? 'bold' : 'normal'}>
-              Like
-            </Typography>
-          </Button>
-        </Tooltip>
+        {/* Reaction Button */}
+        <ReactionButton
+          currentReaction={post.currentUserReaction}
+          onReactionChange={handleReactionChange}
+          count={post.reactions?.length || 0}
+          size="small"
+        />
 
+        {/* Comment Button */}
         <Tooltip title="Comment">
           <Button
             size="small"
@@ -323,7 +311,7 @@ const PostCard = ({
               }
             }}
           >
-            <Typography variant="body2">Comment</Typography>
+            Comment
           </Button>
         </Tooltip>
 

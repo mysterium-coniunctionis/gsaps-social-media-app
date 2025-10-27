@@ -29,7 +29,41 @@ const Feed = () => {
   // Mock data for now - replace with API call
   useEffect(() => {
     fetchPosts();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter]);
+
+  // Helper to generate mock reactions
+  const generateMockReactions = (count, includeCurrentUser = false, currentUserType = null) => {
+    const reactionTypes = ['like', 'love', 'laugh', 'wow', 'celebrate', 'think'];
+    const mockUsers = [
+      { id: 101, name: 'Sarah Chen', username: 'sarah_chen', avatar_url: 'https://i.pravatar.cc/150?img=1' },
+      { id: 102, name: 'Marcus Johnson', username: 'marcus_j', avatar_url: 'https://i.pravatar.cc/150?img=2' },
+      { id: 103, name: 'Emily Rodriguez', username: 'emily_r', avatar_url: 'https://i.pravatar.cc/150?img=3' },
+      { id: 104, name: 'David Park', username: 'david_park', avatar_url: 'https://i.pravatar.cc/150?img=4' },
+      { id: 105, name: 'Lisa Wang', username: 'lisa_wang', avatar_url: 'https://i.pravatar.cc/150?img=5' },
+      { id: 106, name: 'James Kim', username: 'james_kim', avatar_url: 'https://i.pravatar.cc/150?img=6' },
+    ];
+
+    const reactions = [];
+
+    // Add current user reaction if specified
+    if (includeCurrentUser && currentUserType) {
+      reactions.push({
+        type: currentUserType,
+        user: { id: 'current-user', name: 'You', username: 'you', avatar_url: '' }
+      });
+    }
+
+    // Add random reactions from other users
+    for (let i = 0; i < count - (includeCurrentUser ? 1 : 0); i++) {
+      reactions.push({
+        type: reactionTypes[Math.floor(Math.random() * reactionTypes.length)],
+        user: mockUsers[i % mockUsers.length]
+      });
+    }
+
+    return reactions;
+  };
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -49,10 +83,10 @@ const Feed = () => {
           content: 'Excited to share our latest findings on psilocybin and neuroplasticity! The results from our 6-month study show remarkable improvements in neural connectivity. Full paper coming soon. 🧠✨',
           images: [],
           timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-          likes: 156,
+          reactions: generateMockReactions(156, false),
+          currentUserReaction: null,
           comments: 23,
           shares: 12,
-          isLiked: false,
           isBookmarked: false,
           tags: ['research', 'psilocybin', 'neuroscience']
         },
@@ -68,10 +102,10 @@ const Feed = () => {
           content: 'Anyone attending the Psychedelic Science Symposium next month? Would love to connect and discuss collaboration opportunities!',
           images: [],
           timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-          likes: 89,
+          reactions: generateMockReactions(89, true, 'celebrate'),
+          currentUserReaction: 'celebrate',
           comments: 34,
           shares: 5,
-          isLiked: true,
           isBookmarked: false,
           tags: ['conference', 'networking']
         },
@@ -88,10 +122,10 @@ const Feed = () => {
           content: 'Just completed my first MDMA-assisted therapy training session. The integration of psychedelic medicine into mainstream therapy is happening, and it\'s beautiful to witness. 💚',
           images: [],
           timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-          likes: 234,
+          reactions: generateMockReactions(234, false),
+          currentUserReaction: null,
           comments: 67,
           shares: 45,
-          isLiked: false,
           isBookmarked: true,
           tags: ['therapy', 'mdma', 'training']
         },
@@ -107,10 +141,10 @@ const Feed = () => {
           content: 'Reading list for anyone new to psychedelic research:\n\n1. "How to Change Your Mind" - Michael Pollan\n2. "The Psychedelic Explorer\'s Guide" - James Fadiman\n3. "LSD: My Problem Child" - Albert Hofmann\n\nWhat would you add to this list?',
           images: [],
           timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-          likes: 178,
+          reactions: generateMockReactions(178, true, 'love'),
+          currentUserReaction: 'love',
           comments: 92,
           shares: 56,
-          isLiked: true,
           isBookmarked: true,
           tags: ['books', 'education', 'resources']
         }
@@ -133,10 +167,10 @@ const Feed = () => {
       content: newPost.content,
       images: newPost.images || [],
       timestamp: new Date(),
-      likes: 0,
+      reactions: [],
+      currentUserReaction: null,
       comments: 0,
       shares: 0,
-      isLiked: false,
       isBookmarked: false,
       tags: newPost.tags || []
     };
@@ -145,16 +179,36 @@ const Feed = () => {
     setComposerOpen(false);
   }, [posts]);
 
-  const handleLike = useCallback((postId) => {
-    setPosts(posts.map(post =>
-      post.id === postId
-        ? {
-            ...post,
-            isLiked: !post.isLiked,
-            likes: post.isLiked ? post.likes - 1 : post.likes + 1
-          }
-        : post
-    ));
+  const handleReaction = useCallback((postId, reactionType) => {
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        const currentUserReaction = post.currentUserReaction;
+        let newReactions = [...post.reactions];
+
+        // Remove current user's existing reaction
+        newReactions = newReactions.filter(r => r.user.id !== 'current-user');
+
+        // If different reaction or no previous reaction, add new one
+        if (reactionType !== null && reactionType !== currentUserReaction) {
+          newReactions.push({
+            type: reactionType,
+            user: {
+              id: 'current-user',
+              name: 'You',
+              username: 'your_username',
+              avatar_url: ''
+            }
+          });
+        }
+
+        return {
+          ...post,
+          reactions: newReactions,
+          currentUserReaction: (reactionType === currentUserReaction) ? null : reactionType
+        };
+      }
+      return post;
+    }));
   }, [posts]);
 
   const handleBookmark = useCallback((postId) => {
@@ -231,7 +285,7 @@ const Feed = () => {
               >
                 <PostCard
                   post={post}
-                  onLike={handleLike}
+                  onReaction={handleReaction}
                   onComment={handleComment}
                   onShare={handleShare}
                   onBookmark={handleBookmark}

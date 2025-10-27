@@ -20,6 +20,7 @@ import {
   Event as EventIcon,
   People as PeopleIcon,
   Message as MessageIcon,
+  LibraryBooks as LibraryIcon,
   Brightness4,
   Brightness7
 } from '@mui/icons-material';
@@ -74,6 +75,7 @@ const Navbar = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: <HomeIcon /> },
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
+    { label: 'Library', path: '/library', icon: <LibraryIcon /> },
     { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },
     { label: 'Groups', path: '/groups', icon: <GroupsIcon />, protected: true },
     { label: 'Events', path: '/events', icon: <EventIcon /> },

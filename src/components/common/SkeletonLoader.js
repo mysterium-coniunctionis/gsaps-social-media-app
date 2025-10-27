@@ -1,6 +1,5 @@
 import React from 'react';
 import { Box, Skeleton as MuiSkeleton } from '@mui/material';
-import { skeletonLoading } from '../../theme/animations';
 
 /**
  * Enhanced Skeleton Loading components

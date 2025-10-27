@@ -23,7 +23,8 @@ const Feed = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [composerOpen, setComposerOpen] = useState(false);
-  const [filter, setFilter] = useState('all'); // all, following, trending
+  // eslint-disable-next-line no-unused-vars
+  const [filter, setFilter] = useState('all'); // all, following, trending - TODO: implement filter UI
 
   // Mock data for now - replace with API call
   useEffect(() => {

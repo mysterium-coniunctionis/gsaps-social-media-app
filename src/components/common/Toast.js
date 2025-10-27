@@ -41,6 +41,22 @@ export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
 
   /**
+   * Hide a specific toast
+   */
+  const hideToast = useCallback((id) => {
+    setToasts((prev) =>
+      prev.map((toast) =>
+        toast.id === id ? { ...toast, open: false } : toast
+      )
+    );
+
+    // Remove from state after animation completes
+    setTimeout(() => {
+      setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    }, 300);
+  }, []);
+
+  /**
    * Show a toast notification
    * @param {string} message - The message to display
    * @param {string} severity - 'success' | 'error' | 'warning' | 'info'
@@ -64,7 +80,7 @@ export const ToastProvider = ({ children }) => {
         hideToast(id);
       }, duration);
     }
-  }, []);
+  }, [hideToast]);
 
   /**
    * Convenience methods for different toast types
@@ -84,22 +100,6 @@ export const ToastProvider = ({ children }) => {
   const info = useCallback((message, duration) => {
     showToast(message, 'info', duration);
   }, [showToast]);
-
-  /**
-   * Hide a specific toast
-   */
-  const hideToast = useCallback((id) => {
-    setToasts((prev) =>
-      prev.map((toast) =>
-        toast.id === id ? { ...toast, open: false } : toast
-      )
-    );
-
-    // Remove from state after animation completes
-    setTimeout(() => {
-      setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    }, 300);
-  }, []);
 
   const value = {
     showToast,

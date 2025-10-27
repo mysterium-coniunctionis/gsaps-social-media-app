@@ -10,6 +10,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 
 // Pages
 import Home from './pages/Home';
+import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
@@ -20,6 +21,8 @@ import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Messages from './pages/Messages';
 import Conversation from './pages/Conversation';
+import ResearchLibrary from './pages/library/ResearchLibrary';
+import PaperDetail from './pages/library/PaperDetail';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
@@ -48,7 +51,12 @@ function App() {
         <Container maxWidth="lg">
           <Routes>
             <Route path="/" element={<Home />} />
-            
+            <Route path="/feed" element={
+              <ProtectedRoute>
+                <Feed />
+              </ProtectedRoute>
+            } />
+
             <Route path="/login" element={
               currentUser ? <Navigate to="/" /> : <Login />
             } />
@@ -82,9 +90,13 @@ function App() {
             } />
             
             <Route path="/events" element={<Events />} />
-            
+
             <Route path="/events/:eventId" element={<EventDetail />} />
-            
+
+            <Route path="/library" element={<ResearchLibrary />} />
+
+            <Route path="/library/:paperId" element={<PaperDetail />} />
+
             <Route path="/messages" element={
               <ProtectedRoute>
                 <Messages />

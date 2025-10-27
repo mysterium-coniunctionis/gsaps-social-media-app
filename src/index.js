@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -14,8 +15,10 @@ root.render(
     <BrowserRouter>
       <AuthProvider>
         <ThemeProvider>
-          <CssBaseline />
-          <App />
+          <ToastProvider>
+            <CssBaseline />
+            <App />
+          </ToastProvider>
         </ThemeProvider>
       </AuthProvider>
     </BrowserRouter>

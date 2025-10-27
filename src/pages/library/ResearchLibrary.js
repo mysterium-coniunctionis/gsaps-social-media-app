@@ -1,0 +1,513 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  Box,
+  Container,
+  Typography,
+  Grid,
+  TextField,
+  InputAdornment,
+  Button,
+  Chip,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Fab,
+  CircularProgress,
+  Alert,
+  ToggleButtonGroup,
+  ToggleButton
+} from '@mui/material';
+import {
+  Search as SearchIcon,
+  Add as AddIcon,
+  ViewList as ListIcon,
+  ViewModule as GridIcon,
+  FilterList as FilterIcon,
+  TrendingUp as TrendingIcon
+} from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { fadeInUp } from '../../theme/animations';
+import PaperCard from '../../components/library/PaperCard';
+import PaperUploadDialog from '../../components/library/PaperUploadDialog';
+import { useToast } from '../../components/common';
+
+/**
+ * ResearchLibrary Page
+ * Browse, search, and upload research papers
+ * Member-driven content library for GSAPS community
+ */
+const ResearchLibrary = () => {
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [papers, setPapers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterTopic, setFilterTopic] = useState('all');
+  const [filterYear, setFilterYear] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
+  const [viewMode, setViewMode] = useState('grid'); // grid or list
+  const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
+  // Available filter options
+  const topics = [
+    'all',
+    'psilocybin',
+    'mdma',
+    'lsd',
+    'ayahuasca',
+    'dmt',
+    'ketamine',
+    'neuroscience',
+    'therapy',
+    'consciousness',
+    'clinical-trials'
+  ];
+
+  const years = ['all', '2025', '2024', '2023', '2022', '2021', '2020', 'older'];
+
+  const sortOptions = [
+    { value: 'recent', label: 'Most Recent' },
+    { value: 'popular', label: 'Most Popular' },
+    { value: 'rating', label: 'Highest Rated' },
+    { value: 'citations', label: 'Most Cited' },
+    { value: 'discussed', label: 'Most Discussed' }
+  ];
+
+  // Fetch papers from API (mock data for now)
+  useEffect(() => {
+    fetchPapers();
+  }, [filterTopic, filterYear, sortBy]);
+
+  const fetchPapers = async () => {
+    setLoading(true);
+
+    // TODO: Replace with real API call
+    setTimeout(() => {
+      const mockPapers = [
+        {
+          id: 1,
+          title: 'Psilocybin with psychological support for treatment-resistant depression: six-month follow-up',
+          authors: ['Robin L. Carhart-Harris', 'Briony Bolstridge', 'James Rucker', 'et al.'],
+          year: 2024,
+          journal: 'Psychopharmacology',
+          doi: '10.1007/s00213-024-12345-6',
+          abstract: 'This study investigates the long-term effects of psilocybin-assisted therapy for treatment-resistant depression...',
+          topics: ['psilocybin', 'therapy', 'clinical-trials'],
+          fileUrl: '#',
+          fileSize: '2.4 MB',
+          uploadedBy: {
+            id: 1,
+            name: 'Dr. Alice Johnson',
+            username: 'alice_researcher',
+            avatar_url: 'https://i.pravatar.cc/150?img=1'
+          },
+          uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
+          views: 1547,
+          downloads: 342,
+          citations: 23,
+          rating: 4.8,
+          ratingCount: 45,
+          discussionCount: 12,
+          inMyLibrary: false
+        },
+        {
+          id: 2,
+          title: 'MDMA-assisted therapy for severe PTSD: a randomized, double-blind, placebo-controlled phase 3 study',
+          authors: ['Jennifer M. Mitchell', 'Michael Bogenschutz', 'Alia Lilienstein', 'et al.'],
+          year: 2024,
+          journal: 'Nature Medicine',
+          doi: '10.1038/s41591-024-00001-1',
+          abstract: 'Phase 3 trial results demonstrating efficacy of MDMA-assisted therapy for post-traumatic stress disorder...',
+          topics: ['mdma', 'therapy', 'clinical-trials'],
+          fileUrl: '#',
+          fileSize: '3.1 MB',
+          uploadedBy: {
+            id: 2,
+            name: 'Bob Williams',
+            username: 'bob_neuroscience',
+            avatar_url: 'https://i.pravatar.cc/150?img=2'
+          },
+          uploadedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
+          views: 2834,
+          downloads: 756,
+          citations: 45,
+          rating: 4.9,
+          ratingCount: 78,
+          discussionCount: 28,
+          inMyLibrary: true
+        },
+        {
+          id: 3,
+          title: 'Neural mechanisms of psychedelic-induced neuroplasticity',
+          authors: ['David E. Olson', 'Calvin Ly', 'Lindsay P. Cameron'],
+          year: 2023,
+          journal: 'Cell',
+          doi: '10.1016/j.cell.2023.11.023',
+          abstract: 'Investigation into the molecular mechanisms by which psychedelics promote neural plasticity and synaptogenesis...',
+          topics: ['neuroscience', 'psilocybin', 'lsd'],
+          fileUrl: '#',
+          fileSize: '4.7 MB',
+          uploadedBy: {
+            id: 3,
+            name: 'Carol Davis',
+            username: 'carol_therapist',
+            avatar_url: 'https://i.pravatar.cc/150?img=3'
+          },
+          uploadedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          views: 1923,
+          downloads: 489,
+          citations: 67,
+          rating: 4.7,
+          ratingCount: 56,
+          discussionCount: 19,
+          inMyLibrary: false
+        },
+        {
+          id: 4,
+          title: 'Ayahuasca: Pharmacology, neuroscience, and therapeutic potential',
+          authors: ['Rafael G. dos Santos', 'José Carlos Bouso', 'Jordi Riba'],
+          year: 2023,
+          journal: 'Brain Research Bulletin',
+          doi: '10.1016/j.brainresbull.2023.08.015',
+          abstract: 'Comprehensive review of ayahuasca chemistry, neuropharmacology, and therapeutic applications...',
+          topics: ['ayahuasca', 'dmt', 'therapy'],
+          fileUrl: '#',
+          fileSize: '5.2 MB',
+          uploadedBy: {
+            id: 4,
+            name: 'David Martinez',
+            username: 'david_student',
+            avatar_url: 'https://i.pravatar.cc/150?img=4'
+          },
+          uploadedAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
+          views: 1256,
+          downloads: 312,
+          citations: 34,
+          rating: 4.6,
+          ratingCount: 41,
+          discussionCount: 15,
+          inMyLibrary: false
+        }
+      ];
+
+      setPapers(mockPapers);
+      setLoading(false);
+    }, 800);
+  };
+
+  const handleSearch = useCallback((query) => {
+    setSearchQuery(query);
+    // TODO: Implement real search
+  }, []);
+
+  const handleUploadSuccess = (newPaper) => {
+    setPapers([newPaper, ...papers]);
+    setUploadDialogOpen(false);
+    toast.success('Research paper uploaded successfully!');
+  };
+
+  const handleToggleLibrary = (paperId) => {
+    setPapers(papers.map(paper =>
+      paper.id === paperId
+        ? { ...paper, inMyLibrary: !paper.inMyLibrary }
+        : paper
+    ));
+    const paper = papers.find(p => p.id === paperId);
+    if (paper) {
+      toast.success(paper.inMyLibrary ? 'Removed from your library' : 'Added to your library');
+    }
+  };
+
+  // Filter papers based on search and filters
+  const filteredPapers = papers.filter(paper => {
+    // Search filter
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      const matchesTitle = paper.title.toLowerCase().includes(query);
+      const matchesAuthors = paper.authors.some(author => author.toLowerCase().includes(query));
+      const matchesAbstract = paper.abstract.toLowerCase().includes(query);
+      const matchesDOI = paper.doi.toLowerCase().includes(query);
+
+      if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
+        return false;
+      }
+    }
+
+    // Topic filter
+    if (filterTopic !== 'all' && !paper.topics.includes(filterTopic)) {
+      return false;
+    }
+
+    // Year filter
+    if (filterYear !== 'all') {
+      if (filterYear === 'older' && paper.year >= 2020) return false;
+      if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
+    }
+
+    return true;
+  });
+
+  return (
+    <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>
+      <Container maxWidth="lg" sx={{ pt: 3 }}>
+        {/* Header */}
+        <Box sx={{ mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 2 }}>
+            <Box>
+              <Typography
+                variant="h4"
+                fontWeight="bold"
+                sx={{
+                  mb: 1,
+                  animation: `${fadeInUp} 0.5s ease-out`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1
+                }}
+              >
+                📚 Research Library
+              </Typography>
+              <Typography
+                variant="body1"
+                color="text.secondary"
+                sx={{ animation: `${fadeInUp} 0.5s ease-out 0.1s backwards` }}
+              >
+                Member-driven collection of psychedelic research papers
+              </Typography>
+            </Box>
+
+            <Button
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setUploadDialogOpen(true)}
+              sx={{
+                borderRadius: 2,
+                textTransform: 'none',
+                px: 3,
+                animation: `${fadeInUp} 0.5s ease-out 0.2s backwards`
+              }}
+            >
+              Upload Paper
+            </Button>
+          </Box>
+
+          {/* Stats */}
+          <Box sx={{ display: 'flex', gap: 3, mt: 3 }}>
+            <Chip
+              icon={<TrendingIcon />}
+              label={`${papers.length} Papers`}
+              color="primary"
+              variant="outlined"
+            />
+            <Chip
+              label={`${papers.reduce((sum, p) => sum + p.views, 0).toLocaleString()} Total Views`}
+              variant="outlined"
+            />
+            <Chip
+              label={`${papers.reduce((sum, p) => sum + p.citations, 0)} Citations`}
+              variant="outlined"
+            />
+          </Box>
+        </Box>
+
+        {/* Search and Filters */}
+        <Box sx={{ mb: 3 }}>
+          <Grid container spacing={2} alignItems="center">
+            {/* Search */}
+            <Grid item xs={12} md={5}>
+              <TextField
+                fullWidth
+                placeholder="Search by title, author, DOI, or keywords..."
+                value={searchQuery}
+                onChange={(e) => handleSearch(e.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}
+                sx={{ bgcolor: 'background.paper', borderRadius: 1 }}
+              />
+            </Grid>
+
+            {/* Topic Filter */}
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Topic</InputLabel>
+                <Select
+                  value={filterTopic}
+                  label="Topic"
+                  onChange={(e) => setFilterTopic(e.target.value)}
+                  startAdornment={<FilterIcon sx={{ mr: 1, color: 'action.active' }} />}
+                >
+                  {topics.map(topic => (
+                    <MenuItem key={topic} value={topic}>
+                      {topic === 'all' ? 'All Topics' : topic.charAt(0).toUpperCase() + topic.slice(1)}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Year Filter */}
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Year</InputLabel>
+                <Select
+                  value={filterYear}
+                  label="Year"
+                  onChange={(e) => setFilterYear(e.target.value)}
+                >
+                  {years.map(year => (
+                    <MenuItem key={year} value={year}>
+                      {year === 'all' ? 'All Years' : year === 'older' ? 'Before 2020' : year}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* Sort */}
+            <Grid item xs={12} sm={6} md={2}>
+              <FormControl fullWidth size="small">
+                <InputLabel>Sort By</InputLabel>
+                <Select
+                  value={sortBy}
+                  label="Sort By"
+                  onChange={(e) => setSortBy(e.target.value)}
+                >
+                  {sortOptions.map(option => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+
+            {/* View Mode Toggle */}
+            <Grid item xs={12} sm={6} md={1}>
+              <ToggleButtonGroup
+                value={viewMode}
+                exclusive
+                onChange={(e, newMode) => newMode && setViewMode(newMode)}
+                size="small"
+                fullWidth
+              >
+                <ToggleButton value="grid">
+                  <GridIcon fontSize="small" />
+                </ToggleButton>
+                <ToggleButton value="list">
+                  <ListIcon fontSize="small" />
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Grid>
+          </Grid>
+        </Box>
+
+        {/* Active Filters */}
+        {(searchQuery || filterTopic !== 'all' || filterYear !== 'all') && (
+          <Box sx={{ mb: 2, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Active filters:
+            </Typography>
+            {searchQuery && (
+              <Chip
+                label={`Search: "${searchQuery}"`}
+                size="small"
+                onDelete={() => setSearchQuery('')}
+              />
+            )}
+            {filterTopic !== 'all' && (
+              <Chip
+                label={`Topic: ${filterTopic}`}
+                size="small"
+                onDelete={() => setFilterTopic('all')}
+              />
+            )}
+            {filterYear !== 'all' && (
+              <Chip
+                label={`Year: ${filterYear}`}
+                size="small"
+                onDelete={() => setFilterYear('all')}
+              />
+            )}
+          </Box>
+        )}
+
+        {/* Results Count */}
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {filteredPapers.length} {filteredPapers.length === 1 ? 'paper' : 'papers'} found
+        </Typography>
+
+        {/* Loading State */}
+        {loading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+            <CircularProgress />
+          </Box>
+        )}
+
+        {/* Papers Grid/List */}
+        {!loading && filteredPapers.length > 0 && (
+          <Grid container spacing={3}>
+            {filteredPapers.map((paper, index) => (
+              <Grid
+                item
+                xs={12}
+                sm={viewMode === 'grid' ? 6 : 12}
+                md={viewMode === 'grid' ? 4 : 12}
+                key={paper.id}
+                sx={{
+                  animation: `${fadeInUp} 0.5s ease-out ${index * 0.05}s backwards`
+                }}
+              >
+                <PaperCard
+                  paper={paper}
+                  viewMode={viewMode}
+                  onToggleLibrary={handleToggleLibrary}
+                  onClick={() => navigate(`/library/${paper.id}`)}
+                />
+              </Grid>
+            ))}
+          </Grid>
+        )}
+
+        {/* Empty State */}
+        {!loading && filteredPapers.length === 0 && (
+          <Alert severity="info" sx={{ mt: 4 }}>
+            No papers found matching your criteria. Try adjusting your filters or{' '}
+            <Button size="small" onClick={() => setUploadDialogOpen(true)}>
+              upload a paper
+            </Button>
+            .
+          </Alert>
+        )}
+
+        {/* Upload FAB (mobile) */}
+        <Fab
+          color="primary"
+          sx={{
+            position: 'fixed',
+            bottom: 80,
+            right: 24,
+            display: { xs: 'flex', md: 'none' }
+          }}
+          onClick={() => setUploadDialogOpen(true)}
+        >
+          <AddIcon />
+        </Fab>
+
+        {/* Upload Dialog */}
+        <PaperUploadDialog
+          open={uploadDialogOpen}
+          onClose={() => setUploadDialogOpen(false)}
+          onSuccess={handleUploadSuccess}
+        />
+      </Container>
+    </Box>
+  );
+};
+
+export default ResearchLibrary;

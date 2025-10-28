@@ -6,6 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { GamificationProvider } from './context/GamificationContext';
 import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
 
@@ -14,12 +15,14 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            <CssBaseline />
-            <App />
-          </ToastProvider>
-        </ThemeProvider>
+        <GamificationProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <CssBaseline />
+              <App />
+            </ToastProvider>
+          </ThemeProvider>
+        </GamificationProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

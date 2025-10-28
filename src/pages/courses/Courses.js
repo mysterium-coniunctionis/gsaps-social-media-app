@@ -34,6 +34,7 @@ import { useAuth } from '../../context/AuthContext';
 import CourseCard from '../../components/courses/CourseCard';
 import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
 import { fadeInUp } from '../../theme/animations';
+import { useGamification } from '../../context/GamificationContext';
 
 /**
  * Courses Page - Main LMS course listing
@@ -42,6 +43,7 @@ import { fadeInUp } from '../../theme/animations';
 const Courses = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { awardXP, updateStat } = useGamification();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
@@ -316,6 +318,15 @@ const Courses = () => {
   const handleCourseCreated = (newCourse) => {
     setCourses([newCourse, ...courses]);
     setCreateDialogOpen(false);
+
+    // Award XP for creating course (major contribution!)
+    awardXP('CREATE_COURSE'); // +100 XP for creating a course
+    updateStat('courses_created');
+
+    // Bonus XP if course offers CE credits
+    if (newCourse.ceCredits && newCourse.ceCredits > 0) {
+      awardXP('COURSE_WITH_CE'); // +25 XP bonus for offering CE credits
+    }
   };
 
   return (

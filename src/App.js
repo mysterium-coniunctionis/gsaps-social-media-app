@@ -7,6 +7,7 @@ import { useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import BottomNavigation from './components/layout/BottomNavigation';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import XPNotification from './components/gamification/XPNotification';
 
 // Pages
 import Home from './pages/Home';
@@ -47,7 +48,8 @@ function App() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      
+      <XPNotification />
+
       <Box component="main" sx={{ flexGrow: 1, py: 2, mt: 8, mb: { xs: 7, sm: 0 } }}>
         <Container maxWidth="lg">
           <Routes>

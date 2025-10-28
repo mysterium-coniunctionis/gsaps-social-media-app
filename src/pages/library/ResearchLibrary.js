@@ -31,6 +31,7 @@ import { fadeInUp } from '../../theme/animations';
 import PaperCard from '../../components/library/PaperCard';
 import PaperUploadDialog from '../../components/library/PaperUploadDialog';
 import { useToast } from '../../components/common';
+import { useGamification } from '../../context/GamificationContext';
 
 /**
  * ResearchLibrary Page
@@ -40,6 +41,7 @@ import { useToast } from '../../components/common';
 const ResearchLibrary = () => {
   const navigate = useNavigate();
   const toast = useToast();
+  const { awardXP, updateStat } = useGamification();
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -205,6 +207,10 @@ const ResearchLibrary = () => {
     setPapers([newPaper, ...papers]);
     setUploadDialogOpen(false);
     toast.success('Research paper uploaded successfully!');
+
+    // Award XP for uploading paper (major contribution!)
+    awardXP('UPLOAD_PAPER'); // +50 XP for uploading research paper
+    updateStat('papers_uploaded');
   };
 
   const handleToggleLibrary = (paperId) => {

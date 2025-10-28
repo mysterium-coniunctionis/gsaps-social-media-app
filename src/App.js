@@ -23,6 +23,7 @@ import Messages from './pages/Messages';
 import Conversation from './pages/Conversation';
 import ResearchLibrary from './pages/library/ResearchLibrary';
 import PaperDetail from './pages/library/PaperDetail';
+import Courses from './pages/courses/Courses';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
@@ -96,6 +97,8 @@ function App() {
             <Route path="/library" element={<ResearchLibrary />} />
 
             <Route path="/library/:paperId" element={<PaperDetail />} />
+
+            <Route path="/courses" element={<Courses />} />
 
             <Route path="/messages" element={
               <ProtectedRoute>

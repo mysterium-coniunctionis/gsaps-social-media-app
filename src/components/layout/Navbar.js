@@ -21,6 +21,7 @@ import {
   People as PeopleIcon,
   Message as MessageIcon,
   LibraryBooks as LibraryIcon,
+  School as CoursesIcon,
   Brightness4,
   Brightness7
 } from '@mui/icons-material';
@@ -76,6 +77,7 @@ const Navbar = () => {
     { label: 'Home', path: '/', icon: <HomeIcon /> },
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
     { label: 'Library', path: '/library', icon: <LibraryIcon /> },
+    { label: 'Courses', path: '/courses', icon: <CoursesIcon /> },
     { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },
     { label: 'Groups', path: '/groups', icon: <GroupsIcon />, protected: true },
     { label: 'Events', path: '/events', icon: <EventIcon /> },

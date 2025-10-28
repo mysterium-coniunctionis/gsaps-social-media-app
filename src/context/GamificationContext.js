@@ -119,7 +119,7 @@ const LEVEL_THRESHOLDS = [
 /**
  * Rank names based on level
  */
-const RANKS = {
+export const RANKS = {
   1: { name: 'Novice', color: '#9e9e9e', icon: '🌱' },
   5: { name: 'Learner', color: '#8bc34a', icon: '📚' },
   10: { name: 'Contributor', color: '#4caf50', icon: '✍️' },

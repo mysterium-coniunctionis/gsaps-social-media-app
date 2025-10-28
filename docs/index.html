@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GSAPS Social Media App - A next-generation academic social platform for psychedelic research">
+    <meta name="keywords" content="GSAPS, psychedelic research, academic social network, research library">
+    <title>GSAPS Social Media App - Academic Social Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.95;
+        }
+
+        .badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .badge {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+
+        .content {
+            background: white;
+            border-radius: 20px;
+            padding: 60px 40px;
+            margin-top: -50px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            padding: 30px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #667eea;
+        }
+
+        .feature-desc {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .stat-card {
+            padding: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            color: white;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .roadmap {
+            margin: 60px 0;
+        }
+
+        .roadmap-item {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .roadmap-status {
+            font-size: 2rem;
+            margin-right: 20px;
+        }
+
+        .roadmap-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .roadmap-desc {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+            margin-top: 60px;
+        }
+
+        .tech-stack {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 40px 0;
+        }
+
+        .tech-badge {
+            padding: 10px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .subtitle {
+                font-size: 1.2rem;
+            }
+
+            .content {
+                padding: 40px 20px;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧠 GSAPS Social Media App</h1>
+            <p class="subtitle">A Next-Generation Academic Social Platform for Psychedelic Research</p>
+
+            <div class="badges">
+                <span class="badge">✅ Phase 3 Complete</span>
+                <span class="badge">⚛️ React 18.3</span>
+                <span class="badge">📦 217 kB</span>
+                <span class="badge">🎨 Modern UI</span>
+            </div>
+
+            <div class="cta-buttons">
+                <a href="https://github.com/mysterium-coniunctionis/gsaps-social-media-app" class="btn btn-primary" target="_blank">
+                    View on GitHub
+                </a>
+                <a href="https://github.com/mysterium-coniunctionis/gsaps-social-media-app/blob/main/QUICKSTART_MACBOOK.md" class="btn btn-secondary" target="_blank">
+                    Quick Start Guide
+                </a>
+            </div>
+        </header>
+
+        <div class="content">
+            <section>
+                <h2 style="text-align: center; color: #667eea; margin-bottom: 20px; font-size: 2.5rem;">
+                    What Makes Us Different?
+                </h2>
+                <p style="text-align: center; font-size: 1.2rem; color: #666; max-width: 800px; margin: 0 auto 60px;">
+                    GSAPS Social Media App combines cutting-edge social features with a member-driven research repository,
+                    creating a unique platform for academic collaboration in psychedelic research.
+                </p>
+            </section>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">🔬</div>
+                    <h3 class="feature-title">Research Library</h3>
+                    <p class="feature-desc">
+                        Member-uploaded academic papers with ratings, reviews, and threaded discussions.
+                        Export citations in BibTeX, APA, and MLA formats.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3 class="feature-title">Rich Engagement</h3>
+                    <p class="feature-desc">
+                        8-emoji reaction system, @mentions with autocomplete, nested comments,
+                        and real-time notifications for seamless interaction.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3 class="feature-title">Modern Design</h3>
+                    <p class="feature-desc">
+                        Glassmorphism UI with 25+ custom animations, dark/light mode toggle,
+                        and fully responsive design for all devices.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3 class="feature-title">Community Features</h3>
+                    <p class="feature-desc">
+                        Member directory, groups, events, messaging system, and customizable
+                        profiles tailored for academic researchers.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3 class="feature-title">Responsive</h3>
+                    <p class="feature-desc">
+                        Mobile-first design that works seamlessly on desktop, tablet, and mobile
+                        devices with optimized performance.
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🔓</div>
+                    <h3 class="feature-title">Open Source</h3>
+                    <p class="feature-desc">
+                        Community-driven development with full transparency. Contribute,
+                        customize, and extend the platform freely.
+                    </p>
+                </div>
+            </div>
+
+            <section class="stats">
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">Components</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">7.9k+</div>
+                    <div class="stat-label">Lines of Code</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">217 kB</div>
+                    <div class="stat-label">Build Size</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">75%</div>
+                    <div class="stat-label">Feature Complete</div>
+                </div>
+            </section>
+
+            <section>
+                <h2 style="text-align: center; color: #667eea; margin-bottom: 40px; font-size: 2.5rem;">
+                    Technology Stack
+                </h2>
+                <div class="tech-stack">
+                    <span class="tech-badge">React 18.3</span>
+                    <span class="tech-badge">Material-UI 5.16</span>
+                    <span class="tech-badge">React Router 6</span>
+                    <span class="tech-badge">Axios</span>
+                    <span class="tech-badge">date-fns</span>
+                    <span class="tech-badge">Context API</span>
+                    <span class="tech-badge">CSS-in-JS</span>
+                </div>
+            </section>
+
+            <section class="roadmap">
+                <h2 style="text-align: center; color: #667eea; margin-bottom: 40px; font-size: 2.5rem;">
+                    Development Roadmap
+                </h2>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">✅</span>
+                    <div>
+                        <div class="roadmap-title">Phase 1: Activity Feed System</div>
+                        <div class="roadmap-desc">Feed, comments, reactions, notifications, UI components</div>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">✅</span>
+                    <div>
+                        <div class="roadmap-title">Phase 2: Advanced Engagement</div>
+                        <div class="roadmap-desc">8-emoji reactions, @mentions, tags</div>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">✅</span>
+                    <div>
+                        <div class="roadmap-title">Phase 3: Research Library</div>
+                        <div class="roadmap-desc">Papers, reviews, citations, discussions</div>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">🚧</span>
+                    <div>
+                        <div class="roadmap-title">Phase 4: Real-time Features</div>
+                        <div class="roadmap-desc">WebSocket, live notifications, real-time chat</div>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">📅</span>
+                    <div>
+                        <div class="roadmap-title">Phase 5: Gamification</div>
+                        <div class="roadmap-desc">Reputation system, badges, leaderboards</div>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">📅</span>
+                    <div>
+                        <div class="roadmap-title">Phase 6: PWA Implementation</div>
+                        <div class="roadmap-desc">Offline support, push notifications, app install</div>
+                    </div>
+                </div>
+
+                <div class="roadmap-item">
+                    <span class="roadmap-status">📅</span>
+                    <div>
+                        <div class="roadmap-title">Phase 7: API Integration</div>
+                        <div class="roadmap-desc">WordPress/BuddyBoss backend, production deployment</div>
+                    </div>
+                </div>
+            </section>
+
+            <section style="text-align: center; margin: 60px 0;">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 2.5rem;">Get Started</h2>
+                <p style="font-size: 1.2rem; color: #666; margin-bottom: 30px;">
+                    Ready to explore? Clone the repository and start the app in 5 minutes!
+                </p>
+                <div style="background: #f8f9fa; padding: 30px; border-radius: 10px; text-align: left; max-width: 600px; margin: 0 auto;">
+                    <code style="display: block; line-height: 2; color: #667eea; font-family: 'Courier New', monospace;">
+                        git clone https://github.com/mysterium-coniunctionis/gsaps-social-media-app.git<br>
+                        cd gsaps-social-media-app<br>
+                        npm install<br>
+                        npm start
+                    </code>
+                </div>
+                <p style="margin-top: 20px; color: #666;">
+                    Test credentials: <strong>demo_user</strong> / <strong>demo123</strong>
+                </p>
+            </section>
+        </div>
+
+        <footer>
+            <p style="font-size: 1.2rem; margin-bottom: 10px;">Built with ❤️ for the psychedelic research community</p>
+            <p style="opacity: 0.8;">
+                <a href="https://github.com/mysterium-coniunctionis/gsaps-social-media-app" style="color: white; text-decoration: none;">
+                    GitHub
+                </a>
+                •
+                <a href="https://github.com/mysterium-coniunctionis/gsaps-social-media-app/issues" style="color: white; text-decoration: none;">
+                    Issues
+                </a>
+                •
+                <a href="https://gsaps.org" style="color: white; text-decoration: none;">
+                    GSAPS.org
+                </a>
+            </p>
+            <p style="opacity: 0.7; margin-top: 20px; font-size: 0.9rem;">© 2025 GSAPS. Licensed under MIT.</p>
+        </footer>
+    </div>
+</body>
+</html>

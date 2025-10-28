@@ -14,7 +14,7 @@ import Home from './pages/Home';
 import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Profile from './pages/Profile';
+import UserProfile from './pages/UserProfile';
 import Members from './pages/Members';
 import Groups from './pages/Groups';
 import GroupDetail from './pages/GroupDetail';
@@ -71,7 +71,7 @@ function App() {
             
             <Route path="/profile/:username" element={
               <ProtectedRoute>
-                <Profile />
+                <UserProfile />
               </ProtectedRoute>
             } />
             

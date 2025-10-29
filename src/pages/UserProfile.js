@@ -287,7 +287,8 @@ const UserProfile = () => {
                     <Button
                       variant="contained"
                       startIcon={<MessageIcon />}
-                      onClick={() => navigate(`/messages/new?to=${profileData.username}`)}
+                      onClick={() => navigate('/messages')}
+                      title={`Send a message to ${profileData.username}`}
                     >
                       Message
                     </Button>

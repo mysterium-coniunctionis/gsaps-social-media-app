@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Card,
   CardHeader,
@@ -35,6 +35,7 @@ import ReactionsSummary from '../reactions/ReactionsSummary';
 /**
  * PostCard Component - Displays a single post with all engagement features
  * Modern design with glassmorphism and smooth animations
+ * Optimized with React.memo and useCallback to prevent unnecessary re-renders
  */
 const PostCard = ({
   post,
@@ -49,48 +50,48 @@ const PostCard = ({
   const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const isOwnPost = post.author.id === currentUserId;
+  const isOwnPost = useMemo(() => post.author.id === currentUserId, [post.author.id, currentUserId]);
   const menuOpen = Boolean(anchorEl);
 
-  const handleMenuOpen = (event) => {
+  const handleMenuOpen = useCallback((event) => {
     setAnchorEl(event.currentTarget);
-  };
+  }, []);
 
-  const handleMenuClose = () => {
+  const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
-  };
+  }, []);
 
-  const handleReactionChange = (reactionType) => {
+  const handleReactionChange = useCallback((reactionType) => {
     onReaction(post.id, reactionType);
-  };
+  }, [onReaction, post.id]);
 
-  const handleCommentClick = () => {
-    setShowComments(!showComments);
-  };
+  const handleCommentClick = useCallback(() => {
+    setShowComments(prev => !prev);
+  }, []);
 
-  const handleShare = () => {
+  const handleShare = useCallback(() => {
     onShare(post.id);
     // TODO: Show share dialog
-  };
+  }, [onShare, post.id]);
 
-  const handleBookmark = () => {
+  const handleBookmark = useCallback(() => {
     onBookmark(post.id);
-  };
+  }, [onBookmark, post.id]);
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     if (window.confirm('Are you sure you want to delete this post?')) {
       onDelete(post.id);
     }
     handleMenuClose();
-  };
+  }, [onDelete, post.id, handleMenuClose]);
 
-  const formatTimestamp = (date) => {
+  const formattedTimestamp = useMemo(() => {
     try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true });
+      return formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
     } catch {
       return 'recently';
     }
-  };
+  }, [post.timestamp]);
 
   return (
     <Card
@@ -162,7 +163,7 @@ const PostCard = ({
               {post.author.credentials && ` • ${post.author.credentials}`}
             </Typography>
             <Typography variant="caption" color="text.secondary">
-              {formatTimestamp(post.timestamp)}
+              {formattedTimestamp}
             </Typography>
           </Box>
         }
@@ -397,4 +398,5 @@ const PostCard = ({
   );
 };
 
-export default PostCard;
+// Memoize PostCard to prevent unnecessary re-renders
+export default React.memo(PostCard);

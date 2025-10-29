@@ -177,7 +177,7 @@ const Feed = () => {
       tags: newPost.tags || []
     };
 
-    setPosts([post, ...posts]);
+    setPosts(prevPosts => [post, ...prevPosts]);
     setComposerOpen(false);
 
     // Award XP for creating post
@@ -194,10 +194,10 @@ const Feed = () => {
 
     // Update stats
     updateStat('posts_created');
-  }, [posts, awardXP, updateStat]);
+  }, [awardXP, updateStat]);
 
   const handleReaction = useCallback((postId, reactionType) => {
-    setPosts(posts.map(post => {
+    setPosts(prevPosts => prevPosts.map(post => {
       if (post.id === postId) {
         const currentUserReaction = post.currentUserReaction;
         let newReactions = [...post.reactions];
@@ -230,15 +230,15 @@ const Feed = () => {
       }
       return post;
     }));
-  }, [posts, awardXP, updateStat]);
+  }, [awardXP, updateStat]);
 
   const handleBookmark = useCallback((postId) => {
-    setPosts(posts.map(post =>
+    setPosts(prevPosts => prevPosts.map(post =>
       post.id === postId
         ? { ...post, isBookmarked: !post.isBookmarked }
         : post
     ));
-  }, [posts]);
+  }, []);
 
   const handleComment = useCallback((postId, comment) => {
     // TODO: Add comment to post
@@ -259,8 +259,8 @@ const Feed = () => {
   }, [awardXP, updateStat]);
 
   const handleDelete = useCallback((postId) => {
-    setPosts(posts.filter(post => post.id !== postId));
-  }, [posts]);
+    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+  }, []);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>

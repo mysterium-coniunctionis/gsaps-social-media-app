@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 
 const GamificationContext = createContext();
@@ -333,9 +333,10 @@ export const GamificationProvider = ({ children }) => {
       setUserStats(null);
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
-  const loadUserStats = () => {
+  const loadUserStats = useCallback(() => {
     setLoading(true);
 
     // Get stats from localStorage or create new
@@ -373,13 +374,13 @@ export const GamificationProvider = ({ children }) => {
     }
 
     setLoading(false);
-  };
+  }, [currentUser]);
 
-  const saveUserStats = (stats) => {
+  const saveUserStats = useCallback((stats) => {
     const storageKey = `gamification_${currentUser.id}`;
     localStorage.setItem(storageKey, JSON.stringify(stats));
     setUserStats(stats);
-  };
+  }, [currentUser]);
 
   // Calculate level from XP
   const calculateLevel = useCallback((xp) => {
@@ -457,23 +458,7 @@ export const GamificationProvider = ({ children }) => {
       newLevel,
       leveledUp
     };
-  }, [currentUser, userStats, calculateLevel]);
-
-  // Update stat
-  const updateStat = useCallback((statName, increment = 1) => {
-    if (!currentUser || !userStats) return;
-
-    const updatedStats = {
-      ...userStats,
-      stats: {
-        ...userStats.stats,
-        [statName]: (userStats.stats[statName] || 0) + increment
-      }
-    };
-
-    saveUserStats(updatedStats);
-    checkAchievements(updatedStats);
-  }, [currentUser, userStats]);
+  }, [currentUser, userStats, calculateLevel, saveUserStats]);
 
   // Check for new achievements
   const checkAchievements = useCallback((stats) => {
@@ -513,7 +498,23 @@ export const GamificationProvider = ({ children }) => {
       };
       saveUserStats(updatedStats);
     }
-  }, [calculateLevel]);
+  }, [calculateLevel, saveUserStats]);
+
+  // Update stat
+  const updateStat = useCallback((statName, increment = 1) => {
+    if (!currentUser || !userStats) return;
+
+    const updatedStats = {
+      ...userStats,
+      stats: {
+        ...userStats.stats,
+        [statName]: (userStats.stats[statName] || 0) + increment
+      }
+    };
+
+    saveUserStats(updatedStats);
+    checkAchievements(updatedStats);
+  }, [currentUser, userStats, saveUserStats, checkAchievements]);
 
   // Get progress to next level
   const getLevelProgress = useCallback(() => {
@@ -531,7 +532,8 @@ export const GamificationProvider = ({ children }) => {
     };
   }, [userStats, getXPForNextLevel]);
 
-  const value = {
+  // Memoize context value to prevent unnecessary re-renders
+  const value = useMemo(() => ({
     userStats,
     loading,
     recentXP,
@@ -543,7 +545,7 @@ export const GamificationProvider = ({ children }) => {
     getLevelProgress,
     XP_ACTIONS,
     ACHIEVEMENTS
-  };
+  }), [userStats, loading, recentXP, awardXP, updateStat, calculateLevel, getXPForNextLevel, getCurrentRank, getLevelProgress]);
 
   return (
     <GamificationContext.Provider value={value}>

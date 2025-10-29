@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -95,21 +95,20 @@ const ResearchLibrary = () => {
 
   const handleSearch = useCallback((query) => {
     setSearchQuery(query);
-    // TODO: Implement real search
   }, []);
 
-  const handleUploadSuccess = (newPaper) => {
-    setPapers([newPaper, ...papers]);
+  const handleUploadSuccess = useCallback((newPaper) => {
+    setPapers(prevPapers => [newPaper, ...prevPapers]);
     setUploadDialogOpen(false);
     toast.success('Research paper uploaded successfully!');
 
     // Award XP for uploading paper (major contribution!)
     awardXP('UPLOAD_PAPER'); // +50 XP for uploading research paper
     updateStat('papers_uploaded');
-  };
+  }, [toast, awardXP, updateStat]);
 
-  const handleToggleLibrary = (paperId) => {
-    setPapers(papers.map(paper =>
+  const handleToggleLibrary = useCallback((paperId) => {
+    setPapers(prevPapers => prevPapers.map(paper =>
       paper.id === paperId
         ? { ...paper, inMyLibrary: !paper.inMyLibrary }
         : paper
@@ -118,36 +117,38 @@ const ResearchLibrary = () => {
     if (paper) {
       toast.success(paper.inMyLibrary ? 'Removed from your library' : 'Added to your library');
     }
-  };
+  }, [papers, toast]);
 
-  // Filter papers based on search and filters
-  const filteredPapers = papers.filter(paper => {
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      const matchesTitle = paper.title.toLowerCase().includes(query);
-      const matchesAuthors = paper.authors.some(author => author.toLowerCase().includes(query));
-      const matchesAbstract = paper.abstract.toLowerCase().includes(query);
-      const matchesDOI = paper.doi.toLowerCase().includes(query);
+  // Memoize filtered papers to prevent recalculation on every render
+  const filteredPapers = useMemo(() => {
+    return papers.filter(paper => {
+      // Search filter
+      if (searchQuery) {
+        const query = searchQuery.toLowerCase();
+        const matchesTitle = paper.title.toLowerCase().includes(query);
+        const matchesAuthors = paper.authors.some(author => author.toLowerCase().includes(query));
+        const matchesAbstract = paper.abstract.toLowerCase().includes(query);
+        const matchesDOI = paper.doi.toLowerCase().includes(query);
 
-      if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
+        if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
+          return false;
+        }
+      }
+
+      // Topic filter
+      if (filterTopic !== 'all' && !paper.topics.includes(filterTopic)) {
         return false;
       }
-    }
 
-    // Topic filter
-    if (filterTopic !== 'all' && !paper.topics.includes(filterTopic)) {
-      return false;
-    }
+      // Year filter
+      if (filterYear !== 'all') {
+        if (filterYear === 'older' && paper.year >= 2020) return false;
+        if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
+      }
 
-    // Year filter
-    if (filterYear !== 'all') {
-      if (filterYear === 'older' && paper.year >= 2020) return false;
-      if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
-    }
-
-    return true;
-  });
+      return true;
+    });
+  }, [papers, searchQuery, filterTopic, filterYear]);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>

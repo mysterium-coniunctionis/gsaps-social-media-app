@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -24,12 +24,12 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 /**
  * Members directory page
  * Browse and search GSAPS community members
+ * Optimized with useMemo for filtering
  */
 const Members = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [members, setMembers] = useState([]);
-  const [filteredMembers, setFilteredMembers] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
   const [filterInterest, setFilterInterest] = useState('all');
@@ -83,21 +83,22 @@ const Members = () => {
         }
       ];
       setMembers(mockMembers);
-      setFilteredMembers(mockMembers);
       setLoading(false);
     }, 500);
   }, []);
 
-  useEffect(() => {
+  // Memoize filtered and sorted members to prevent recalculation on every render
+  const filteredMembers = useMemo(() => {
     // Filter and search members
     let filtered = [...members];
 
     // Apply search
     if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(member =>
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.bio.toLowerCase().includes(searchQuery.toLowerCase())
+        member.name.toLowerCase().includes(query) ||
+        member.username.toLowerCase().includes(query) ||
+        member.bio.toLowerCase().includes(query)
       );
     }
 
@@ -117,7 +118,7 @@ const Members = () => {
       filtered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    setFilteredMembers(filtered);
+    return filtered;
   }, [searchQuery, sortBy, filterInterest, members]);
 
   if (loading) {

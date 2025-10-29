@@ -12,11 +12,9 @@ import {
   CardContent,
   Chip,
   Button,
-  IconButton,
   LinearProgress,
   useTheme,
-  alpha,
-  Divider
+  alpha
 } from '@mui/material';
 import {
   Settings as SettingsIcon,

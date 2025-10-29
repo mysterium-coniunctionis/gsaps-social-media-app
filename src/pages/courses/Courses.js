@@ -15,19 +15,14 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Card,
-  CardContent,
-  IconButton,
-  alpha,
-  Tooltip
+  CardContent
 } from '@mui/material';
 import {
   Search as SearchIcon,
   Add as AddIcon,
   ViewModule as GridIcon,
   ViewList as ListIcon,
-  School as SchoolIcon,
-  FilterList as FilterIcon,
-  Star as StarIcon
+  School as SchoolIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -53,7 +48,6 @@ const Courses = () => {
   const [filterLevel, setFilterLevel] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
 
   // Course categories
   const categories = [

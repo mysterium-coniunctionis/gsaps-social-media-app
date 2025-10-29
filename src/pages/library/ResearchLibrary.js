@@ -32,6 +32,7 @@ import PaperCard from '../../components/library/PaperCard';
 import PaperUploadDialog from '../../components/library/PaperUploadDialog';
 import { useToast } from '../../components/common';
 import { useGamification } from '../../context/GamificationContext';
+import { RESEARCH_PAPERS } from '../../data/researchPapersData';
 
 /**
  * ResearchLibrary Page
@@ -84,116 +85,10 @@ const ResearchLibrary = () => {
   const fetchPapers = async () => {
     setLoading(true);
 
-    // TODO: Replace with real API call
+    // TODO: Replace with real API call when backend is ready
+    // For now, using comprehensive data from researchPapersData.js
     setTimeout(() => {
-      const mockPapers = [
-        {
-          id: 1,
-          title: 'Psilocybin with psychological support for treatment-resistant depression: six-month follow-up',
-          authors: ['Robin L. Carhart-Harris', 'Briony Bolstridge', 'James Rucker', 'et al.'],
-          year: 2024,
-          journal: 'Psychopharmacology',
-          doi: '10.1007/s00213-024-12345-6',
-          abstract: 'This study investigates the long-term effects of psilocybin-assisted therapy for treatment-resistant depression...',
-          topics: ['psilocybin', 'therapy', 'clinical-trials'],
-          fileUrl: '#',
-          fileSize: '2.4 MB',
-          uploadedBy: {
-            id: 1,
-            name: 'Dr. Alice Johnson',
-            username: 'alice_researcher',
-            avatar_url: 'https://i.pravatar.cc/150?img=1'
-          },
-          uploadedAt: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-          views: 1547,
-          downloads: 342,
-          citations: 23,
-          rating: 4.8,
-          ratingCount: 45,
-          discussionCount: 12,
-          inMyLibrary: false
-        },
-        {
-          id: 2,
-          title: 'MDMA-assisted therapy for severe PTSD: a randomized, double-blind, placebo-controlled phase 3 study',
-          authors: ['Jennifer M. Mitchell', 'Michael Bogenschutz', 'Alia Lilienstein', 'et al.'],
-          year: 2024,
-          journal: 'Nature Medicine',
-          doi: '10.1038/s41591-024-00001-1',
-          abstract: 'Phase 3 trial results demonstrating efficacy of MDMA-assisted therapy for post-traumatic stress disorder...',
-          topics: ['mdma', 'therapy', 'clinical-trials'],
-          fileUrl: '#',
-          fileSize: '3.1 MB',
-          uploadedBy: {
-            id: 2,
-            name: 'Bob Williams',
-            username: 'bob_neuroscience',
-            avatar_url: 'https://i.pravatar.cc/150?img=2'
-          },
-          uploadedAt: new Date(Date.now() - 14 * 24 * 60 * 60 * 1000),
-          views: 2834,
-          downloads: 756,
-          citations: 45,
-          rating: 4.9,
-          ratingCount: 78,
-          discussionCount: 28,
-          inMyLibrary: true
-        },
-        {
-          id: 3,
-          title: 'Neural mechanisms of psychedelic-induced neuroplasticity',
-          authors: ['David E. Olson', 'Calvin Ly', 'Lindsay P. Cameron'],
-          year: 2023,
-          journal: 'Cell',
-          doi: '10.1016/j.cell.2023.11.023',
-          abstract: 'Investigation into the molecular mechanisms by which psychedelics promote neural plasticity and synaptogenesis...',
-          topics: ['neuroscience', 'psilocybin', 'lsd'],
-          fileUrl: '#',
-          fileSize: '4.7 MB',
-          uploadedBy: {
-            id: 3,
-            name: 'Carol Davis',
-            username: 'carol_therapist',
-            avatar_url: 'https://i.pravatar.cc/150?img=3'
-          },
-          uploadedAt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-          views: 1923,
-          downloads: 489,
-          citations: 67,
-          rating: 4.7,
-          ratingCount: 56,
-          discussionCount: 19,
-          inMyLibrary: false
-        },
-        {
-          id: 4,
-          title: 'Ayahuasca: Pharmacology, neuroscience, and therapeutic potential',
-          authors: ['Rafael G. dos Santos', 'José Carlos Bouso', 'Jordi Riba'],
-          year: 2023,
-          journal: 'Brain Research Bulletin',
-          doi: '10.1016/j.brainresbull.2023.08.015',
-          abstract: 'Comprehensive review of ayahuasca chemistry, neuropharmacology, and therapeutic applications...',
-          topics: ['ayahuasca', 'dmt', 'therapy'],
-          fileUrl: '#',
-          fileSize: '5.2 MB',
-          uploadedBy: {
-            id: 4,
-            name: 'David Martinez',
-            username: 'david_student',
-            avatar_url: 'https://i.pravatar.cc/150?img=4'
-          },
-          uploadedAt: new Date(Date.now() - 45 * 24 * 60 * 60 * 1000),
-          views: 1256,
-          downloads: 312,
-          citations: 34,
-          rating: 4.6,
-          ratingCount: 41,
-          discussionCount: 15,
-          inMyLibrary: false
-        }
-      ];
-
-      setPapers(mockPapers);
+      setPapers(RESEARCH_PAPERS);
       setLoading(false);
     }, 800);
   };

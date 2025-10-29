@@ -7,12 +7,17 @@ import {
   TextField,
   IconButton,
   Paper,
-  Divider
+  Divider,
+  Grid,
+  Chip,
+  Button
 } from '@mui/material';
 import {
   Send as SendIcon,
   ArrowBack as BackIcon,
-  MoreVert as MoreIcon
+  MoreVert as MoreIcon,
+  Person as PersonIcon,
+  Email as EmailIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -188,42 +193,45 @@ const Conversation = () => {
   const messageGroups = groupMessagesByDate(messages);
 
   return (
-    <Box sx={{ py: 3, height: 'calc(100vh - 200px)', display: 'flex', flexDirection: 'column' }}>
-      {/* Conversation Header */}
-      <Card sx={{ mb: 2 }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
-          <IconButton
-            edge="start"
-            onClick={() => navigate('/messages')}
-            sx={{ mr: 2 }}
-          >
-            <BackIcon />
-          </IconButton>
+    <Box sx={{ py: 3, height: 'calc(100vh - 200px)' }}>
+      <Grid container spacing={2} sx={{ height: '100%' }}>
+        {/* Main Conversation Area */}
+        <Grid item xs={12} md={9} sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+          {/* Conversation Header */}
+          <Card sx={{ mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', p: 2 }}>
+              <IconButton
+                edge="start"
+                onClick={() => navigate('/messages')}
+                sx={{ mr: 2 }}
+              >
+                <BackIcon />
+              </IconButton>
 
-          <Avatar
-            src={conversation.participant.avatar_url}
-            sx={{ mr: 2 }}
-          >
-            {conversation.participant.name.charAt(0)}
-          </Avatar>
+              <Avatar
+                src={conversation.participant.avatar_url}
+                sx={{ mr: 2 }}
+              >
+                {conversation.participant.name.charAt(0)}
+              </Avatar>
 
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="h6">
-              {conversation.participant.name}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              @{conversation.participant.username}
-            </Typography>
-          </Box>
+              <Box sx={{ flex: 1 }}>
+                <Typography variant="h6">
+                  {conversation.participant.name}
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  @{conversation.participant.username}
+                </Typography>
+              </Box>
 
-          <IconButton>
-            <MoreIcon />
-          </IconButton>
-        </Box>
-      </Card>
+              <IconButton>
+                <MoreIcon />
+              </IconButton>
+            </Box>
+          </Card>
 
-      {/* Messages Area */}
-      <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+          {/* Messages Area */}
+          <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         <Box
           sx={{
             flex: 1,
@@ -344,6 +352,64 @@ const Conversation = () => {
           </IconButton>
         </Box>
       </Card>
+        </Grid>
+
+        {/* Right Sidebar - Participant Profile */}
+        <Grid item xs={12} md={3} sx={{ display: { xs: 'none', md: 'block' } }}>
+          <Card sx={{ position: 'sticky', top: 16 }}>
+            <Box sx={{ p: 3, textAlign: 'center' }}>
+              {/* Profile Photo */}
+              <Avatar
+                src={conversation.participant.avatar_url}
+                sx={{ width: 100, height: 100, mx: 'auto', mb: 2 }}
+              >
+                {conversation.participant.name.charAt(0)}
+              </Avatar>
+
+              {/* Name */}
+              <Typography variant="h6" fontWeight="bold" gutterBottom>
+                {conversation.participant.name}
+              </Typography>
+
+              {/* Username */}
+              <Typography variant="body2" color="text.secondary" paragraph>
+                @{conversation.participant.username}
+              </Typography>
+
+              <Divider sx={{ my: 2 }} />
+
+              {/* Basic Info */}
+              <Box sx={{ textAlign: 'left' }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                  <PersonIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                  <Typography variant="body2">
+                    Member
+                  </Typography>
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5 }}>
+                  <EmailIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                  <Typography variant="body2" noWrap>
+                    {conversation.participant.username}@gsaps.org
+                  </Typography>
+                </Box>
+              </Box>
+
+              <Divider sx={{ my: 2 }} />
+
+              {/* Actions */}
+              <Button
+                fullWidth
+                variant="outlined"
+                onClick={() => navigate(`/profile/${conversation.participant.username}`)}
+                sx={{ mb: 1 }}
+              >
+                View Profile
+              </Button>
+            </Box>
+          </Card>
+        </Grid>
+      </Grid>
     </Box>
   );
 };

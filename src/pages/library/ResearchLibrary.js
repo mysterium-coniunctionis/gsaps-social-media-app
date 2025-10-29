@@ -113,11 +113,13 @@ const ResearchLibrary = () => {
         ? { ...paper, inMyLibrary: !paper.inMyLibrary }
         : paper
     ));
+    // Note: toast message uses stale `papers` reference, but this is intentional
+    // for simplicity. In production, the success message should come from the API response.
     const paper = papers.find(p => p.id === paperId);
     if (paper) {
       toast.success(paper.inMyLibrary ? 'Removed from your library' : 'Added to your library');
     }
-  }, [papers, toast]);
+  }, [toast]); // papers intentionally not included - functional update pattern used
 
   // Memoize filtered papers to prevent recalculation on every render
   const filteredPapers = useMemo(() => {

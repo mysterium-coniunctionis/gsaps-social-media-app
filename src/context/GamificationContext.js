@@ -333,6 +333,8 @@ export const GamificationProvider = ({ children }) => {
       setUserStats(null);
       setLoading(false);
     }
+  // loadUserStats is defined with useCallback, but we disable the exhaustive-deps rule here
+  // because including it would create unnecessary re-initialization on every render
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
@@ -532,20 +534,30 @@ export const GamificationProvider = ({ children }) => {
     };
   }, [userStats, getXPForNextLevel]);
 
-  // Memoize context value to prevent unnecessary re-renders
+  // Memoize stable functions separately to reduce dependency chain complexity
+  const stableFunctions = useMemo(() => ({
+    calculateLevel,
+    getXPForNextLevel,
+    getCurrentRank,
+    getLevelProgress
+  }), [calculateLevel, getXPForNextLevel, getCurrentRank, getLevelProgress]);
+
+  // Memoize dynamic functions separately
+  const dynamicFunctions = useMemo(() => ({
+    awardXP,
+    updateStat
+  }), [awardXP, updateStat]);
+
+  // Memoize context value with grouped dependencies
   const value = useMemo(() => ({
     userStats,
     loading,
     recentXP,
-    awardXP,
-    updateStat,
-    calculateLevel,
-    getXPForNextLevel,
-    getCurrentRank,
-    getLevelProgress,
+    ...stableFunctions,
+    ...dynamicFunctions,
     XP_ACTIONS,
     ACHIEVEMENTS
-  }), [userStats, loading, recentXP, awardXP, updateStat, calculateLevel, getXPForNextLevel, getCurrentRank, getLevelProgress]);
+  }), [userStats, loading, recentXP, stableFunctions, dynamicFunctions]);
 
   return (
     <GamificationContext.Provider value={value}>

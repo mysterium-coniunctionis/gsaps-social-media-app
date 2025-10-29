@@ -114,6 +114,8 @@ const CommentSection = ({ postId, onComment }) => {
   }, [commentText, replyingTo, onComment, postId]);
 
   const handleLikeComment = useCallback((commentId, isReply = false, parentId = null) => {
+    // Uses functional update pattern to avoid stale closure issues
+    // Empty dependency array is safe because we use prevComments in all setComments calls
     if (isReply && parentId) {
       setComments(prevComments => prevComments.map(comment =>
         comment.id === parentId

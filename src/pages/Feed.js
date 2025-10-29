@@ -12,6 +12,7 @@ import { Add as AddIcon } from '@mui/icons-material';
 import PostCard from '../components/feed/PostCard';
 import PostComposer from '../components/feed/PostComposer';
 import { fadeInUp } from '../theme/animations';
+import { useGamification } from '../context/GamificationContext';
 
 /**
  * Activity Feed Page - The heart of the social platform
@@ -20,6 +21,7 @@ import { fadeInUp } from '../theme/animations';
 const Feed = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const { awardXP, updateStat } = useGamification();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [composerOpen, setComposerOpen] = useState(false);
@@ -177,7 +179,22 @@ const Feed = () => {
 
     setPosts([post, ...posts]);
     setComposerOpen(false);
-  }, [posts]);
+
+    // Award XP for creating post
+    if (newPost.images && newPost.images.length > 0) {
+      awardXP('POST_WITH_IMAGE'); // +15 XP for post with image
+    } else {
+      awardXP('CREATE_POST'); // +10 XP for regular post
+    }
+
+    // Bonus XP for using tags
+    if (newPost.tags && newPost.tags.length > 0) {
+      awardXP('POST_WITH_TAGS'); // +5 XP bonus for tagging
+    }
+
+    // Update stats
+    updateStat('posts_created');
+  }, [posts, awardXP, updateStat]);
 
   const handleReaction = useCallback((postId, reactionType) => {
     setPosts(posts.map(post => {
@@ -199,6 +216,10 @@ const Feed = () => {
               avatar_url: ''
             }
           });
+
+          // Award XP for adding reaction
+          awardXP('ADD_REACTION'); // +3 XP for reacting to post
+          updateStat('reactions_given');
         }
 
         return {
@@ -209,7 +230,7 @@ const Feed = () => {
       }
       return post;
     }));
-  }, [posts]);
+  }, [posts, awardXP, updateStat]);
 
   const handleBookmark = useCallback((postId) => {
     setPosts(posts.map(post =>
@@ -222,12 +243,20 @@ const Feed = () => {
   const handleComment = useCallback((postId, comment) => {
     // TODO: Add comment to post
     console.log('Comment on post', postId, comment);
-  }, []);
+
+    // Award XP for commenting
+    awardXP('COMMENT'); // +5 XP for commenting
+    updateStat('comments_made');
+  }, [awardXP, updateStat]);
 
   const handleShare = useCallback((postId) => {
     // TODO: Share functionality
     console.log('Share post', postId);
-  }, []);
+
+    // Award XP for sharing
+    awardXP('SHARE_POST'); // +8 XP for sharing
+    updateStat('posts_shared');
+  }, [awardXP, updateStat]);
 
   const handleDelete = useCallback((postId) => {
     setPosts(posts.filter(post => post.id !== postId));

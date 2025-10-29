@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import COMPREHENSIVE_EVENTS from '../data/eventsData';
 
 /**
  * Events listing page
@@ -39,9 +40,21 @@ const Events = () => {
   const [sortBy, setSortBy] = useState('date');
 
   useEffect(() => {
-    // TODO: Fetch events from API
+    // Load comprehensive events data
     setTimeout(() => {
-      const mockEvents = [
+      // Use comprehensive events data
+      const mockEvents = COMPREHENSIVE_EVENTS.map(event => ({
+        ...event,
+        startDate: event.date.toISOString(),
+        endDate: event.endDate.toISOString(),
+        attendeeCount: event.attendees,
+        venue: event.isVirtual ? 'Virtual (Zoom)' : (event.venue?.name || event.location),
+        isAttending: Math.random() > 0.6,
+        category: event.type,
+        imageUrl: event.image
+      }));
+
+      const fallbackEvents = [
         {
           id: 1,
           title: 'Psychedelic Science Symposium 2025',

@@ -7,13 +7,14 @@ import { useAuth } from './context/AuthContext';
 import Navbar from './components/layout/Navbar';
 import BottomNavigation from './components/layout/BottomNavigation';
 import LoadingSpinner from './components/common/LoadingSpinner';
+import XPNotification from './components/gamification/XPNotification';
 
 // Pages
 import Home from './pages/Home';
 import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Profile from './pages/Profile';
+import UserProfile from './pages/UserProfile';
 import Members from './pages/Members';
 import Groups from './pages/Groups';
 import GroupDetail from './pages/GroupDetail';
@@ -23,6 +24,9 @@ import Messages from './pages/Messages';
 import Conversation from './pages/Conversation';
 import ResearchLibrary from './pages/library/ResearchLibrary';
 import PaperDetail from './pages/library/PaperDetail';
+import Courses from './pages/courses/Courses';
+import CourseDetail from './pages/courses/CourseDetail';
+import Leaderboard from './pages/Leaderboard';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
@@ -46,7 +50,8 @@ function App() {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Navbar />
-      
+      <XPNotification />
+
       <Box component="main" sx={{ flexGrow: 1, py: 2, mt: 8, mb: { xs: 7, sm: 0 } }}>
         <Container maxWidth="lg">
           <Routes>
@@ -67,7 +72,7 @@ function App() {
             
             <Route path="/profile/:username" element={
               <ProtectedRoute>
-                <Profile />
+                <UserProfile />
               </ProtectedRoute>
             } />
             
@@ -96,6 +101,12 @@ function App() {
             <Route path="/library" element={<ResearchLibrary />} />
 
             <Route path="/library/:paperId" element={<PaperDetail />} />
+
+            <Route path="/courses" element={<Courses />} />
+
+            <Route path="/courses/:courseId" element={<CourseDetail />} />
+
+            <Route path="/leaderboard" element={<Leaderboard />} />
 
             <Route path="/messages" element={
               <ProtectedRoute>

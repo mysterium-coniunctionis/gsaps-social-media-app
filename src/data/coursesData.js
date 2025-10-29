@@ -454,17 +454,610 @@ This course includes extensive case study analysis, role-play practice, video de
             title: 'Neurobiology of PTSD',
             type: 'video',
             duration: '55 min',
-            content: 'Trauma effects on brain structure and function: amygdala hyperactivity, hippocampal atrophy, prefrontal cortex dysfunction, altered fear conditioning.',
+            content: 'Trauma effects on brain structure and function: amygdala hyperactivity, hippocampal atrophy, prefrontal cortex dysfunction, altered fear conditioning. This lesson explores how traumatic experiences create lasting neurobiological changes that manifest as PTSD symptoms. Understanding these mechanisms is essential for comprehending how MDMA therapy facilitates healing by normalizing fear responses and enabling memory reconsolidation.',
             resources: [
               'Reading: van der Kolk - The Body Keeps the Score (Ch. 3-4)',
               'Neuroimaging: PTSD brain scan comparisons',
               'Video lecture: Fear conditioning and extinction'
             ]
+          },
+          {
+            lessonId: 3,
+            title: 'MDMA Mechanisms in Trauma Processing',
+            type: 'video',
+            duration: '60 min',
+            content: 'Deep exploration of how MDMA facilitates trauma processing through reduced fear response, enhanced emotional engagement, and strengthened therapeutic alliance. MDMA\'s unique pharmacological profile decreases amygdala reactivity while increasing prefrontal cortex activity, creating an optimal window for processing traumatic memories. The compound enhances oxytocin release, promoting trust and social connection essential for therapeutic work. This lesson examines the neurobiological underpinnings that make MDMA particularly effective for PTSD treatment.',
+            resources: [
+              'Reading: Mithoefer - Mechanisms of MDMA-Assisted Psychotherapy',
+              'Research: Fear extinction enhancement with MDMA',
+              'Diagram: MDMA effects on fear circuitry',
+              'Video: Neural mechanisms of therapeutic action'
+            ]
+          },
+          {
+            lessonId: 4,
+            title: 'MAPS Phase 3 Clinical Trial Results',
+            type: 'video',
+            duration: '50 min',
+            content: 'Comprehensive review of the landmark MAPS Phase 3 clinical trials that demonstrated MDMA therapy\'s efficacy for severe PTSD. Analysis of study design, participant demographics, treatment protocol, and outcome measures. The trials showed 67% of participants no longer met PTSD criteria after three MDMA sessions, with effects maintained at long-term follow-up. Understanding this evidence base is crucial for clinical practice and helps contextualize MDMA therapy within evidence-based treatment approaches.',
+            resources: [
+              'Reading: Mitchell et al. - MDMA-Assisted Therapy for Severe PTSD (Nature Medicine)',
+              'Data: Phase 3 trial results and effect sizes',
+              'Protocol: MAPS treatment manual overview',
+              'Video: Principal investigators discuss findings'
+            ]
+          },
+          {
+            lessonId: 5,
+            title: 'Somatic Approaches and Body-Centered Healing',
+            type: 'video',
+            duration: '55 min',
+            content: 'Trauma is stored in the body as well as the mind. This lesson explores somatic experiencing, body-oriented therapy, and the role of physical sensations in trauma processing. MDMA therapy integrates somatic awareness, helping clients process traumatic material held in bodily memory. Learn techniques for facilitating body-centered healing, recognizing somatic releases, and supporting clients through physical manifestations of trauma processing during MDMA sessions.',
+            resources: [
+              'Reading: Levine - Waking the Tiger: Healing Trauma',
+              'Video: Somatic experiencing techniques',
+              'Protocol: Body scan and somatic tracking in MDMA therapy',
+              'Research: Embodied trauma and therapeutic approaches'
+            ]
+          },
+          {
+            lessonId: 6,
+            title: 'Polyvagal Theory and Window of Tolerance',
+            type: 'video',
+            duration: '50 min',
+            content: 'Polyvagal theory provides a neurobiological framework for understanding trauma responses and healing. This lesson covers the autonomic nervous system\'s role in PTSD, the concept of "window of tolerance," and how MDMA helps expand this window. Learn to recognize autonomic states, track nervous system regulation, and help clients develop greater capacity for processing traumatic material without becoming overwhelmed or dissociated.',
+            resources: [
+              'Reading: Porges - The Polyvagal Theory',
+              'Diagram: Autonomic ladder and trauma responses',
+              'Video: Window of tolerance in trauma therapy',
+              'Application: Using polyvagal theory in MDMA sessions'
+            ]
+          },
+          {
+            lessonId: 7,
+            title: 'Memory Reconsolidation and Therapeutic Change',
+            type: 'video',
+            duration: '55 min',
+            content: 'Memory reconsolidation theory explains how therapeutic change occurs at the level of emotional memory. When traumatic memories are retrieved in a safe, supportive context under MDMA, they become labile and can be updated with new emotional and cognitive information. This lesson explores the neuroscience of memory reconsolidation, optimal timing for therapeutic interventions, and how to maximize reconsolidation windows during MDMA sessions for lasting therapeutic benefit.',
+            resources: [
+              'Reading: Ecker - Unlocking the Emotional Brain',
+              'Research: Memory reconsolidation mechanisms',
+              'Timeline: Windows for therapeutic intervention',
+              'Protocol: Facilitating memory updating in MDMA therapy'
+            ]
+          },
+          {
+            lessonId: 8,
+            title: 'Safety Pharmacology and Medical Screening',
+            type: 'video',
+            duration: '60 min',
+            content: 'Comprehensive safety profile of MDMA including cardiovascular effects, contraindications, and medical screening requirements. MDMA causes moderate increases in blood pressure and heart rate, requiring careful cardiovascular screening. This lesson covers absolute and relative contraindications, pre-treatment medical evaluation, medication interactions (especially SSRIs and MAOIs), and monitoring protocols during MDMA sessions to ensure participant safety.',
+            resources: [
+              'Reading: MAPS Medical Screening Protocol',
+              'Checklist: Contraindications and risk factors',
+              'Guidelines: Cardiovascular screening requirements',
+              'Drug interactions: Comprehensive interaction database'
+            ]
+          },
+          {
+            lessonId: 9,
+            title: 'Psychiatric Screening and Risk Assessment',
+            type: 'video',
+            duration: '55 min',
+            content: 'Thorough psychiatric screening is essential for safe MDMA therapy. This lesson covers structured diagnostic interviews, assessment of psychosis risk (personal and family history), evaluation of dissociative symptoms, and screening for personality disorders that may complicate treatment. Learn to differentiate between manageable psychiatric complexity and true exclusion criteria, balancing accessibility with safety in participant selection.',
+            resources: [
+              'Tools: SCID-5 and MINI diagnostic interviews',
+              'Protocol: Psychiatric screening procedures',
+              'Research: Psychiatric adverse events in trials',
+              'Case studies: Complex psychiatric presentations'
+            ]
+          },
+          {
+            lessonId: 10,
+            title: 'Ethical Considerations in MDMA Therapy',
+            type: 'video',
+            duration: '50 min',
+            content: 'MDMA therapy involves unique ethical considerations due to the vulnerability of altered states and the intimacy of trauma work. This lesson addresses informed consent, power dynamics, boundary maintenance, preventing exploitation, touch policies, and ethical decision-making frameworks. Special attention to historical harms in psychedelic therapy, including sexual misconduct, and concrete strategies for maintaining ethical practice and protecting participants.',
+            resources: [
+              'Reading: Cover - Psychedelic Ethics and Misconduct',
+              'Guidelines: Professional boundaries in altered states',
+              'Policy templates: Informed consent and touch consent',
+              'Case discussions: Ethical dilemmas and solutions'
+            ]
+          },
+          {
+            lessonId: 11,
+            title: 'Cultural Competence and Trauma-Informed Care',
+            type: 'video',
+            duration: '55 min',
+            content: 'Trauma intersects with culture, identity, and systemic oppression. This lesson explores culturally responsive MDMA therapy, understanding historical trauma in marginalized communities, addressing power dynamics, and creating identity-safe therapeutic spaces. Learn about cultural humility, working with interpreters, adapting protocols for diverse populations, and recognizing how race, gender, sexuality, and other identities shape both trauma experiences and healing processes.',
+            resources: [
+              'Reading: Cultural Safety in Psychedelic Medicine',
+              'Research: PTSD in diverse populations',
+              'Guidelines: Culturally adapted therapy approaches',
+              'Resources: Community-specific considerations'
+            ]
+          },
+          {
+            lessonId: 12,
+            title: 'Module 1 Assessment: Foundations and Theory',
+            type: 'quiz',
+            duration: '45 min',
+            content: 'Comprehensive assessment of MDMA pharmacology, trauma neurobiology, clinical evidence, safety considerations, and ethical foundations. This assessment ensures mastery of essential theoretical knowledge before advancing to clinical protocol training.',
+            resources: [
+              'Study guide: Key concepts from Module 1',
+              'Practice questions: Self-assessment preparation',
+              'References: Primary sources for review'
+            ]
           }
-          // ... more lessons
+        ]
+      },
+      {
+        moduleId: 2,
+        title: 'Module 2: MAPS Protocol and Treatment Structure',
+        description: 'Detailed training in the three-phase MAPS MDMA therapy protocol',
+        duration: '2.5 weeks',
+        learningObjectives: [
+          'Master the structure of MAPS MDMA therapy protocol',
+          'Understand the rationale for each treatment component',
+          'Learn the therapeutic stance and therapist role',
+          'Develop competency in protocol implementation'
+        ],
+        lessons: [
+          {
+            lessonId: 13,
+            title: 'Overview of MAPS Three-Phase Protocol',
+            type: 'video',
+            duration: '60 min',
+            content: 'Comprehensive introduction to the MAPS protocol structure: preparatory sessions, MDMA-assisted sessions, and integration sessions. The protocol typically includes three preparatory sessions, three 8-hour MDMA sessions spaced one month apart, and integration sessions following each MDMA session. Understanding the rationale for each phase and how they work together to facilitate healing. This lesson provides the roadmap for the entire treatment process and explains the evidence-based reasoning behind protocol design.',
+            resources: [
+              'Reading: MAPS MDMA-Assisted Psychotherapy Treatment Manual',
+              'Timeline: Typical treatment trajectory',
+              'Video: Protocol overview from MAPS trainers',
+              'Research: Protocol development and refinement'
+            ]
+          },
+          {
+            lessonId: 14,
+            title: 'Therapeutic Stance: Non-Directive Support',
+            type: 'video',
+            duration: '55 min',
+            content: 'MDMA therapy utilizes a non-directive, client-centered therapeutic stance that trusts the innate healing wisdom of the psyche. Therapists serve as compassionate witnesses and safety anchors rather than directing content or interpretation. This lesson explores the therapeutic stance, the balance between structure and spontaneity, when to intervene versus allow process to unfold, and how to maintain therapeutic presence without imposing agenda. Learning to "follow" rather than "lead" is a crucial skill for MDMA therapists.',
+            resources: [
+              'Reading: Rogers - Client-Centered Therapy foundations',
+              'Video demonstrations: Therapeutic presence examples',
+              'Protocol: Intervention decision framework',
+              'Discussion: Balancing support and space'
+            ]
+          },
+          {
+            lessonId: 15,
+            title: 'Co-Therapy Model and Team Dynamics',
+            type: 'video',
+            duration: '50 min',
+            content: 'MAPS protocol employs a co-therapy team (typically male-female dyad) to provide balanced support, ensure safety, and model healthy relationship dynamics. This lesson covers co-therapy benefits, team communication, role division, managing countertransference as a team, and addressing conflicts or differences. Special attention to co-therapy dynamics during challenging moments and how teams can support each other while remaining attuned to the client.',
+            resources: [
+              'Reading: Co-therapy in Psychedelic-Assisted Treatment',
+              'Protocol: Team preparation and debriefing structure',
+              'Video: Co-therapy teams in action',
+              'Exercises: Developing team communication'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 3,
+        title: 'Module 3: Preparation Phase',
+        description: 'Building therapeutic alliance and preparing clients for MDMA sessions',
+        duration: '2 weeks',
+        learningObjectives: [
+          'Establish strong therapeutic alliance and safety',
+          'Conduct thorough trauma history and treatment planning',
+          'Prepare clients psychologically for MDMA experiences',
+          'Set appropriate intentions and expectations'
+        ],
+        lessons: [
+          {
+            lessonId: 16,
+            title: 'Building Therapeutic Alliance and Trust',
+            type: 'video',
+            duration: '60 min',
+            content: 'The foundation of effective MDMA therapy is a strong therapeutic relationship built on trust, safety, and attunement. Preparatory sessions focus on establishing rapport, understanding the client\'s trauma history, and creating a container of safety. This lesson covers alliance-building techniques, addressing fears and concerns, demonstrating reliability and consistency, and creating the relational foundation necessary for vulnerable trauma work. The quality of the therapeutic relationship predicts treatment outcomes.',
+            resources: [
+              'Reading: Therapeutic Alliance in Trauma Treatment',
+              'Video: First preparation session demonstration',
+              'Assessment: Working Alliance Inventory',
+              'Techniques: Attunement and rapport-building strategies'
+            ]
+          },
+          {
+            lessonId: 17,
+            title: 'Trauma History and Treatment Planning',
+            type: 'video',
+            duration: '55 min',
+            content: 'Conducting a thorough trauma history while maintaining safety and avoiding retraumatization. Learn pacing techniques, recognizing dissociation, grounding interventions, and how to gather necessary information while respecting client readiness. This lesson covers treatment planning, identifying target traumas, assessing resources and resilience, and collaboratively setting treatment goals. Special attention to complex trauma, developmental trauma, and multiple trauma types.',
+            resources: [
+              'Protocol: Trauma history interview structure',
+              'Tools: Timeline and mapping exercises',
+              'Guidelines: Preventing retraumatization during assessment',
+              'Case examples: Treatment planning for complex presentations'
+            ]
+          },
+          {
+            lessonId: 18,
+            title: 'Preparation Session Structure and Content',
+            type: 'video',
+            duration: '50 min',
+            content: 'Detailed walkthrough of preparation session content: education about MDMA effects, what to expect during sessions, introducing therapeutic techniques, discussing fears and hopes, practicing communication signals, and setting intentions. This lesson provides session-by-session structure for the preparatory phase, including specific topics, exercises, and preparation practices. Learn to balance education, emotional preparation, and practical logistics while maintaining focus on building safety and readiness.',
+            resources: [
+              'Protocol: Preparation session outlines (sessions 1-3)',
+              'Handouts: Client education materials',
+              'Video: Preparation session excerpts',
+              'Exercises: Intention-setting and visualization practices'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 4,
+        title: 'Module 4: MDMA Sessions - Protocol and Practice',
+        description: 'Conducting MDMA-assisted therapy sessions with skill and safety',
+        duration: '3 weeks',
+        learningObjectives: [
+          'Execute MDMA session protocol with fidelity',
+          'Provide skilled therapeutic support during altered states',
+          'Navigate challenging experiences and intense emotions',
+          'Maintain safety and therapeutic boundaries'
+        ],
+        lessons: [
+          {
+            lessonId: 19,
+            title: 'MDMA Session Structure and Timeline',
+            type: 'video',
+            duration: '60 min',
+            content: 'Comprehensive walkthrough of an 8-hour MDMA session from arrival to departure. Typical timeline: assessment and preparation (30 min), MDMA administration, onset period (30-45 min), peak effects (2-3 hours), plateau (2-3 hours), gradual return (2-3 hours), and departure preparation. This lesson details what happens in each phase, typical experiences, therapeutic tasks, and how to pace the session. Understanding session flow helps therapists provide appropriate support and anticipate client needs.',
+            resources: [
+              'Protocol: MDMA session timeline and structure',
+              'Video: Complete session walkthrough (condensed)',
+              'Checklist: Session preparation and setup',
+              'Chart: Typical effect timeline and therapeutic windows'
+            ]
+          },
+          {
+            lessonId: 20,
+            title: 'Facilitating Trauma Processing and Emotional Release',
+            type: 'video',
+            duration: '65 min',
+            content: 'MDMA creates optimal conditions for processing traumatic memories with reduced fear and enhanced emotional access. This lesson covers techniques for supporting trauma processing: staying present with intense emotions, facilitating somatic releases, supporting abreactions, helping clients stay with difficult material, and recognizing when processing is complete. Learn to distinguish productive processing from overwhelm, support emotional expression while maintaining safety, and trust the healing process unfolding organically.',
+            resources: [
+              'Reading: Emotional Processing in MDMA Therapy',
+              'Video demonstrations: Supporting trauma work',
+              'Techniques: Somatic tracking and emotional facilitation',
+              'Case examples: Various trauma processing patterns'
+            ]
+          },
+          {
+            lessonId: 21,
+            title: 'Managing Challenging Experiences and Crisis Intervention',
+            type: 'video',
+            duration: '55 min',
+            content: 'Not all MDMA sessions proceed smoothly. This lesson prepares therapists for challenging experiences including anxiety, panic, overwhelming emotions, dissociation, paranoia, or physical discomfort. Learn intervention hierarchy: reassuring presence, verbal support, grounding techniques, physical comfort measures, breathing exercises, and when to consider pharmacological rescue. Understand the difference between challenging-but-therapeutic experiences versus situations requiring intervention. Decision-making frameworks for crisis situations.',
+            resources: [
+              'Protocol: Managing difficult experiences',
+              'Video: Responding to challenges - demonstrations',
+              'Decision tree: Intervention escalation',
+              'Rescue protocols: Benzodiazepine administration'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 5,
+        title: 'Module 5: Integration Sessions',
+        description: 'Supporting meaning-making and consolidating therapeutic gains',
+        duration: '2 weeks',
+        learningObjectives: [
+          'Facilitate effective integration of MDMA experiences',
+          'Support meaning-making and insight consolidation',
+          'Address post-session challenges and questions',
+          'Connect session experiences to daily life and recovery'
+        ],
+        lessons: [
+          {
+            lessonId: 22,
+            title: 'Integration Theory and Best Practices',
+            type: 'video',
+            duration: '60 min',
+            content: 'Integration is the process of incorporating insights, healing, and changes from MDMA sessions into daily life. This lesson covers integration theory, why integration is crucial for lasting change, typical integration challenges, and evidence-based integration practices. Learn the distinction between processing (during sessions) and integrating (afterwards), timing of integration work, and how to support clients in applying new understandings to relationships, behaviors, and self-concept.',
+            resources: [
+              'Reading: Integration in Psychedelic Therapy',
+              'Research: Integration and therapeutic outcomes',
+              'Framework: Integration stages and tasks',
+              'Resources: Integration workbooks and exercises'
+            ]
+          },
+          {
+            lessonId: 23,
+            title: 'Integration Session Structure and Techniques',
+            type: 'video',
+            duration: '55 min',
+            content: 'Detailed guidance for conducting integration sessions following MDMA experiences. Typical structure includes reviewing the session experience, exploring insights and realizations, addressing questions or concerns, connecting experiences to treatment goals, and planning actionable changes. Learn specific techniques: narrative reconstruction, identifying themes, cognitive restructuring, behavioral experiments, and supporting implementation of changes. Integration sessions bridge extraordinary experiences with ordinary life.',
+            resources: [
+              'Protocol: Integration session structure',
+              'Video: Integration session examples',
+              'Techniques: Meaning-making interventions',
+              'Worksheets: Integration planning tools'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 6,
+        title: 'Module 6: Safety, Ethics, and Boundaries',
+        description: 'Maintaining safety and ethical practice in MDMA therapy',
+        duration: '1.5 weeks',
+        learningObjectives: [
+          'Implement comprehensive safety protocols',
+          'Maintain ethical boundaries in vulnerable states',
+          'Prevent and address boundary violations',
+          'Navigate ethical dilemmas with integrity'
+        ],
+        lessons: [
+          {
+            lessonId: 24,
+            title: 'Medical Safety and Monitoring Protocols',
+            type: 'video',
+            duration: '60 min',
+            content: 'Comprehensive medical safety procedures for MDMA therapy. Pre-session medical screening, vital sign monitoring schedules, recognizing concerning physiological changes, emergency response protocols, and post-session medical follow-up. MDMA causes predictable cardiovascular effects requiring vigilant monitoring. This lesson covers when to assess vitals, what parameters indicate concern, documentation requirements, and when to escalate to medical intervention. Safety is paramount and requires systematic, disciplined protocols.',
+            resources: [
+              'Protocol: Medical monitoring procedures',
+              'Guidelines: Vital sign parameters and red flags',
+              'Emergency protocols: Medical response algorithms',
+              'Documentation: Medical monitoring forms'
+            ]
+          },
+          {
+            lessonId: 25,
+            title: 'Ethical Boundaries and Sexual Misconduct Prevention',
+            type: 'video',
+            duration: '65 min',
+            content: 'The altered state induced by MDMA creates profound vulnerability and increased suggestibility, making strict boundary maintenance absolutely essential. This lesson addresses the history of sexual misconduct in psychedelic therapy, power dynamics in therapeutic relationships, touch policies and consent, recognizing boundary crossings before they become violations, and creating a culture of accountability. Concrete strategies for maintaining professional boundaries, managing attraction or countertransference, and protecting clients from exploitation.',
+            resources: [
+              'Reading: Cover - Sexual Boundary Violations in Psychedelic Therapy',
+              'Policy: Touch consent and documentation protocols',
+              'Ethics: Professional boundary standards',
+              'Case studies: Boundary violations and prevention'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 7,
+        title: 'Module 7: Special Populations and Adaptations',
+        description: 'Adapting MDMA therapy for diverse populations and presentations',
+        duration: '1.5 weeks',
+        learningObjectives: [
+          'Adapt protocols for specific populations and trauma types',
+          'Address cultural and identity-specific considerations',
+          'Work effectively with complex presentations',
+          'Recognize when additional supports are needed'
+        ],
+        lessons: [
+          {
+            lessonId: 26,
+            title: 'Complex PTSD and Developmental Trauma',
+            type: 'video',
+            duration: '60 min',
+            content: 'Complex PTSD from chronic, developmental trauma requires protocol adaptations. Clients with complex trauma may have difficulty with emotional regulation, relationship trust, and maintaining therapeutic alliance. This lesson covers recognizing complex PTSD, protocol modifications for greater stabilization and pacing, working with dissociation and fragmentation, addressing relational trauma in the therapeutic relationship, and determining when clients need additional preparation or contraindication for MDMA therapy.',
+            resources: [
+              'Reading: Complex PTSD - Clinical Features',
+              'Assessment: Distinguishing PTSD from complex PTSD',
+              'Protocol adaptations: Modified approach for complex trauma',
+              'Case examples: Complex presentations in MDMA therapy'
+            ]
+          },
+          {
+            lessonId: 27,
+            title: 'Cultural Adaptations and Working with Diverse Communities',
+            type: 'video',
+            duration: '55 min',
+            content: 'MDMA therapy must be culturally responsive and adapted for diverse populations. This lesson explores working with BIPOC clients, LGBTQ+ individuals, veterans, refugees, and other communities with specific cultural contexts and trauma experiences. Topics include historical trauma, culturally-specific healing practices, language and communication considerations, family involvement, spirituality and meaning-making frameworks, and addressing systemic oppression as a trauma source. Cultural humility and responsiveness enhance therapeutic effectiveness and accessibility.',
+            resources: [
+              'Reading: Cultural Competence in Trauma Treatment',
+              'Guidelines: Community-specific considerations',
+              'Resources: Culturally-adapted protocols',
+              'Discussion: Decolonizing psychedelic therapy'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 8,
+        title: 'Module 8: Clinical Skills and Therapeutic Techniques',
+        description: 'Advanced therapeutic skills for MDMA-assisted therapy',
+        duration: '2 weeks',
+        learningObjectives: [
+          'Develop advanced therapeutic presence and attunement',
+          'Master specific intervention techniques',
+          'Manage countertransference and self-care',
+          'Integrate multiple therapeutic modalities'
+        ],
+        lessons: [
+          {
+            lessonId: 28,
+            title: 'Therapeutic Presence and Attunement',
+            type: 'video',
+            duration: '60 min',
+            content: 'Therapeutic presence - being fully present, attuned, and responsive - is the foundation of effective MDMA therapy. This lesson explores cultivating presence, tracking client experience through multiple channels (verbal, nonverbal, somatic, energetic), staying grounded while holding space for intense experiences, and developing the capacity to be with suffering without trying to fix or change it. Practical techniques for enhancing presence including mindfulness, somatic awareness, and supervision practices.',
+            resources: [
+              'Reading: Therapeutic Presence in Psychotherapy',
+              'Practices: Presence cultivation exercises',
+              'Video: Demonstrating attuned presence',
+              'Self-assessment: Presence and attunement skills'
+            ]
+          },
+          {
+            lessonId: 29,
+            title: 'Countertransference and Therapist Self-Care',
+            type: 'video',
+            duration: '55 min',
+            content: 'Working with trauma is emotionally demanding and therapists must manage their own reactions and maintain wellbeing. This lesson addresses recognizing countertransference, using supervision effectively, processing vicarious trauma, maintaining boundaries between personal and client experiences, and comprehensive self-care strategies. MDMA therapy can activate therapists\' own trauma or attachment patterns, making self-awareness and self-care essential for ethical, effective practice.',
+            resources: [
+              'Reading: Countertransference in Trauma Work',
+              'Assessment: Vicarious trauma screening',
+              'Practices: Self-care and boundary maintenance',
+              'Resources: Therapist support and supervision options'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 9,
+        title: 'Module 9: Supervision and Consultation',
+        description: 'Engaging in effective supervision for ongoing development',
+        duration: '1.5 weeks',
+        learningObjectives: [
+          'Utilize supervision for clinical development',
+          'Present cases effectively',
+          'Integrate feedback and continue learning',
+          'Build a practice community and support network'
+        ],
+        lessons: [
+          {
+            lessonId: 30,
+            title: 'Clinical Supervision Models and Best Practices',
+            type: 'video',
+            duration: '60 min',
+            content: 'Clinical supervision is essential for safe, ethical, and effective MDMA therapy practice. This lesson covers supervision models (individual, group, peer), what makes effective supervision, how to prepare case presentations, asking for specific feedback, integrating supervision insights into practice, and finding qualified supervisors. Understanding that supervision is not remedial but rather an essential component of professional development and lifelong learning. Requirements for supervision in MDMA therapy certification pathways.',
+            resources: [
+              'Reading: Clinical Supervision in Psychedelic Therapy',
+              'Guidelines: Supervision requirements and standards',
+              'Templates: Case presentation structures',
+              'Resources: Finding qualified supervisors'
+            ]
+          },
+          {
+            lessonId: 31,
+            title: 'Building Practice Community and Peer Support',
+            type: 'video',
+            duration: '50 min',
+            content: 'MDMA therapy is emerging and practitioners benefit from community, peer learning, and mutual support. This lesson explores building professional networks, participating in peer consultation groups, attending conferences and continuing education, engaging with research communities, and contributing to field development. Discussion of maintaining ethical standards in community spaces, balancing collaboration with healthy boundaries, and participating in the broader psychedelic therapy ecosystem.',
+            resources: [
+              'Resources: Professional organizations and networks',
+              'Events: Conferences and training opportunities',
+              'Platform: Peer consultation group guidelines',
+              'Discussion: Community building and field development'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 10,
+        title: 'Module 10: Research Literacy and Evidence-Based Practice',
+        description: 'Understanding research and contributing to the evidence base',
+        duration: '1.5 weeks',
+        learningObjectives: [
+          'Critically evaluate psychedelic research',
+          'Understand research methodologies and limitations',
+          'Apply evidence to clinical decision-making',
+          'Contribute to data collection and research efforts'
+        ],
+        lessons: [
+          {
+            lessonId: 32,
+            title: 'Critical Evaluation of Psychedelic Research',
+            type: 'video',
+            duration: '60 min',
+            content: 'Psychedelic research is rapidly expanding but must be critically evaluated. This lesson covers reading and interpreting clinical trials, understanding study design (randomized controlled trials, blinding challenges, expectancy effects), evaluating methodological quality, recognizing bias and limitations, and distinguishing strong evidence from preliminary findings. Learn to assess effect sizes, follow-up duration, generalizability, and applicability to clinical practice. Developing research literacy enables evidence-based practice.',
+            resources: [
+              'Reading: How to Read a Clinical Trial',
+              'Analysis: MAPS Phase 3 trials - critical review',
+              'Tools: Research quality assessment checklists',
+              'Database: Accessing primary research literature'
+            ]
+          },
+          {
+            lessonId: 33,
+            title: 'Contributing to Research and Practice Development',
+            type: 'video',
+            duration: '55 min',
+            content: 'As an emerging field, MDMA therapy needs practitioner contributions to research and knowledge development. This lesson covers participating in clinical trials, conducting practice-based research, case reporting, outcome measurement, data collection for quality improvement, and disseminating knowledge through presentations and publications. Understanding ethical research practices, informed consent in research contexts, and how clinicians can contribute to building the evidence base while maintaining focus on client care.',
+            resources: [
+              'Guidelines: Practice-based research methods',
+              'Tools: Standardized outcome measures',
+              'Resources: Research participation opportunities',
+              'Examples: Case reports and practice data sharing'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 11,
+        title: 'Module 11: Legal, Regulatory, and Professional Considerations',
+        description: 'Navigating the legal landscape and professional requirements',
+        duration: '1.5 weeks',
+        learningObjectives: [
+          'Understand current legal and regulatory status',
+          'Navigate licensure and practice requirements',
+          'Prepare for regulatory changes and FDA approval',
+          'Maintain professional standards and accountability'
+        ],
+        lessons: [
+          {
+            lessonId: 34,
+            title: 'Legal Status and Regulatory Pathways',
+            type: 'video',
+            duration: '60 min',
+            content: 'MDMA remains Schedule I federally but is progressing through FDA approval processes. This lesson covers current legal status, FDA Breakthrough Therapy designation, expected approval timeline, state-level considerations, Expanded Access programs, clinical trial participation requirements, and what FDA approval will mean for practice. Understanding legal risks, practice restrictions, and how to maintain compliance while the field evolves. Preparing for the transition from research to clinical access.',
+            resources: [
+              'Reading: FDA Approval Process for MDMA',
+              'Timeline: Regulatory pathway and expected milestones',
+              'Guidelines: Current legal practice limitations',
+              'Updates: State-by-state regulatory developments'
+            ]
+          },
+          {
+            lessonId: 35,
+            title: 'Professional Certification and Practice Requirements',
+            type: 'video',
+            duration: '55 min',
+            content: 'What will be required to practice MDMA therapy legally and ethically? This lesson covers anticipated certification pathways, training requirements, ongoing education, supervision requirements, scope of practice considerations, documentation and record-keeping, insurance and liability issues, and professional standards. Understanding the difference between general psychedelic knowledge and MDMA-specific certification. Preparing for professional requirements as the field becomes established.',
+            resources: [
+              'Information: Anticipated certification requirements',
+              'Organizations: Certifying bodies and training programs',
+              'Guidelines: Documentation and record-keeping standards',
+              'Discussion: Building professional infrastructure'
+            ]
+          }
+        ]
+      },
+      {
+        moduleId: 12,
+        title: 'Module 12: Course Completion and Next Steps',
+        description: 'Synthesis, assessment, and planning your path forward',
+        duration: '1 week',
+        learningObjectives: [
+          'Synthesize learning from entire course',
+          'Demonstrate competency through comprehensive assessment',
+          'Develop personal plan for continued training and practice',
+          'Understand next steps toward MDMA therapy practice'
+        ],
+        lessons: [
+          {
+            lessonId: 36,
+            title: 'Comprehensive Final Assessment and Course Completion',
+            type: 'quiz + assignment',
+            duration: '90 min',
+            content: 'Capstone assessment covering all course content: MDMA pharmacology and mechanisms, trauma theory, MAPS protocol, preparation and integration, session conduct, safety and ethics, special populations, clinical skills, research literacy, and professional considerations. Comprehensive case study assignment requiring integration of theoretical knowledge with clinical decision-making. Successful completion demonstrates readiness for advanced training and supervised practice. This assessment ensures graduates have mastered essential knowledge for safe, ethical, and effective MDMA-assisted therapy.',
+            resources: [
+              'Study guide: Comprehensive course review',
+              'Practice assessment: Self-testing materials',
+              'Case study: Final integration assignment',
+              'Certificate: Course completion documentation'
+            ]
+          }
         ]
       }
-      // ... more modules
     ],
     createdAt: new Date('2024-08-15'),
     updatedAt: new Date('2024-10-28'),

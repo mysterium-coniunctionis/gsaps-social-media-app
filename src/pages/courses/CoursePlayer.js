@@ -33,7 +33,6 @@ import {
   Menu as MenuIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
 import { useGamification } from '../../context/GamificationContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import COMPREHENSIVE_COURSES from '../../data/coursesData';

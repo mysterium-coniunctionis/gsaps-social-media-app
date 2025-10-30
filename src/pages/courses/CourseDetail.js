@@ -59,6 +59,7 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
   useEffect(() => {
@@ -70,9 +71,27 @@ const CourseDetail = () => {
 
       if (foundCourse) {
         setCourse(foundCourse);
-        // Check if user is enrolled (mock - would check against user's enrolled courses)
-        setIsEnrolled(Math.random() > 0.5);
-        setIsBookmarked(Math.random() > 0.5);
+
+        // Check if user is enrolled (from localStorage)
+        const enrollmentKey = `course_enrolled_${foundCourse.id}`;
+        const enrolled = localStorage.getItem(enrollmentKey);
+        setIsEnrolled(enrolled === 'true');
+
+        // Check if bookmarked
+        const bookmarkKey = `course_bookmarked_${foundCourse.id}`;
+        const bookmarked = localStorage.getItem(bookmarkKey);
+        setIsBookmarked(bookmarked === 'true');
+
+        // Check if user has started the course (has progress)
+        const progress = localStorage.getItem(`course_progress_${foundCourse.id}`);
+        if (progress) {
+          try {
+            const progressData = JSON.parse(progress);
+            setHasStarted(progressData.completed && progressData.completed.length > 0);
+          } catch (e) {
+            setHasStarted(false);
+          }
+        }
       }
 
       setLoading(false);
@@ -86,6 +105,10 @@ const CourseDetail = () => {
     }
 
     setIsEnrolled(true);
+
+    // Save enrollment to localStorage
+    const enrollmentKey = `course_enrolled_${course.id}`;
+    localStorage.setItem(enrollmentKey, 'true');
 
     // Award XP for enrolling in course
     awardXP('ENROLL_COURSE'); // +20 XP for enrolling
@@ -107,6 +130,15 @@ const CourseDetail = () => {
   const handleUnenroll = () => {
     if (window.confirm('Are you sure you want to unenroll from this course?')) {
       setIsEnrolled(false);
+      setHasStarted(false);
+
+      // Remove enrollment from localStorage
+      const enrollmentKey = `course_enrolled_${course.id}`;
+      localStorage.removeItem(enrollmentKey);
+
+      // Remove progress
+      localStorage.removeItem(`course_progress_${course.id}`);
+
       alert('Unenrolled successfully');
     }
   };
@@ -118,6 +150,10 @@ const CourseDetail = () => {
     }
 
     setIsBookmarked(!isBookmarked);
+
+    // Save bookmark state to localStorage
+    const bookmarkKey = `course_bookmarked_${course.id}`;
+    localStorage.setItem(bookmarkKey, (!isBookmarked).toString());
 
     if (!isBookmarked) {
       awardXP('BOOKMARK_COURSE'); // +5 XP for bookmarking
@@ -319,9 +355,9 @@ const CourseDetail = () => {
                           size="large"
                           startIcon={<CompleteIcon />}
                           sx={{ mb: 1 }}
-                          onClick={() => navigate(`/courses/${course.slug}/learn`)}
+                          onClick={() => navigate(`/courses/${course.id}/learn`)}
                         >
-                          Continue Learning
+                          {hasStarted ? 'Continue Learning' : 'Start Course'}
                         </Button>
                         <Button
                           variant="outlined"

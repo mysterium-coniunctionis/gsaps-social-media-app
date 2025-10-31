@@ -364,19 +364,33 @@ const CoursePlayer = () => {
 
                     {/* Lesson Content */}
                     <Box sx={{ my: 4 }}>
-                      {activeLessonData?.type === 'video' && (
-                        <Paper
+                      {activeLessonData?.type === 'video' && activeLessonData?.videoUrl && (
+                        <Box
                           sx={{
-                            aspectRatio: '16/9',
+                            position: 'relative',
+                            width: '100%',
+                            paddingBottom: '56.25%', // 16:9 aspect ratio
                             bgcolor: 'grey.900',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
+                            borderRadius: 2,
+                            overflow: 'hidden',
                             mb: 3
                           }}
                         >
-                          <PlayIcon sx={{ fontSize: 80, color: 'grey.400' }} />
-                        </Paper>
+                          <iframe
+                            src={activeLessonData.videoUrl}
+                            title={activeLessonData.title}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            style={{
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: '100%'
+                            }}
+                          />
+                        </Box>
                       )}
 
                       <Typography variant="body1" paragraph sx={{ lineHeight: 1.8 }}>
@@ -390,17 +404,34 @@ const CoursePlayer = () => {
                             Additional Resources
                           </Typography>
                           <List>
-                            {activeLessonData.resources.map((resource, index) => (
-                              <ListItem key={index} divider>
-                                <ListItemIcon>
-                                  <DocumentIcon />
-                                </ListItemIcon>
-                                <ListItemText
-                                  primary={resource.title || resource}
-                                  secondary={resource.description || 'Resource'}
-                                />
-                              </ListItem>
-                            ))}
+                            {activeLessonData.resources.map((resource, index) => {
+                              const resourceData = typeof resource === 'string'
+                                ? { title: resource, url: null, type: 'document' }
+                                : resource;
+
+                              return (
+                                <ListItem
+                                  key={index}
+                                  divider
+                                  sx={{
+                                    cursor: resourceData.url ? 'pointer' : 'default',
+                                    '&:hover': resourceData.url ? { bgcolor: 'action.hover' } : {}
+                                  }}
+                                  onClick={() => resourceData.url && window.open(resourceData.url, '_blank')}
+                                >
+                                  <ListItemIcon>
+                                    <DocumentIcon color={resourceData.url ? 'primary' : 'default'} />
+                                  </ListItemIcon>
+                                  <ListItemText
+                                    primary={resourceData.title}
+                                    secondary={resourceData.type || 'Resource'}
+                                    primaryTypographyProps={{
+                                      color: resourceData.url ? 'primary.main' : 'text.primary'
+                                    }}
+                                  />
+                                </ListItem>
+                              );
+                            })}
                           </List>
                         </Box>
                       )}

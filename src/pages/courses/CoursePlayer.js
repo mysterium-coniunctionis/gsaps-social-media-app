@@ -18,7 +18,10 @@ import {
   Grid,
   Card,
   CardContent,
-  Alert
+  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent
 } from '@mui/material';
 import {
   PlayCircle as PlayIcon,
@@ -30,21 +33,27 @@ import {
   Description as DocumentIcon,
   ArrowBack as BackIcon,
   ArrowForward as NextIcon,
-  Menu as MenuIcon
+  Menu as MenuIcon,
+  EmojiEvents as TrophyIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGamification } from '../../context/GamificationContext';
+import { useToast } from '../../components/common';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
+import Quiz from '../../components/courses/Quiz';
+import Certificate from '../../components/courses/Certificate';
 import COMPREHENSIVE_COURSES from '../../data/coursesData';
+import QUIZ_DATA from '../../data/quizData';
 
 /**
  * CoursePlayer Component
- * Interactive learning interface for enrolled students
+ * Interactive learning interface for enrolled students with quizzes and certificates
  */
 const CoursePlayer = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { awardXP } = useGamification();
+  const { awardXP, updateStat } = useGamification();
+  const toast = useToast();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -53,6 +62,9 @@ const CoursePlayer = () => {
   const [expandedModules, setExpandedModules] = useState([0]); // First module expanded by default
   const [completedLessons, setCompletedLessons] = useState(new Set());
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showCertificate, setShowCertificate] = useState(false);
+  const [quizScores, setQuizScores] = useState({});
+  const [courseCompleted, setCourseCompleted] = useState(false);
 
   useEffect(() => {
     // Simulate API call
@@ -70,6 +82,8 @@ const CoursePlayer = () => {
           setCompletedLessons(new Set(progress.completed || []));
           setCurrentModule(progress.currentModule || 0);
           setCurrentLesson(progress.currentLesson || 0);
+          setQuizScores(progress.quizScores || {});
+          setCourseCompleted(progress.courseCompleted || false);
         }
       }
       setLoading(false);
@@ -83,11 +97,13 @@ const CoursePlayer = () => {
         completed: Array.from(completedLessons),
         currentModule,
         currentLesson,
+        quizScores,
+        courseCompleted,
         lastAccessed: new Date().toISOString()
       };
       localStorage.setItem(`course_progress_${course.id}`, JSON.stringify(progress));
     }
-  }, [course, completedLessons, currentModule, currentLesson]);
+  }, [course, completedLessons, currentModule, currentLesson, quizScores, courseCompleted]);
 
   const handleModuleToggle = (moduleIndex) => {
     setExpandedModules(prev =>
@@ -109,10 +125,40 @@ const CoursePlayer = () => {
     setCompletedLessons(newCompleted);
 
     // Award XP for completing lesson
-    awardXP('COMPLETE_LESSON', { amount: 20 });
+    awardXP('COMPLETE_LESSON');
+    updateStat('lessons_completed');
+    
+    toast.success(`Lesson completed! +20 XP`);
 
     // Auto-advance to next lesson
     handleNextLesson();
+  };
+
+  const handleQuizComplete = (result) => {
+    const lessonId = `${currentModule}-${currentLesson}`;
+    
+    // Save quiz score
+    setQuizScores({
+      ...quizScores,
+      [lessonId]: result
+    });
+
+    if (result.passed) {
+      // Mark lesson as completed
+      const newCompleted = new Set(completedLessons);
+      newCompleted.add(lessonId);
+      setCompletedLessons(newCompleted);
+      
+      updateStat('quizzes_passed');
+      toast.success(`Quiz passed with ${result.score}%! Great job!`);
+      
+      // Auto-advance after a moment
+      setTimeout(() => {
+        handleNextLesson();
+      }, 2000);
+    } else {
+      toast.error(`Quiz score: ${result.score}%. Review the material and try again.`);
+    }
   };
 
   const handleNextLesson = () => {
@@ -128,8 +174,22 @@ const CoursePlayer = () => {
       setExpandedModules(prev => [...prev, currentModule + 1]);
     } else {
       // Course completed!
-      awardXP('COMPLETE_COURSE', { amount: 150 });
-      alert('Congratulations! You have completed the course!');
+      handleCourseCompletion();
+    }
+  };
+
+  const handleCourseCompletion = () => {
+    if (!courseCompleted) {
+      setCourseCompleted(true);
+      awardXP('COMPLETE_COURSE');
+      updateStat('courses_completed');
+      
+      toast.success(`🎉 Congratulations! You've completed the course! +150 XP`);
+      
+      // Show certificate after a moment
+      setTimeout(() => {
+        setShowCertificate(true);
+      }, 1500);
     }
   };
 
@@ -363,6 +423,7 @@ const CoursePlayer = () => {
 
                     {/* Lesson Content */}
                     <Box sx={{ my: 4 }}>
+                      {/* Video Lesson */}
                       {activeLessonData?.type === 'video' && activeLessonData?.videoUrl && (
                         <Box
                           sx={{
@@ -392,9 +453,71 @@ const CoursePlayer = () => {
                         </Box>
                       )}
 
-                      <Typography variant="body1" paragraph sx={{ lineHeight: 1.8 }}>
-                        {activeLessonData?.content}
-                      </Typography>
+                      {/* Quiz Lesson */}
+                      {activeLessonData?.type === 'quiz' && (
+                        <Box sx={{ mb: 4 }}>
+                          {(() => {
+                            // Determine quiz key based on lesson title or module
+                            let quizKey = 'module-1-quiz';
+                            if (activeLessonData.title.toLowerCase().includes('final')) {
+                              quizKey = 'final-exam';
+                            } else if (currentModule === 1) {
+                              quizKey = 'module-2-quiz';
+                            } else if (currentModule === 2) {
+                              quizKey = 'module-3-quiz';
+                            }
+                            
+                            const quizData = QUIZ_DATA[course.slug]?.[quizKey];
+                            const lessonId = `${currentModule}-${currentLesson}`;
+                            const previousScore = quizScores[lessonId];
+
+                            if (!quizData) {
+                              return (
+                                <Alert severity="info">
+                                  Quiz data is being prepared. Please check back soon.
+                                </Alert>
+                              );
+                            }
+
+                            if (previousScore && previousScore.passed) {
+                              return (
+                                <Alert severity="success" sx={{ mb: 2 }}>
+                                  <Typography fontWeight="bold">Quiz Already Passed!</Typography>
+                                  <Typography variant="body2">
+                                    You scored {previousScore.score}% on this quiz. You can retake it for a better score if you'd like.
+                                  </Typography>
+                                  <Button 
+                                    size="small" 
+                                    sx={{ mt: 1 }}
+                                    onClick={() => {
+                                      const newScores = {...quizScores};
+                                      delete newScores[lessonId];
+                                      setQuizScores(newScores);
+                                    }}
+                                  >
+                                    Retake Quiz
+                                  </Button>
+                                </Alert>
+                              );
+                            }
+
+                            return (
+                              <Quiz
+                                quizData={quizData}
+                                onComplete={handleQuizComplete}
+                                lessonTitle={activeLessonData.title}
+                              />
+                            );
+                          })()}
+                        </Box>
+                      )}
+
+                      {/* Lesson Description (for non-quiz lessons) */}
+                      {activeLessonData?.type !== 'quiz' && (
+                        <Typography variant="body1" paragraph sx={{ lineHeight: 1.8 }}>
+                          {activeLessonData?.content}
+                        </Typography>
+                      )}
 
                       {/* Resources */}
                       {activeLessonData?.resources && activeLessonData.resources.length > 0 && (
@@ -461,7 +584,17 @@ const CoursePlayer = () => {
           </Button>
 
           <Box sx={{ display: 'flex', gap: 2 }}>
-            {!isLessonCompleted(currentModule, currentLesson) && (
+            {courseCompleted && (
+              <Button
+                variant="outlined"
+                color="success"
+                startIcon={<TrophyIcon />}
+                onClick={() => setShowCertificate(true)}
+              >
+                View Certificate
+              </Button>
+            )}
+            {!isLessonCompleted(currentModule, currentLesson) && activeLessonData?.type !== 'quiz' && (
               <Button
                 variant="contained"
                 color="success"
@@ -485,6 +618,33 @@ const CoursePlayer = () => {
           </Box>
         </Paper>
       </Box>
+
+      {/* Certificate Dialog */}
+      <Dialog
+        open={showCertificate}
+        onClose={() => setShowCertificate(false)}
+        maxWidth="lg"
+        fullWidth
+      >
+        <DialogTitle>
+          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <Typography variant="h5" fontWeight="bold">
+              🎓 Certificate of Completion
+            </Typography>
+            <IconButton onClick={() => setShowCertificate(false)}>
+              <BackIcon />
+            </IconButton>
+          </Box>
+        </DialogTitle>
+        <DialogContent>
+          <Certificate
+            course={course}
+            completionDate={new Date().toISOString()}
+            ceCredits={course.ceCredits}
+            score={calculateProgress()}
+          />
+        </DialogContent>
+      </Dialog>
     </Box>
   );
 };

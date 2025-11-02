@@ -7,8 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 GSAPS Social Media App is a React-based academic social platform for the Graduate Student Association for Psychedelic Studies. It combines social networking features (posts, messaging, groups, events) with unique academic features including a Research Library (papers with ratings/reviews/discussions) and a Learning Management System (courses with CE credits, quizzes, and certifications). The app is designed to integrate with WordPress/BuddyBoss via REST API but currently runs with comprehensive mock data.
 
 **Current Status:** Phase 7 Complete (Gold Standard) - 95%+ feature parity with major platforms
-**Tech Stack:** React 18, Material-UI 5, React Router 6, Context API for state management
-**Demo Mode:** Fully functional with mock data for all features
+**Tech Stack:** React 18.2.0, Material-UI 5.13.1, React Router 6.11.2, Context API for state management
+**Demo Mode:** Fully functional with comprehensive mock data for all features
+**API Integration:** Ready for WordPress/BuddyBoss integration (mock data only currently)
 
 ## Development Commands
 
@@ -138,11 +139,25 @@ Protected routes: Feed, Profile, Members, Groups, Messages, Research Library, Co
 - **Groups**: `src/pages/Groups.js`, `GroupDetail.js`
 - **Events**: `src/pages/Events.js`, `EventDetail.js`
 
-### Integration Circles (Sprint 1 - In Development)
-- **Pages**: `src/pages/IntegrationCircles.js` (planned), `CircleDetail.js` (planned)
-- **Components**: `src/components/circles/CircleCard.js`
-- **Data**: `src/data/circlesData.js`, `circleResources.js`
-- **Plan**: See `SPRINT_1_IMPLEMENTATION_PLAN.md` for detailed implementation roadmap
+### Integration Circles (Sprint 1 - PLANNED, NOT IMPLEMENTED)
+
+**IMPORTANT**: Integration Circles is a **planned feature**, NOT a completed feature.
+
+**What exists**:
+- ✅ Implementation plan (SPRINT_1_IMPLEMENTATION_PLAN.md) - detailed 4-week roadmap
+- ✅ Mock data files (`src/data/circlesData.js`, `circleResources.js`)
+- ✅ One component (`src/components/circles/CircleCard.js`)
+
+**What does NOT exist**:
+- ❌ Main pages (`src/pages/IntegrationCircles.js`, `CircleDetail.js`)
+- ❌ Routes in App.js
+- ❌ Navigation menu items
+- ❌ Matching wizard component
+- ❌ Circle discussion components
+- ❌ Facilitator tools
+- ❌ Circle management features
+
+**DO NOT reference Integration Circles as a completed feature.** It is planned for future development per SPRINT_1_IMPLEMENTATION_PLAN.md.
 
 ## Important Development Patterns
 
@@ -261,11 +276,14 @@ When implementing real API integration:
 
 - **README.md**: Comprehensive project overview, features, roadmap
 - **DEMO_INSTRUCTIONS.md**: Full feature walkthrough for demos
-- **PROJECT_STATUS.md**: Current status, completed phases, next priorities
-- **SPRINT_1_IMPLEMENTATION_PLAN.md**: Detailed plan for Integration Circles feature
-- **GENAI_FEATURES_ROADMAP.md**: Phase 8 AI features (18 planned features)
+- **PROJECT_STATUS.md**: Current status, completed phases, priorities, next steps
+- **GOLD_STANDARD_STATUS.md**: Detailed achievements report and feature breakdown
+- **SPRINT_1_IMPLEMENTATION_PLAN.md**: Integration Circles implementation plan (PLANNED FEATURE - NOT YET IMPLEMENTED)
+- **GENAI_FEATURES_ROADMAP.md**: Phase 8 AI features roadmap (18 planned features for future)
 - **UI_COMPONENTS_GUIDE.md**: Component documentation and usage
-- **IMPLEMENTATION_GUIDE.md**: Implementation details for all features
+- **IMPLEMENTATION_GUIDE.md**: Implementation details for all completed features
+- **LMS_SYSTEM_DOCUMENTATION.md**: Learning Management System documentation
+- **QUICKSTART_MACBOOK.md**: Quick start guide for local development
 
 ## Build and Deployment
 
@@ -280,7 +298,7 @@ Build output includes:
 - Static HTML template
 - Ready for deployment to static hosting (Netlify, Vercel, GitHub Pages)
 
-Current production bundle size: ~295 kB (gzipped)
+Current production bundle size: ~326 kB (gzipped)
 
 ## Special Notes
 
@@ -288,5 +306,5 @@ Current production bundle size: ~295 kB (gzipped)
 - All user data persists in localStorage (gamification stats, theme preference, auth token)
 - Mobile navigation uses BottomNavigation, desktop uses Navbar
 - Research Library is the "killer feature" that differentiates from generic social platforms
-- Gamification system is fully integrated across all features
-- Integration Circles is the next priority feature (see Sprint 1 plan)
+- Gamification system is fully integrated across all features (feed, library, courses)
+- **Integration Circles is a PLANNED feature for future development** (not yet implemented)

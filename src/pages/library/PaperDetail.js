@@ -127,7 +127,6 @@ const PaperDetail = () => {
 
   const trackView = () => {
     // TODO: Track view in analytics
-    console.log('Tracking view for paper:', paperId);
   };
 
   const handleDownload = () => {

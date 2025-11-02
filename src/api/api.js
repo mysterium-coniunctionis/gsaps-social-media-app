@@ -33,8 +33,6 @@ api.interceptors.response.use(
     // Handle authentication errors
     if (response && response.status === 401) {
       localStorage.removeItem('gsaps_token');
-      // Redirect to login if needed
-      // window.location.href = '/login';
     }
     
     return Promise.reject(error);

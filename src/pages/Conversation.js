@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
-  Card,
   Avatar,
   Typography,
   TextField,
@@ -23,7 +22,6 @@ import {
 import {
   Send as SendIcon,
   ArrowBack as BackIcon,
-  MoreVert as MoreIcon,
   Person as PersonIcon,
   Email as EmailIcon,
   Search as SearchIcon,
@@ -55,11 +53,7 @@ const Conversation = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showConversationsList, setShowConversationsList] = useState(true);
   const [showProfileSidebar, setShowProfileSidebar] = useState(true);
-  const [conversationsWidth, setConversationsWidth] = useState(320);
-  const [profileWidth, setProfileWidth] = useState(280);
   const messagesEndRef = useRef(null);
-  const conversationsResizeRef = useRef(null);
-  const profileResizeRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -328,7 +322,7 @@ const Conversation = () => {
       <Fade in={showConversationsList} timeout={300}>
         <Box
           sx={{
-            width: showConversationsList ? conversationsWidth : 0,
+            width: showConversationsList ? 320 : 0,
             minWidth: showConversationsList ? 280 : 0,
             maxWidth: 480,
             transition: 'width 0.3s ease',
@@ -706,7 +700,7 @@ const Conversation = () => {
       <Fade in={showProfileSidebar} timeout={300}>
         <Box
           sx={{
-            width: showProfileSidebar ? profileWidth : 0,
+            width: showProfileSidebar ? 280 : 0,
             minWidth: showProfileSidebar ? 250 : 0,
             maxWidth: 400,
             transition: 'width 0.3s ease',

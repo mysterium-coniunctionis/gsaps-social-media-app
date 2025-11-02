@@ -333,6 +333,7 @@ export const GamificationProvider = ({ children }) => {
       setUserStats(null);
       setLoading(false);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
   const loadUserStats = () => {
@@ -375,12 +376,6 @@ export const GamificationProvider = ({ children }) => {
     setLoading(false);
   };
 
-  const saveUserStats = (stats) => {
-    const storageKey = `gamification_${currentUser.id}`;
-    localStorage.setItem(storageKey, JSON.stringify(stats));
-    setUserStats(stats);
-  };
-
   // Calculate level from XP
   const calculateLevel = useCallback((xp) => {
     for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i--) {
@@ -412,68 +407,52 @@ export const GamificationProvider = ({ children }) => {
 
   // Award XP
   const awardXP = useCallback((action, customAmount = null) => {
-    if (!currentUser || !userStats) return;
+    if (!currentUser) return;
 
     const xpAmount = customAmount || XP_ACTIONS[action] || 0;
     if (xpAmount === 0) return;
 
-    const newXP = userStats.xp + xpAmount;
-    const oldLevel = userStats.level;
-    const newLevel = calculateLevel(newXP);
-    const leveledUp = newLevel > oldLevel;
+    setUserStats(prevStats => {
+      if (!prevStats) return prevStats;
 
-    // Add XP notification
-    setRecentXP(prev => [
-      ...prev,
-      {
-        id: Date.now(),
-        action,
-        amount: xpAmount,
-        timestamp: new Date()
+      const newXP = prevStats.xp + xpAmount;
+      const oldLevel = prevStats.level;
+      const newLevel = calculateLevel(newXP);
+      const leveledUp = newLevel > oldLevel;
+
+      // Add XP notification
+      setRecentXP(prev => [
+        ...prev,
+        {
+          id: Date.now(),
+          action,
+          amount: xpAmount,
+          timestamp: new Date()
+        }
+      ]);
+
+      // Remove notification after 3 seconds
+      setTimeout(() => {
+        setRecentXP(prev => prev.slice(1));
+      }, 3000);
+
+      const updatedStats = {
+        ...prevStats,
+        xp: newXP,
+        level: newLevel
+      };
+
+      // Award bonus XP for leveling up
+      if (leveledUp) {
+        updatedStats.xp += XP_ACTIONS.REACH_LEVEL_MILESTONE;
       }
-    ]);
 
-    // Remove notification after 3 seconds
-    setTimeout(() => {
-      setRecentXP(prev => prev.slice(1));
-    }, 3000);
+      const storageKey = `gamification_${currentUser.id}`;
+      localStorage.setItem(storageKey, JSON.stringify(updatedStats));
 
-    const updatedStats = {
-      ...userStats,
-      xp: newXP,
-      level: newLevel
-    };
-
-    // Award bonus XP for leveling up
-    if (leveledUp) {
-      updatedStats.xp += XP_ACTIONS.REACH_LEVEL_MILESTONE;
-    }
-
-    saveUserStats(updatedStats);
-
-    return {
-      xpAwarded: xpAmount,
-      newXP,
-      newLevel,
-      leveledUp
-    };
-  }, [currentUser, userStats, calculateLevel]);
-
-  // Update stat
-  const updateStat = useCallback((statName, increment = 1) => {
-    if (!currentUser || !userStats) return;
-
-    const updatedStats = {
-      ...userStats,
-      stats: {
-        ...userStats.stats,
-        [statName]: (userStats.stats[statName] || 0) + increment
-      }
-    };
-
-    saveUserStats(updatedStats);
-    checkAchievements(updatedStats);
-  }, [currentUser, userStats]);
+      return updatedStats;
+    });
+  }, [currentUser, calculateLevel]);
 
   // Check for new achievements
   const checkAchievements = useCallback((stats) => {
@@ -511,9 +490,34 @@ export const GamificationProvider = ({ children }) => {
         xp: stats.xp, // Already updated above
         level: calculateLevel(stats.xp)
       };
-      saveUserStats(updatedStats);
+      const storageKey = `gamification_${currentUser.id}`;
+      localStorage.setItem(storageKey, JSON.stringify(updatedStats));
+      setUserStats(updatedStats);
     }
-  }, [calculateLevel]);
+  }, [calculateLevel, currentUser]);
+
+  // Update stat
+  const updateStat = useCallback((statName, increment = 1) => {
+    if (!currentUser || !userStats) return;
+
+    setUserStats(prevStats => {
+      const updatedStats = {
+        ...prevStats,
+        stats: {
+          ...prevStats.stats,
+          [statName]: (prevStats.stats[statName] || 0) + increment
+        }
+      };
+
+      const storageKey = `gamification_${currentUser.id}`;
+      localStorage.setItem(storageKey, JSON.stringify(updatedStats));
+      
+      // Check achievements in next tick to avoid state update during render
+      setTimeout(() => checkAchievements(updatedStats), 0);
+      
+      return updatedStats;
+    });
+  }, [currentUser, userStats, checkAchievements]);
 
   // Get progress to next level
   const getLevelProgress = useCallback(() => {

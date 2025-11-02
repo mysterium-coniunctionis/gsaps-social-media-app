@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -46,11 +46,21 @@ const ResearchLibrary = () => {
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [filterTopic, setFilterTopic] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [viewMode, setViewMode] = useState('grid'); // grid or list
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Available filter options
   const topics = [
@@ -108,8 +118,8 @@ const ResearchLibrary = () => {
     updateStat('papers_uploaded');
   };
 
-  const handleToggleLibrary = (paperId) => {
-    setPapers(papers.map(paper =>
+  const handleToggleLibrary = useCallback((paperId) => {
+    setPapers(prevPapers => prevPapers.map(paper =>
       paper.id === paperId
         ? { ...paper, inMyLibrary: !paper.inMyLibrary }
         : paper
@@ -118,13 +128,13 @@ const ResearchLibrary = () => {
     if (paper) {
       toast.success(paper.inMyLibrary ? 'Removed from your library' : 'Added to your library');
     }
-  };
+  }, [papers, toast]);
 
-  // Filter papers based on search and filters
-  const filteredPapers = papers.filter(paper => {
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
+  // Filter papers based on search and filters - memoized for performance
+  const filteredPapers = useMemo(() => papers.filter(paper => {
+    // Search filter - use debounced query
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
       const matchesTitle = paper.title.toLowerCase().includes(query);
       const matchesAuthors = paper.authors.some(author => author.toLowerCase().includes(query));
       const matchesAbstract = paper.abstract.toLowerCase().includes(query);
@@ -147,7 +157,7 @@ const ResearchLibrary = () => {
     }
 
     return true;
-  });
+  }), [papers, debouncedSearchQuery, filterTopic, filterYear]);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>

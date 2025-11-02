@@ -33,7 +33,9 @@
 ## 📊 Project Status
 
 ### Current Release: **Phase 7 Complete** 🎉 **[GOLD STANDARD]**
-**Build Size:** 294.85 kB (gzipped) | **Completion:** 95%+ feature parity with major platforms
+**Build Size:** 323.76 kB (gzipped) | **Completion:** 95%+ feature parity with major platforms
+
+> 📚 **Documentation**: See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for a complete guide to all project documentation.
 
 <table>
 <tr>

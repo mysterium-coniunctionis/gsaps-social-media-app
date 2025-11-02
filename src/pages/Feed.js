@@ -802,7 +802,6 @@ const Feed = () => {
 
   const handleComment = useCallback((postId, comment) => {
     // TODO: Add comment to post
-    console.log('Comment on post', postId, comment);
 
     // Award XP for commenting
     awardXP('COMMENT'); // +5 XP for commenting
@@ -811,7 +810,6 @@ const Feed = () => {
 
   const handleShare = useCallback((postId) => {
     // TODO: Share functionality
-    console.log('Share post', postId);
 
     // Award XP for sharing
     awardXP('SHARE_POST'); // +8 XP for sharing

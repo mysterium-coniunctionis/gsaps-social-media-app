@@ -80,21 +80,18 @@ const Settings = () => {
 
   const handleSaveProfile = () => {
     // TODO: Implement API call to save profile
-    console.log('Saving profile:', profile);
     setSuccessMessage('Profile updated successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const handleSaveAccount = () => {
     // TODO: Implement API call to save account settings
-    console.log('Saving account settings:', accountSettings);
     setSuccessMessage('Settings updated successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
   };
 
   const handleSavePrivacy = () => {
     // TODO: Implement API call to save privacy settings
-    console.log('Saving privacy settings:', privacySettings);
     setSuccessMessage('Privacy settings updated successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
   };

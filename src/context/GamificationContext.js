@@ -498,9 +498,11 @@ export const GamificationProvider = ({ children }) => {
 
   // Update stat
   const updateStat = useCallback((statName, increment = 1) => {
-    if (!currentUser || !userStats) return;
+    if (!currentUser) return;
 
     setUserStats(prevStats => {
+      if (!prevStats) return prevStats;
+      
       const updatedStats = {
         ...prevStats,
         stats: {
@@ -517,7 +519,7 @@ export const GamificationProvider = ({ children }) => {
       
       return updatedStats;
     });
-  }, [currentUser, userStats, checkAchievements]);
+  }, [currentUser, checkAchievements]);
 
   // Get progress to next level
   const getLevelProgress = useCallback(() => {

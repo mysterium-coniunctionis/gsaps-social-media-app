@@ -5,8 +5,8 @@
 **A Next-Generation Academic Social Platform for the Graduate Student Association for Psychedelic Studies**
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/mysterium-coniunctionis/gsaps-social-media-app)
-[![React](https://img.shields.io/badge/React-18.3.1-61dafb?logo=react)](https://reactjs.org/)
-[![Material-UI](https://img.shields.io/badge/Material--UI-5.16.7-007FFF?logo=mui)](https://mui.com/)
+[![React](https://img.shields.io/badge/React-18.2.0-61dafb?logo=react)](https://reactjs.org/)
+[![Material-UI](https://img.shields.io/badge/Material--UI-5.13.1-007FFF?logo=mui)](https://mui.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
@@ -211,10 +211,10 @@ For a full feature walkthrough, see **[DEMO_INSTRUCTIONS.md](DEMO_INSTRUCTIONS.m
 
 | Technology | Version | Purpose |
 |------------|---------|---------|
-| **React** | 18.3.1 | UI framework with hooks and functional components |
-| **Material-UI** | 5.16.7 | Comprehensive component library with theming |
-| **React Router** | 6.26.0 | Client-side routing with protected routes |
-| **Axios** | 1.7.4 | HTTP client with interceptors |
+| **React** | 18.2.0 | UI framework with hooks and functional components |
+| **Material-UI** | 5.13.1 | Comprehensive component library with theming |
+| **React Router** | 6.11.2 | Client-side routing with protected routes |
+| **Axios** | 1.4.0 | HTTP client with interceptors |
 | **date-fns** | 2.30.0 | Date formatting and manipulation |
 
 ### Architecture & Patterns

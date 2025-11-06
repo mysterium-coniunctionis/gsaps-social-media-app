@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   TextField,
@@ -21,6 +21,7 @@ import { formatDistanceToNow } from 'date-fns';
 /**
  * CommentSection Component - Display and add comments
  * Supports nested replies and reactions
+ * Optimized with React.memo and useCallback
  */
 const CommentSection = ({ postId, onComment }) => {
   const [comments, setComments] = useState([]);
@@ -77,7 +78,7 @@ const CommentSection = ({ postId, onComment }) => {
     setComments(mockComments);
   }, [postId]);
 
-  const handleSubmitComment = () => {
+  const handleSubmitComment = useCallback(() => {
     if (!commentText.trim()) return;
 
     const newComment = {
@@ -97,7 +98,7 @@ const CommentSection = ({ postId, onComment }) => {
 
     if (replyingTo) {
       // Add as reply
-      setComments(comments.map(comment =>
+      setComments(prevComments => prevComments.map(comment =>
         comment.id === replyingTo
           ? { ...comment, replies: [...(comment.replies || []), newComment] }
           : comment
@@ -105,16 +106,18 @@ const CommentSection = ({ postId, onComment }) => {
       setReplyingTo(null);
     } else {
       // Add as top-level comment
-      setComments([...comments, newComment]);
+      setComments(prevComments => [...prevComments, newComment]);
     }
 
     setCommentText('');
     onComment(postId, commentText.trim());
-  };
+  }, [commentText, replyingTo, onComment, postId]);
 
-  const handleLikeComment = (commentId, isReply = false, parentId = null) => {
+  const handleLikeComment = useCallback((commentId, isReply = false, parentId = null) => {
+    // Uses functional update pattern to avoid stale closure issues
+    // Empty dependency array is safe because we use prevComments in all setComments calls
     if (isReply && parentId) {
-      setComments(comments.map(comment =>
+      setComments(prevComments => prevComments.map(comment =>
         comment.id === parentId
           ? {
               ...comment,
@@ -131,7 +134,7 @@ const CommentSection = ({ postId, onComment }) => {
           : comment
       ));
     } else {
-      setComments(comments.map(comment =>
+      setComments(prevComments => prevComments.map(comment =>
         comment.id === commentId
           ? {
               ...comment,
@@ -141,15 +144,25 @@ const CommentSection = ({ postId, onComment }) => {
           : comment
       ));
     }
-  };
+  }, []);
 
-  const formatTimestamp = (date) => {
+  const handleReply = useCallback((commentId, username) => {
+    setReplyingTo(commentId);
+    setCommentText(`@${username} `);
+  }, []);
+
+  const handleCancelReply = useCallback(() => {
+    setReplyingTo(null);
+    setCommentText('');
+  }, []);
+
+  const formatTimestamp = useCallback((date) => {
     try {
       return formatDistanceToNow(new Date(date), { addSuffix: true });
     } catch {
       return 'recently';
     }
-  };
+  }, []);
 
   const CommentItem = ({ comment, isReply = false, parentId = null }) => {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -243,10 +256,7 @@ const CommentSection = ({ postId, onComment }) => {
             {!isReply && (
               <Button
                 size="small"
-                onClick={() => {
-                  setReplyingTo(comment.id);
-                  setCommentText(`@${comment.author.username} `);
-                }}
+                onClick={() => handleReply(comment.id, comment.author.username)}
                 sx={{
                   minWidth: 'auto',
                   textTransform: 'none',
@@ -332,10 +342,7 @@ const CommentSection = ({ postId, onComment }) => {
               </Typography>
               <Button
                 size="small"
-                onClick={() => {
-                  setReplyingTo(null);
-                  setCommentText('');
-                }}
+                onClick={handleCancelReply}
                 sx={{ minWidth: 'auto', textTransform: 'none', fontSize: '0.75rem' }}
               >
                 Cancel
@@ -387,4 +394,5 @@ const CommentSection = ({ postId, onComment }) => {
   );
 };
 
-export default CommentSection;
+// Memoize CommentSection to prevent unnecessary re-renders
+export default React.memo(CommentSection);

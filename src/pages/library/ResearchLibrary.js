@@ -105,18 +105,17 @@ const ResearchLibrary = () => {
 
   const handleSearch = useCallback((query) => {
     setSearchQuery(query);
-    // TODO: Implement real search
   }, []);
 
-  const handleUploadSuccess = (newPaper) => {
-    setPapers([newPaper, ...papers]);
+  const handleUploadSuccess = useCallback((newPaper) => {
+    setPapers(prevPapers => [newPaper, ...prevPapers]);
     setUploadDialogOpen(false);
     toast.success('Research paper uploaded successfully!');
 
     // Award XP for uploading paper (major contribution!)
     awardXP('UPLOAD_PAPER'); // +50 XP for uploading research paper
     updateStat('papers_uploaded');
-  };
+  }, [toast, awardXP, updateStat]);
 
   const handleToggleLibrary = useCallback((paperId) => {
     setPapers(prevPapers => {
@@ -149,18 +148,12 @@ const ResearchLibrary = () => {
       if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
         return false;
       }
-    }
 
-    // Topic filter
-    if (filterTopic !== 'all' && !paper.topics.includes(filterTopic)) {
-      return false;
-    }
-
-    // Year filter
-    if (filterYear !== 'all') {
-      if (filterYear === 'older' && paper.year >= 2020) return false;
-      if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
-    }
+      // Year filter
+      if (filterYear !== 'all') {
+        if (filterYear === 'older' && paper.year >= 2020) return false;
+        if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
+      }
 
     return true;
   }), [papers, debouncedSearchQuery, filterTopic, filterYear]);

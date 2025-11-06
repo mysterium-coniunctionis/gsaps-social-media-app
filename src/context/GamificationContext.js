@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from './AuthContext';
 
 const GamificationContext = createContext();
@@ -336,7 +336,7 @@ export const GamificationProvider = ({ children }) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
-  const loadUserStats = () => {
+  const loadUserStats = useCallback(() => {
     setLoading(true);
 
     // Get stats from localStorage or create new
@@ -374,7 +374,7 @@ export const GamificationProvider = ({ children }) => {
     }
 
     setLoading(false);
-  };
+  }, [currentUser]);
 
   // Calculate level from XP
   const calculateLevel = useCallback((xp) => {
@@ -537,19 +537,30 @@ export const GamificationProvider = ({ children }) => {
     };
   }, [userStats, getXPForNextLevel]);
 
-  const value = {
-    userStats,
-    loading,
-    recentXP,
-    awardXP,
-    updateStat,
+  // Memoize stable functions separately to reduce dependency chain complexity
+  const stableFunctions = useMemo(() => ({
     calculateLevel,
     getXPForNextLevel,
     getCurrentRank,
-    getLevelProgress,
+    getLevelProgress
+  }), [calculateLevel, getXPForNextLevel, getCurrentRank, getLevelProgress]);
+
+  // Memoize dynamic functions separately
+  const dynamicFunctions = useMemo(() => ({
+    awardXP,
+    updateStat
+  }), [awardXP, updateStat]);
+
+  // Memoize context value with grouped dependencies
+  const value = useMemo(() => ({
+    userStats,
+    loading,
+    recentXP,
+    ...stableFunctions,
+    ...dynamicFunctions,
     XP_ACTIONS,
     ACHIEVEMENTS
-  };
+  }), [userStats, loading, recentXP, stableFunctions, dynamicFunctions]);
 
   return (
     <GamificationContext.Provider value={value}>

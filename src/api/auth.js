@@ -1,4 +1,11 @@
 import api from './api';
+import {
+  mockLogin,
+  mockRegister,
+  mockGetCurrentUser,
+  mockLogout,
+  isDevelopmentMode
+} from './mockAuth';
 
 /**
  * Login a user with WordPress/BuddyBoss credentials
@@ -7,6 +14,14 @@ import api from './api';
  * @returns {Promise} - User data and token
  */
 export const loginUser = async (username, password) => {
+  // Use mock authentication in development mode
+  if (isDevelopmentMode()) {
+    const { token, user } = await mockLogin(username, password);
+    localStorage.setItem('gsaps_token', token);
+    return user;
+  }
+
+  // Production: Use real WordPress API
   try {
     const response = await api.post('/jwt-auth/v1/token', {
       username,
@@ -17,7 +32,7 @@ export const loginUser = async (username, password) => {
       localStorage.setItem('gsaps_token', response.data.token);
       return response.data.user;
     }
-    
+
     throw new Error('Authentication failed');
   } catch (error) {
     console.error('Login error:', error);
@@ -31,15 +46,23 @@ export const loginUser = async (username, password) => {
  * @returns {Promise} - Created user data
  */
 export const registerUser = async (userData) => {
+  // Use mock authentication in development mode
+  if (isDevelopmentMode()) {
+    const { token, user } = await mockRegister(userData);
+    localStorage.setItem('gsaps_token', token);
+    return user;
+  }
+
+  // Production: Use real WordPress API
   try {
     // First register the user with WordPress
     const response = await api.post('/wp/v2/users/register', userData);
-    
+
     if (response.data && response.data.id) {
       // If registration successful, login automatically
       return await loginUser(userData.username, userData.password);
     }
-    
+
     throw new Error('Registration failed');
   } catch (error) {
     console.error('Registration error:', error);
@@ -52,7 +75,14 @@ export const registerUser = async (userData) => {
  * @returns {Promise} - Success status
  */
 export const logoutUser = async () => {
-  // JWT tokens are stateless, so we just remove from localStorage
+  // Use mock authentication in development mode
+  if (isDevelopmentMode()) {
+    await mockLogout();
+    localStorage.removeItem('gsaps_token');
+    return { success: true };
+  }
+
+  // Production: JWT tokens are stateless, so we just remove from localStorage
   localStorage.removeItem('gsaps_token');
   return { success: true };
 };
@@ -62,6 +92,13 @@ export const logoutUser = async () => {
  * @returns {Promise} - Current user data
  */
 export const getCurrentUser = async () => {
+  // Use mock authentication in development mode
+  if (isDevelopmentMode()) {
+    const token = localStorage.getItem('gsaps_token');
+    return await mockGetCurrentUser(token);
+  }
+
+  // Production: Use real WordPress API
   try {
     const response = await api.get('/wp/v2/users/me');
     return response.data;

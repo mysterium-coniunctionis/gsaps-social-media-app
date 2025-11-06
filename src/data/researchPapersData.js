@@ -1,0 +1,870 @@
+/**
+ * Comprehensive Research Papers Dataset
+ * High-quality, realistic psychedelic research papers
+ * Covering diverse topics, time periods, and research methodologies
+ */
+
+export const RESEARCH_PAPERS = [
+  // PSILOCYBIN STUDIES
+  {
+    id: 1,
+    title: 'Psilocybin with psychological support for treatment-resistant depression: six-month follow-up',
+    authors: ['Robin L. Carhart-Harris', 'Briony Bolstridge', 'James Rucker', 'et al.'],
+    year: 2024,
+    journal: 'Psychopharmacology',
+    volume: '241',
+    issue: '3',
+    pages: '457-472',
+    doi: '10.1007/s00213-024-12345-6',
+    abstract: 'Background: Treatment-resistant depression (TRD) affects millions worldwide with limited therapeutic options. This study investigates the long-term efficacy and safety of psilocybin-assisted therapy for TRD. Methods: Nineteen patients with TRD received two doses of psilocybin (10 mg and 25 mg, 7 days apart) with psychological support. Results: At 6-month follow-up, significant reductions in depressive symptoms were maintained, with 58% of participants showing clinical response. Conclusions: Psilocybin therapy shows promise for sustained antidepressant effects in treatment-resistant populations.',
+    topics: ['psilocybin', 'therapy', 'clinical-trials'],
+    keywords: ['depression', 'psilocybin', 'treatment-resistant', 'psychedelic therapy', 'mental health'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '2.4 MB',
+    uploadedBy: {
+      id: 1,
+      name: 'Dr. Alice Johnson',
+      username: 'alice_researcher',
+      avatar_url: 'https://i.pravatar.cc/150?img=1'
+    },
+    uploadedAt: new Date('2024-10-22'),
+    views: 1547,
+    downloads: 342,
+    citations: 23,
+    rating: 4.8,
+    ratingCount: 45,
+    discussionCount: 12,
+    inMyLibrary: false
+  },
+  {
+    id: 2,
+    title: 'Single Dose Psilocybin for a Treatment-Resistant Episode of Major Depression',
+    authors: ['Frederick S. Barrett', 'Manoj K. Doss', 'Natalie Sepeda', 'et al.'],
+    year: 2022,
+    journal: 'New England Journal of Medicine',
+    volume: '387',
+    issue: '18',
+    pages: '1637-1648',
+    doi: '10.1056/NEJMoa2206443',
+    abstract: 'In this double-blind trial, we randomly assigned adults with moderate-to-severe major depressive disorder to receive a single dose of either synthetic psilocybin (25 mg) or a placebo, both with psychological support. The primary endpoint was the change from baseline in the score on the Montgomery-Åsberg Depression Rating Scale (MADRS) at week 3. At week 3, the mean decrease in the MADRS score was significantly greater in the psilocybin group than in the placebo group (difference, -5.0 points; 95% CI, -7.6 to -2.3; P<0.001). The incidence of adverse events was similar in the two groups.',
+    topics: ['psilocybin', 'therapy', 'clinical-trials'],
+    keywords: ['major depression', 'psilocybin', 'randomized controlled trial', 'MADRS'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '3.8 MB',
+    uploadedBy: {
+      id: 2,
+      name: 'Bob Williams',
+      username: 'bob_neuroscience',
+      avatar_url: 'https://i.pravatar.cc/150?img=2'
+    },
+    uploadedAt: new Date('2024-09-15'),
+    views: 2891,
+    downloads: 678,
+    citations: 89,
+    rating: 4.9,
+    ratingCount: 102,
+    discussionCount: 34,
+    inMyLibrary: false
+  },
+  {
+    id: 3,
+    title: 'Effects of Psilocybin-Assisted Therapy on Major Depressive Disorder: A Randomized Clinical Trial',
+    authors: ['Alan K. Davis', 'Frederick S. Barrett', 'Darrick G. May', 'et al.'],
+    year: 2021,
+    journal: 'JAMA Psychiatry',
+    volume: '78',
+    issue: '5',
+    pages: '481-489',
+    doi: '10.1001/jamapsychiatry.2020.3285',
+    abstract: 'Importance: Major depressive disorder (MDD) affects approximately 264 million people worldwide. Novel, rapid-acting treatments are needed. Objective: To investigate the effects of psilocybin-assisted therapy for MDD. Design, Setting, and Participants: This randomized clinical trial enrolled adults aged 21-75 years with moderate-to-severe MDD. Results: Large, rapid, and sustained antidepressant effects were observed at 1 and 4 weeks after psilocybin administration. Conclusions: Psilocybin-assisted therapy was efficacious in producing large, rapid, and sustained antidepressant effects in patients with MDD.',
+    topics: ['psilocybin', 'therapy', 'clinical-trials'],
+    keywords: ['major depressive disorder', 'psilocybin', 'RCT', 'rapid-acting antidepressant'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '2.9 MB',
+    uploadedBy: {
+      id: 1,
+      name: 'Dr. Alice Johnson',
+      username: 'alice_researcher',
+      avatar_url: 'https://i.pravatar.cc/150?img=1'
+    },
+    uploadedAt: new Date('2024-08-20'),
+    views: 3245,
+    downloads: 892,
+    citations: 156,
+    rating: 4.9,
+    ratingCount: 128,
+    discussionCount: 47,
+    inMyLibrary: true
+  },
+
+  // MDMA STUDIES
+  {
+    id: 4,
+    title: 'MDMA-assisted therapy for severe PTSD: a randomized, double-blind, placebo-controlled phase 3 study',
+    authors: ['Jennifer M. Mitchell', 'Michael Bogenschutz', 'Alia Lilienstein', 'et al.'],
+    year: 2024,
+    journal: 'Nature Medicine',
+    volume: '30',
+    issue: '2',
+    pages: '194-202',
+    doi: '10.1038/s41591-024-00001-1',
+    abstract: 'Post-traumatic stress disorder (PTSD) represents a major public health problem for which currently available treatments are modestly effective. This multicenter, randomized, double-blind, placebo-controlled phase 3 trial evaluated MDMA-assisted therapy for severe PTSD. Participants received either MDMA (80-120 mg) or placebo along with manualized therapy. The primary endpoint was change in Clinician-Administered PTSD Scale for DSM-5 (CAPS-5) total severity score. MDMA-assisted therapy produced significantly greater reductions in CAPS-5 scores compared with placebo plus therapy. These results support the efficacy and safety of MDMA-assisted therapy for PTSD.',
+    topics: ['mdma', 'therapy', 'clinical-trials'],
+    keywords: ['PTSD', 'MDMA', 'phase 3 trial', 'trauma', 'psychotherapy'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '3.1 MB',
+    uploadedBy: {
+      id: 2,
+      name: 'Bob Williams',
+      username: 'bob_neuroscience',
+      avatar_url: 'https://i.pravatar.cc/150?img=2'
+    },
+    uploadedAt: new Date('2024-10-01'),
+    views: 2834,
+    downloads: 756,
+    citations: 45,
+    rating: 4.9,
+    ratingCount: 78,
+    discussionCount: 28,
+    inMyLibrary: true
+  },
+  {
+    id: 5,
+    title: 'MDMA-Assisted Psychotherapy for Treatment of PTSD: Study Design and Rationale for Phase 3 Trials',
+    authors: ['Michael C. Mithoefer', 'Allison A. Feduccia', 'Lisa Jerome', 'et al.'],
+    year: 2023,
+    journal: 'Psychopharmacology',
+    volume: '240',
+    issue: '9',
+    pages: '2083-2095',
+    doi: '10.1007/s00213-023-06418-8',
+    abstract: 'This paper describes the design, methodology, and rationale for the first phase 3 trials of MDMA-assisted psychotherapy for PTSD. The study protocol includes rigorous safety monitoring, standardized therapy procedures, and diverse outcome measures. We detail the therapy manual, training requirements for therapists, and statistical analysis plan. These trials represent a crucial step toward potential FDA approval of MDMA-assisted therapy as a treatment for PTSD.',
+    topics: ['mdma', 'therapy', 'clinical-trials'],
+    keywords: ['PTSD', 'MDMA', 'clinical trial design', 'protocol', 'FDA approval'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '2.6 MB',
+    uploadedBy: {
+      id: 3,
+      name: 'Carol Davis',
+      username: 'carol_therapist',
+      avatar_url: 'https://i.pravatar.cc/150?img=3'
+    },
+    uploadedAt: new Date('2024-07-18'),
+    views: 1456,
+    downloads: 412,
+    citations: 34,
+    rating: 4.7,
+    ratingCount: 56,
+    discussionCount: 19,
+    inMyLibrary: false
+  },
+
+  // LSD STUDIES
+  {
+    id: 6,
+    title: 'Lysergic Acid Diethylamide (LSD) Promotes Social Behavior Through Serotonergic and Dopaminergic Mechanisms',
+    authors: ['Danilo De Gregorio', 'Antonio Inserra', 'Justine P. Enns', 'et al.'],
+    year: 2023,
+    journal: 'Proceedings of the National Academy of Sciences',
+    volume: '120',
+    issue: '12',
+    pages: 'e2218540120',
+    doi: '10.1073/pnas.2218540120',
+    abstract: 'LSD has profound effects on consciousness and social cognition, yet the neural mechanisms remain poorly understood. Using behavioral, pharmacological, and optogenetic approaches in mice, we demonstrate that LSD promotes social behavior through activation of 5-HT2A receptors in the medial prefrontal cortex and dopamine D2 receptors in the nucleus accumbens. These findings suggest that LSD may have therapeutic potential for disorders characterized by social dysfunction, including autism spectrum disorder and social anxiety.',
+    topics: ['lsd', 'neuroscience'],
+    keywords: ['LSD', 'social behavior', 'serotonin', 'dopamine', 'prefrontal cortex'],
+    researchType: 'basic-science',
+    fileUrl: '#',
+    fileSize: '4.2 MB',
+    uploadedBy: {
+      id: 4,
+      name: 'David Martinez',
+      username: 'david_student',
+      avatar_url: 'https://i.pravatar.cc/150?img=4'
+    },
+    uploadedAt: new Date('2024-06-10'),
+    views: 1823,
+    downloads: 467,
+    citations: 42,
+    rating: 4.8,
+    ratingCount: 61,
+    discussionCount: 23,
+    inMyLibrary: false
+  },
+  {
+    id: 7,
+    title: 'Microdosing with LSD: A Double-Blind, Placebo-Controlled Study',
+    authors: ['Kim P.C. Kuypers', 'Livia Ng', 'David Erritzoe', 'et al.'],
+    year: 2024,
+    journal: 'Journal of Psychopharmacology',
+    volume: '38',
+    issue: '1',
+    pages: '56-67',
+    doi: '10.1177/02698811231215567',
+    abstract: 'Microdosing—the practice of taking sub-perceptual doses of psychedelics—has gained popularity, yet rigorous scientific evidence is lacking. We conducted a randomized, double-blind, placebo-controlled trial examining the effects of microdoses of LSD (10 μg) on mood, cognition, and creativity. Participants completed assessments over four weeks. Results showed modest improvements in certain cognitive tasks but no significant effects on mood or well-being compared to placebo. These findings suggest that expectancy effects may play a significant role in reported benefits of microdosing.',
+    topics: ['lsd', 'neuroscience'],
+    keywords: ['microdosing', 'LSD', 'placebo-controlled', 'cognition', 'creativity'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '2.8 MB',
+    uploadedBy: {
+      id: 5,
+      name: 'Emma Thompson',
+      username: 'emma_research',
+      avatar_url: 'https://i.pravatar.cc/150?img=5'
+    },
+    uploadedAt: new Date('2024-09-05'),
+    views: 2156,
+    downloads: 589,
+    citations: 28,
+    rating: 4.6,
+    ratingCount: 73,
+    discussionCount: 41,
+    inMyLibrary: true
+  },
+
+  // NEUROSCIENCE & MECHANISMS
+  {
+    id: 8,
+    title: 'Neural mechanisms of psychedelic-induced neuroplasticity',
+    authors: ['David E. Olson', 'Calvin Ly', 'Lindsay P. Cameron'],
+    year: 2023,
+    journal: 'Cell',
+    volume: '186',
+    issue: '14',
+    pages: '2860-2875',
+    doi: '10.1016/j.cell.2023.11.023',
+    abstract: 'Psychedelics have emerged as promising therapeutics for neuropsychiatric disorders, with effects that persist long after the acute drug experience. Here, we investigate the molecular mechanisms by which psychedelics promote neural plasticity and synaptogenesis. Using in vitro and in vivo models, we demonstrate that psychedelics activate TrkB, AMPA, and mGluR signaling pathways, leading to increased dendritic spine density and synaptic plasticity. These neuroplastic changes may underlie the sustained therapeutic effects observed clinically. Our findings suggest that psychoplastogenic compounds represent a novel class of fast-acting antidepressants.',
+    topics: ['neuroscience', 'psilocybin', 'lsd'],
+    keywords: ['neuroplasticity', 'psychedelics', 'synaptogenesis', 'TrkB', 'molecular mechanisms'],
+    researchType: 'basic-science',
+    fileUrl: '#',
+    fileSize: '4.7 MB',
+    uploadedBy: {
+      id: 3,
+      name: 'Carol Davis',
+      username: 'carol_therapist',
+      avatar_url: 'https://i.pravatar.cc/150?img=3'
+    },
+    uploadedAt: new Date('2024-05-20'),
+    views: 1923,
+    downloads: 489,
+    citations: 67,
+    rating: 4.7,
+    ratingCount: 56,
+    discussionCount: 19,
+    inMyLibrary: false
+  },
+  {
+    id: 9,
+    title: 'LSD and psilocybin promote structural plasticity and neuronal growth',
+    authors: ['Calvin Ly', 'Alexandra C. Greb', 'Lindsay P. Cameron', 'et al.'],
+    year: 2022,
+    journal: 'Nature Neuroscience',
+    volume: '25',
+    issue: '6',
+    pages: '789-801',
+    doi: '10.1038/s41593-022-01082-2',
+    abstract: 'Depression, anxiety, and related disorders are associated with atrophy of neurons in the prefrontal cortex. We demonstrate that psychedelics, including LSD and psilocybin, robustly promote neuritogenesis and spinogenesis both in vitro and in vivo. These structural changes are mediated through activation of 5-HT2A receptors and downstream signaling through BDNF-TrkB pathways. Remarkably, these effects occur at sub-hallucinogenic doses and persist for extended periods, suggesting that the psychoplastogenic properties of psychedelics may be separable from their subjective effects.',
+    topics: ['neuroscience', 'psilocybin', 'lsd'],
+    keywords: ['structural plasticity', 'neuronal growth', 'BDNF', 'dendrites', 'synaptic density'],
+    researchType: 'basic-science',
+    fileUrl: '#',
+    fileSize: '5.1 MB',
+    uploadedBy: {
+      id: 1,
+      name: 'Dr. Alice Johnson',
+      username: 'alice_researcher',
+      avatar_url: 'https://i.pravatar.cc/150?img=1'
+    },
+    uploadedAt: new Date('2024-04-12'),
+    views: 2467,
+    downloads: 621,
+    citations: 94,
+    rating: 4.9,
+    ratingCount: 87,
+    discussionCount: 31,
+    inMyLibrary: true
+  },
+  {
+    id: 10,
+    title: 'Psychedelics and the Default Mode Network: A Unified Model of Brain Connectivity',
+    authors: ['Robin L. Carhart-Harris', 'Karl J. Friston'],
+    year: 2019,
+    journal: 'Nature Reviews Neuroscience',
+    volume: '20',
+    issue: '3',
+    pages: '155-167',
+    doi: '10.1038/s41583-019-0127-2',
+    abstract: 'The default mode network (DMN) has been implicated in self-referential processing and is hyperactive in depression. Neuroimaging studies demonstrate that psychedelics disrupt DMN connectivity and increase global brain connectivity. We propose the REBUS (RElaxed Beliefs Under pSychedelics) model, suggesting that psychedelics relax the precision of high-level priors, allowing for more flexible cognition and behavior. This framework integrates neurobiological, psychological, and therapeutic effects of psychedelics within a unified predictive processing model.',
+    topics: ['neuroscience', 'consciousness'],
+    keywords: ['default mode network', 'brain connectivity', 'predictive processing', 'neuroimaging', 'fMRI'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '3.9 MB',
+    uploadedBy: {
+      id: 2,
+      name: 'Bob Williams',
+      username: 'bob_neuroscience',
+      avatar_url: 'https://i.pravatar.cc/150?img=2'
+    },
+    uploadedAt: new Date('2024-03-28'),
+    views: 3891,
+    downloads: 1023,
+    citations: 312,
+    rating: 4.9,
+    ratingCount: 156,
+    discussionCount: 68,
+    inMyLibrary: true
+  },
+
+  // AYAHUASCA STUDIES
+  {
+    id: 11,
+    title: 'Ayahuasca: Pharmacology, neuroscience, and therapeutic potential',
+    authors: ['Rafael G. dos Santos', 'José Carlos Bouso', 'Jordi Riba'],
+    year: 2023,
+    journal: 'Brain Research Bulletin',
+    volume: '196',
+    issue: '5',
+    pages: '134-149',
+    doi: '10.1016/j.brainresbull.2023.08.015',
+    abstract: 'Ayahuasca is a traditional Amazonian brew containing DMT and harmala alkaloids with growing interest in its therapeutic applications. This comprehensive review examines ayahuasca chemistry, pharmacokinetics, neuropharmacology, and therapeutic applications. We discuss mechanisms involving serotonergic, dopaminergic, and glutamatergic neurotransmission, as well as effects on neuroplasticity and inflammation. Clinical studies show promise for depression, PTSD, and substance use disorders. Safety profile is favorable in controlled settings, though contraindications exist. Future research should focus on standardization, mechanism elucidation, and rigorous clinical trials.',
+    topics: ['ayahuasca', 'dmt', 'therapy'],
+    keywords: ['ayahuasca', 'DMT', 'harmaline', 'depression', 'traditional medicine'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '5.2 MB',
+    uploadedBy: {
+      id: 4,
+      name: 'David Martinez',
+      username: 'david_student',
+      avatar_url: 'https://i.pravatar.cc/150?img=4'
+    },
+    uploadedAt: new Date('2024-08-14'),
+    views: 1256,
+    downloads: 312,
+    citations: 34,
+    rating: 4.6,
+    ratingCount: 41,
+    discussionCount: 15,
+    inMyLibrary: false
+  },
+  {
+    id: 12,
+    title: 'Rapid antidepressant effects of the psychedelic ayahuasca in treatment-resistant depression: a randomized placebo-controlled trial',
+    authors: ['Fernanda Palhano-Fontes', 'Dayanne Barreto', 'Heloisa Onias', 'et al.'],
+    year: 2021,
+    journal: 'Psychological Medicine',
+    volume: '51',
+    issue: '7',
+    pages: '1163-1172',
+    doi: '10.1017/S0033291719001812',
+    abstract: 'Background: Treatment-resistant depression (TRD) represents a major clinical challenge. Ayahuasca shows promise as a rapid-acting antidepressant. Methods: Double-blind RCT comparing single-dose ayahuasca versus placebo in 29 patients with TRD. Results: Significant reductions in depression scores observed at Day 1 and Day 7 post-ayahuasca compared to placebo. Effect sizes were large (d=0.8-0.9). No serious adverse events occurred. Conclusions: Ayahuasca demonstrated rapid-acting antidepressant effects in TRD with a favorable safety profile in this controlled setting.',
+    topics: ['ayahuasca', 'therapy', 'clinical-trials'],
+    keywords: ['ayahuasca', 'treatment-resistant depression', 'RCT', 'rapid antidepressant'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '2.7 MB',
+    uploadedBy: {
+      id: 5,
+      name: 'Emma Thompson',
+      username: 'emma_research',
+      avatar_url: 'https://i.pravatar.cc/150?img=5'
+    },
+    uploadedAt: new Date('2024-07-22'),
+    views: 1678,
+    downloads: 445,
+    citations: 56,
+    rating: 4.7,
+    ratingCount: 52,
+    discussionCount: 24,
+    inMyLibrary: false
+  },
+
+  // DMT & CONSCIOUSNESS
+  {
+    id: 13,
+    title: 'DMT Models the Near-Death Experience',
+    authors: ['Christopher Timmermann', 'Hannes Kettner', 'Charlotte Letheby', 'et al.'],
+    year: 2023,
+    journal: 'Frontiers in Psychology',
+    volume: '14',
+    issue: '',
+    pages: '1083508',
+    doi: '10.3389/fpsyg.2023.1083508',
+    abstract: 'N,N-Dimethyltryptamine (DMT) produces profound alterations in consciousness, including experiences phenomenologically similar to near-death experiences (NDEs). We administered DMT and placebo in a within-subjects design and assessed experiences using the Near-Death Experience Scale. DMT significantly increased NDE phenomenology, including feelings of transcendence, mystical experiences, and ego dissolution. These findings have implications for understanding the neurobiology of consciousness and may inform therapeutic applications.',
+    topics: ['dmt', 'consciousness'],
+    keywords: ['DMT', 'near-death experience', 'consciousness', 'mystical experience', 'phenomenology'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '3.4 MB',
+    uploadedBy: {
+      id: 1,
+      name: 'Dr. Alice Johnson',
+      username: 'alice_researcher',
+      avatar_url: 'https://i.pravatar.cc/150?img=1'
+    },
+    uploadedAt: new Date('2024-06-30'),
+    views: 2134,
+    downloads: 567,
+    citations: 38,
+    rating: 4.8,
+    ratingCount: 69,
+    discussionCount: 45,
+    inMyLibrary: true
+  },
+  {
+    id: 14,
+    title: 'Extended-release DMT for the treatment of major depressive disorder: A phase 1 open-label study',
+    authors: ['Carol Routledge', 'Guy Goodwin', 'David Erritzoe', 'et al.'],
+    year: 2024,
+    journal: 'Frontiers in Psychiatry',
+    volume: '15',
+    issue: '',
+    pages: '1234567',
+    doi: '10.3389/fpsyt.2024.1234567',
+    abstract: 'DMT typically produces intense but brief experiences. We developed an extended-release formulation (DMTx) to prolong effects while maintaining tolerability. This phase 1 study examined safety, tolerability, and preliminary efficacy in patients with major depressive disorder. DMTx was well-tolerated with no serious adverse events. Preliminary efficacy signals showed rapid reductions in depression scores maintained at 3-month follow-up. These findings support further investigation of DMTx as a novel treatment for depression.',
+    topics: ['dmt', 'therapy', 'clinical-trials'],
+    keywords: ['DMT', 'extended-release', 'major depression', 'phase 1', 'safety'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '2.9 MB',
+    uploadedBy: {
+      id: 3,
+      name: 'Carol Davis',
+      username: 'carol_therapist',
+      avatar_url: 'https://i.pravatar.cc/150?img=3'
+    },
+    uploadedAt: new Date('2024-09-18'),
+    views: 1567,
+    downloads: 423,
+    citations: 15,
+    rating: 4.5,
+    ratingCount: 34,
+    discussionCount: 18,
+    inMyLibrary: false
+  },
+
+  // KETAMINE STUDIES
+  {
+    id: 15,
+    title: 'Ketamine for treatment-resistant depression: systematic review and meta-analysis',
+    authors: ['Rupert McShane', 'Rebecca B. Price', 'James W. Murrough'],
+    year: 2022,
+    journal: 'The British Journal of Psychiatry',
+    volume: '220',
+    issue: '3',
+    pages: '139-148',
+    doi: '10.1192/bjp.2021.208',
+    abstract: 'Background: Ketamine has shown rapid antidepressant effects in treatment-resistant depression (TRD). Aims: To systematically review evidence for ketamine in TRD. Method: Meta-analysis of randomized controlled trials comparing ketamine to control conditions. Results: Analysis of 17 trials (n=897) showed significant benefit for ketamine (standardized mean difference = -0.88). Effects emerged within 24 hours and persisted for at least 7 days. Adverse effects were generally transient. Conclusions: Ketamine demonstrates robust rapid-acting antidepressant effects in TRD.',
+    topics: ['ketamine', 'therapy', 'clinical-trials'],
+    keywords: ['ketamine', 'treatment-resistant depression', 'meta-analysis', 'rapid antidepressant'],
+    researchType: 'meta-analysis',
+    fileUrl: '#',
+    fileSize: '3.6 MB',
+    uploadedBy: {
+      id: 2,
+      name: 'Bob Williams',
+      username: 'bob_neuroscience',
+      avatar_url: 'https://i.pravatar.cc/150?img=2'
+    },
+    uploadedAt: new Date('2024-05-08'),
+    views: 2789,
+    downloads: 734,
+    citations: 121,
+    rating: 4.8,
+    ratingCount: 94,
+    discussionCount: 37,
+    inMyLibrary: true
+  },
+  {
+    id: 16,
+    title: 'Neural mechanisms underlying ketamine-induced antidepressant effects',
+    authors: ['Lisa Monteggia', 'Ronald Duman', 'Chadi Abdallah'],
+    year: 2023,
+    journal: 'Biological Psychiatry',
+    volume: '93',
+    issue: '1',
+    pages: '54-63',
+    doi: '10.1016/j.biopsych.2022.09.015',
+    abstract: 'Ketamine produces rapid and sustained antidepressant effects through mechanisms distinct from traditional antidepressants. This review examines the neural mechanisms underlying ketamine\'s therapeutic actions, including NMDA receptor blockade, AMPA receptor potentiation, and activation of mTOR signaling. We discuss how these molecular events lead to increased synaptic plasticity and reversal of stress-induced neuronal deficits. Understanding these mechanisms may enable development of next-generation rapid-acting antidepressants with improved safety profiles.',
+    topics: ['ketamine', 'neuroscience'],
+    keywords: ['ketamine', 'NMDA receptor', 'synaptic plasticity', 'mTOR', 'neuroplasticity'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '4.1 MB',
+    uploadedBy: {
+      id: 4,
+      name: 'David Martinez',
+      username: 'david_student',
+      avatar_url: 'https://i.pravatar.cc/150?img=4'
+    },
+    uploadedAt: new Date('2024-04-25'),
+    views: 1934,
+    downloads: 512,
+    citations: 78,
+    rating: 4.7,
+    ratingCount: 63,
+    discussionCount: 26,
+    inMyLibrary: false
+  },
+
+  // SAFETY & ADVERSE EFFECTS
+  {
+    id: 17,
+    title: 'Adverse Effects of Psychedelics: From Anecdotes and Misinformation to Systematic Science',
+    authors: ['Ksenia Smirnova', 'Mikael Kowal', 'Kim Kuypers'],
+    year: 2024,
+    journal: 'Journal of Psychopharmacology',
+    volume: '38',
+    issue: '3',
+    pages: '234-248',
+    doi: '10.1177/02698811231224567',
+    abstract: 'As clinical interest in psychedelics grows, systematic assessment of adverse effects is crucial. We reviewed published literature on adverse effects of psilocybin, LSD, MDMA, ayahuasca, and DMT. While serious adverse events in controlled settings are rare, psychological distress, cardiovascular effects, and potential for adverse psychological outcomes exist. Risk factors include underlying psychiatric conditions, cardiovascular disease, and use in uncontrolled settings. Comprehensive screening, medical supervision, and integration support are essential for minimizing risks.',
+    topics: ['psilocybin', 'mdma', 'lsd', 'ayahuasca'],
+    keywords: ['safety', 'adverse effects', 'risk factors', 'contraindications', 'harm reduction'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '3.8 MB',
+    uploadedBy: {
+      id: 5,
+      name: 'Emma Thompson',
+      username: 'emma_research',
+      avatar_url: 'https://i.pravatar.cc/150?img=5'
+    },
+    uploadedAt: new Date('2024-10-15'),
+    views: 1456,
+    downloads: 389,
+    citations: 19,
+    rating: 4.6,
+    ratingCount: 47,
+    discussionCount: 32,
+    inMyLibrary: false
+  },
+  {
+    id: 18,
+    title: 'Cardiovascular Safety of Psilocybin: Evidence from Clinical Trials',
+    authors: ['Peter S. Hendricks', 'Roland R. Griffiths', 'Matthew W. Johnson'],
+    year: 2023,
+    journal: 'Psychopharmacology',
+    volume: '240',
+    issue: '11',
+    pages: '2301-2310',
+    doi: '10.1007/s00213-023-06523-x',
+    abstract: 'Objective: To systematically evaluate cardiovascular safety of psilocybin in clinical trials. Methods: Review of all published clinical trials measuring cardiovascular parameters during psilocybin administration. Results: Psilocybin produces transient increases in heart rate and blood pressure that peak 2-4 hours post-administration and return to baseline by 6 hours. No serious cardiovascular adverse events occurred in healthy participants or those with cardiovascular risk factors when properly screened. Conclusions: Psilocybin demonstrates acceptable cardiovascular safety profile in supervised clinical settings with appropriate screening.',
+    topics: ['psilocybin'],
+    keywords: ['psilocybin', 'cardiovascular safety', 'blood pressure', 'heart rate', 'clinical trials'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '2.5 MB',
+    uploadedBy: {
+      id: 1,
+      name: 'Dr. Alice Johnson',
+      username: 'alice_researcher',
+      avatar_url: 'https://i.pravatar.cc/150?img=1'
+    },
+    uploadedAt: new Date('2024-08-03'),
+    views: 1234,
+    downloads: 298,
+    citations: 27,
+    rating: 4.7,
+    ratingCount: 39,
+    discussionCount: 14,
+    inMyLibrary: false
+  },
+
+  // INTEGRATION & THERAPY
+  {
+    id: 19,
+    title: 'The Role of Integration in Psychedelic-Assisted Psychotherapy',
+    authors: ['Rosalind Watts', 'Rachel Yaden', 'Sara Lem'],
+    year: 2024,
+    journal: 'Journal of Humanistic Psychology',
+    volume: '64',
+    issue: '2',
+    pages: '189-206',
+    doi: '10.1177/00221678231198765',
+    abstract: 'Integration—the process of incorporating insights from psychedelic experiences into daily life—is considered essential for lasting therapeutic benefits. However, systematic study of integration practices is limited. We conducted qualitative interviews with 45 participants who underwent psilocybin-assisted therapy, examining integration processes and outcomes. Themes included meaning-making, behavior change, relationship shifts, and spiritual development. Participants emphasized the importance of ongoing integration support. We propose a framework for evidence-based integration practices and highlight areas for future research.',
+    topics: ['therapy', 'psilocybin'],
+    keywords: ['integration', 'psychotherapy', 'meaning-making', 'behavior change', 'therapeutic outcomes'],
+    researchType: 'qualitative',
+    fileUrl: '#',
+    fileSize: '3.2 MB',
+    uploadedBy: {
+      id: 3,
+      name: 'Carol Davis',
+      username: 'carol_therapist',
+      avatar_url: 'https://i.pravatar.cc/150?img=3'
+    },
+    uploadedAt: new Date('2024-10-10'),
+    views: 1789,
+    downloads: 467,
+    citations: 22,
+    rating: 4.8,
+    ratingCount: 58,
+    discussionCount: 28,
+    inMyLibrary: true
+  },
+  {
+    id: 20,
+    title: 'Training Psychedelic Therapists: Core Competencies and Ethical Considerations',
+    authors: ['William Richards', 'Brian Pilecki', 'Natalie Gukasyan'],
+    year: 2023,
+    journal: 'Journal of Psychoactive Drugs',
+    volume: '55',
+    issue: '4',
+    pages: '445-456',
+    doi: '10.1080/02791072.2023.2234567',
+    abstract: 'As psychedelic therapy advances toward mainstream clinical practice, systematic training programs are essential. We outline core competencies for psychedelic therapists, including: pharmacological knowledge, preparation and integration skills, navigation of altered states, ethical frameworks, and cultural humility. Training should include didactic education, experiential learning, supervised practice, and personal development. We discuss ethical considerations including boundaries, power dynamics, cultural appropriation, and therapist self-care. Standardized training and certification will be crucial for ensuring safe, effective, and ethical psychedelic therapy.',
+    topics: ['therapy'],
+    keywords: ['training', 'competencies', 'ethics', 'therapist education', 'professional development'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '2.8 MB',
+    uploadedBy: {
+      id: 2,
+      name: 'Bob Williams',
+      username: 'bob_neuroscience',
+      avatar_url: 'https://i.pravatar.cc/150?img=2'
+    },
+    uploadedAt: new Date('2024-07-05'),
+    views: 1523,
+    downloads: 401,
+    citations: 31,
+    rating: 4.7,
+    ratingCount: 51,
+    discussionCount: 22,
+    inMyLibrary: false
+  },
+
+  // CLASSIC/HISTORICAL PAPERS
+  {
+    id: 21,
+    title: 'Psilocybin can occasion mystical-type experiences having substantial and sustained personal meaning and spiritual significance',
+    authors: ['Roland R. Griffiths', 'William A. Richards', 'Una McCann', 'Robert Jesse'],
+    year: 2006,
+    journal: 'Psychopharmacology',
+    volume: '187',
+    issue: '3',
+    pages: '268-283',
+    doi: '10.1007/s00213-006-0457-5',
+    abstract: 'Despite widespread anecdotal reports, few controlled studies have examined psychedelics\' capacity to occasion mystical-type experiences. We conducted a double-blind study comparing psilocybin (30 mg/70 kg) with methylphenidate in 36 hallucinogen-naive volunteers. Participants received psilocybin and methylphenidate in counterbalanced order with 8 hours of preparation and supervision. At 2 months, 67% of psilocybin sessions met criteria for "complete" mystical experience compared to 0% of methylphenidate sessions. Ratings of personal meaning and spiritual significance were extremely high and remained high at 14-month follow-up. These findings document psilocybin\'s capacity to reliably occasion mystical experiences with lasting positive effects.',
+    topics: ['psilocybin', 'consciousness'],
+    keywords: ['psilocybin', 'mystical experience', 'spiritual significance', 'phenomenology', 'RCT'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '3.5 MB',
+    uploadedBy: {
+      id: 4,
+      name: 'David Martinez',
+      username: 'david_student',
+      avatar_url: 'https://i.pravatar.cc/150?img=4'
+    },
+    uploadedAt: new Date('2024-02-14'),
+    views: 4567,
+    downloads: 1234,
+    citations: 876,
+    rating: 4.9,
+    ratingCount: 203,
+    discussionCount: 89,
+    inMyLibrary: true
+  },
+  {
+    id: 22,
+    title: 'Psychedelic drugs reconsidered',
+    authors: ['Lester Grinspoon', 'James B. Bakalar'],
+    year: 1981,
+    journal: 'The Sciences',
+    volume: '21',
+    issue: '7',
+    pages: '16-23',
+    doi: '10.1002/j.2326-1951.1981.tb01763.x',
+    abstract: 'Following decades of prohibition and stigma, psychedelic substances deserve scientific reconsideration. Historical review reveals these drugs were studied extensively in the 1950s-1960s with promising results in psychotherapy, alcoholism treatment, and end-of-life care. Political factors, not scientific evidence, led to their prohibition. We argue for renewed research into therapeutic applications, with proper controls and ethical oversight. The potential benefits for psychiatry and our understanding of consciousness warrant serious scientific investigation despite cultural resistance.',
+    topics: ['psilocybin', 'lsd', 'therapy'],
+    keywords: ['history', 'drug policy', 'therapeutic potential', 'research ethics', 'prohibition'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '1.8 MB',
+    uploadedBy: {
+      id: 5,
+      name: 'Emma Thompson',
+      username: 'emma_research',
+      avatar_url: 'https://i.pravatar.cc/150?img=5'
+    },
+    uploadedAt: new Date('2024-01-20'),
+    views: 2134,
+    downloads: 567,
+    citations: 234,
+    rating: 4.6,
+    ratingCount: 78,
+    discussionCount: 43,
+    inMyLibrary: false
+  },
+  {
+    id: 23,
+    title: 'LSD Psychotherapy: An Exploration of Psychedelic and Psycholytic Therapy',
+    authors: ['Stanislav Grof'],
+    year: 1980,
+    journal: 'Journal of Transpersonal Psychology',
+    volume: '12',
+    issue: '1',
+    pages: '7-31',
+    doi: '10.1177/002216788001200101',
+    abstract: 'Based on clinical experience with over 4,000 LSD sessions, this paper explores two distinct therapeutic approaches: psycholytic therapy (lower doses with verbal psychotherapy) and psychedelic therapy (higher doses emphasizing mystical experiences). Both approaches showed promise for various psychiatric conditions including depression, anxiety, and addiction. The paper describes therapeutic mechanisms, optimal set and setting, and clinical techniques. Despite promising early results, political factors halted research. This work documents important clinical observations that may inform future research.',
+    topics: ['lsd', 'therapy'],
+    keywords: ['LSD', 'psychotherapy', 'psychedelic therapy', 'psycholytic therapy', 'Grof'],
+    researchType: 'review',
+    fileUrl: '#',
+    fileSize: '2.6 MB',
+    uploadedBy: {
+      id: 1,
+      name: 'Dr. Alice Johnson',
+      username: 'alice_researcher',
+      avatar_url: 'https://i.pravatar.cc/150?img=1'
+    },
+    uploadedAt: new Date('2024-01-05'),
+    views: 1678,
+    downloads: 445,
+    citations: 187,
+    rating: 4.7,
+    ratingCount: 92,
+    discussionCount: 37,
+    inMyLibrary: true
+  },
+
+  // ADDICTION & SUBSTANCE USE
+  {
+    id: 24,
+    title: 'Psilocybin-assisted therapy for alcohol use disorder: A randomized clinical trial',
+    authors: ['Michael P. Bogenschutz', 'Stephen Ross', 'Sarah Bhatt', 'et al.'],
+    year: 2022,
+    journal: 'JAMA Psychiatry',
+    volume: '79',
+    issue: '10',
+    pages: '953-962',
+    doi: '10.1001/jamapsychiatry.2022.2096',
+    abstract: 'Importance: Alcohol use disorder (AUD) has limited effective treatments. Objective: To test efficacy of psilocybin-assisted therapy for AUD. Design: Double-blind RCT comparing psilocybin to diphenhydramine (active placebo) with 12 sessions of psychotherapy. Participants: 95 adults with DSM-5 AUD. Results: Psilocybin group showed significantly greater reductions in heavy drinking days compared to control (difference: 9.7 percentage points). Abstinence rates and overall drinking were also significantly improved in psilocybin group. Conclusions: Psilocybin with psychotherapy demonstrates efficacy for AUD treatment.',
+    topics: ['psilocybin', 'therapy', 'clinical-trials'],
+    keywords: ['alcohol use disorder', 'addiction', 'psilocybin', 'RCT', 'substance use'],
+    researchType: 'clinical-trial',
+    fileUrl: '#',
+    fileSize: '3.3 MB',
+    uploadedBy: {
+      id: 3,
+      name: 'Carol Davis',
+      username: 'carol_therapist',
+      avatar_url: 'https://i.pravatar.cc/150?img=3'
+    },
+    uploadedAt: new Date('2024-09-28'),
+    views: 2345,
+    downloads: 623,
+    citations: 67,
+    rating: 4.8,
+    ratingCount: 81,
+    discussionCount: 35,
+    inMyLibrary: true
+  },
+  {
+    id: 25,
+    title: 'Classic Psychedelics for the Treatment of Substance Use Disorder: A Systematic Review',
+    authors: ['Peter H. Danforth', 'Charles Grob', 'Christopher Struble', 'et al.'],
+    year: 2023,
+    journal: 'Journal of Psychopharmacology',
+    volume: '37',
+    issue: '1',
+    pages: '10-23',
+    doi: '10.1177/02698811221146366',
+    abstract: 'Background: Substance use disorders (SUDs) are difficult to treat with high relapse rates. Emerging evidence suggests psychedelics may be effective for SUDs. Methods: Systematic review of clinical trials examining psilocybin, LSD, or ayahuasca for SUDs including alcohol, tobacco, opioids, and stimulants. Results: Review of 12 studies (n=580) found significant reductions in substance use across multiple SUDs. Effect sizes ranged from medium to large. Mechanisms may include increased psychological flexibility, mystical experiences, and changes in self-perception. Conclusions: Classic psychedelics show promise for SUD treatment, warranting larger controlled trials.',
+    topics: ['psilocybin', 'lsd', 'ayahuasca', 'therapy'],
+    keywords: ['substance use disorder', 'addiction', 'systematic review', 'treatment outcomes'],
+    researchType: 'meta-analysis',
+    fileUrl: '#',
+    fileSize: '4.0 MB',
+    uploadedBy: {
+      id: 2,
+      name: 'Bob Williams',
+      username: 'bob_neuroscience',
+      avatar_url: 'https://i.pravatar.cc/150?img=2'
+    },
+    uploadedAt: new Date('2024-08-30'),
+    views: 1890,
+    downloads: 501,
+    citations: 43,
+    rating: 4.7,
+    ratingCount: 64,
+    discussionCount: 29,
+    inMyLibrary: false
+  }
+];
+
+// Helper function to get papers by topic
+export const getPapersByTopic = (topic) => {
+  if (topic === 'all') return RESEARCH_PAPERS;
+  return RESEARCH_PAPERS.filter(paper => paper.topics.includes(topic));
+};
+
+// Helper function to get papers by year
+export const getPapersByYear = (year) => {
+  if (year === 'all') return RESEARCH_PAPERS;
+  if (year === 'older') return RESEARCH_PAPERS.filter(paper => paper.year < 2020);
+  return RESEARCH_PAPERS.filter(paper => paper.year === parseInt(year));
+};
+
+// Helper function to get papers by research type
+export const getPapersByResearchType = (type) => {
+  return RESEARCH_PAPERS.filter(paper => paper.researchType === type);
+};
+
+// Helper function to search papers
+export const searchPapers = (query) => {
+  const lowerQuery = query.toLowerCase();
+  return RESEARCH_PAPERS.filter(paper =>
+    paper.title.toLowerCase().includes(lowerQuery) ||
+    paper.authors.some(author => author.toLowerCase().includes(lowerQuery)) ||
+    paper.abstract.toLowerCase().includes(lowerQuery) ||
+    paper.keywords.some(keyword => keyword.toLowerCase().includes(lowerQuery)) ||
+    paper.doi.toLowerCase().includes(lowerQuery)
+  );
+};
+
+// Statistics
+export const PAPER_STATS = {
+  totalPapers: RESEARCH_PAPERS.length,
+  totalCitations: RESEARCH_PAPERS.reduce((sum, paper) => sum + paper.citations, 0),
+  totalViews: RESEARCH_PAPERS.reduce((sum, paper) => sum + paper.views, 0),
+  totalDownloads: RESEARCH_PAPERS.reduce((sum, paper) => sum + paper.downloads, 0),
+  averageRating: (RESEARCH_PAPERS.reduce((sum, paper) => sum + paper.rating, 0) / RESEARCH_PAPERS.length).toFixed(2),
+  byTopic: {
+    psilocybin: getPapersByTopic('psilocybin').length,
+    mdma: getPapersByTopic('mdma').length,
+    lsd: getPapersByTopic('lsd').length,
+    ayahuasca: getPapersByTopic('ayahuasca').length,
+    dmt: getPapersByTopic('dmt').length,
+    ketamine: getPapersByTopic('ketamine').length,
+    neuroscience: getPapersByTopic('neuroscience').length,
+    therapy: getPapersByTopic('therapy').length,
+    consciousness: getPapersByTopic('consciousness').length,
+    clinicalTrials: getPapersByTopic('clinical-trials').length
+  },
+  byResearchType: {
+    clinicalTrial: getPapersByResearchType('clinical-trial').length,
+    review: getPapersByResearchType('review').length,
+    basicScience: getPapersByResearchType('basic-science').length,
+    metaAnalysis: getPapersByResearchType('meta-analysis').length,
+    qualitative: getPapersByResearchType('qualitative').length
+  },
+  byDecade: {
+    '1980s': RESEARCH_PAPERS.filter(p => p.year >= 1980 && p.year < 1990).length,
+    '2000s': RESEARCH_PAPERS.filter(p => p.year >= 2000 && p.year < 2010).length,
+    '2010s': RESEARCH_PAPERS.filter(p => p.year >= 2010 && p.year < 2020).length,
+    '2020s': RESEARCH_PAPERS.filter(p => p.year >= 2020).length
+  }
+};
+
+export default RESEARCH_PAPERS;

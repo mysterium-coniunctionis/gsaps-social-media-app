@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import COMPREHENSIVE_EVENTS from '../data/eventsData';
 
 /**
  * Event detail page
@@ -35,49 +36,41 @@ const EventDetail = () => {
   const [event, setEvent] = useState(null);
 
   useEffect(() => {
-    // TODO: Fetch event details from API
+    // Find event from comprehensive events data
     setTimeout(() => {
-      const mockEvent = {
-        id: parseInt(eventId) || 1,
-        title: 'Psychedelic Science Symposium 2025',
-        slug: eventId,
-        description: 'Annual symposium featuring leading researchers in psychedelic science. Join us for three days of cutting-edge presentations, panel discussions, and networking opportunities with researchers, clinicians, and advocates from around the world.',
-        fullDescription: `
-          The Psychedelic Science Symposium 2025 brings together the global community of psychedelic researchers, clinicians, and advocates for an unprecedented exploration of the latest developments in the field.
+      const foundEvent = COMPREHENSIVE_EVENTS.find(
+        e => e.id === parseInt(eventId) || e.slug === eventId
+      );
 
-          This year's program includes:
-          • Keynote presentations from leading researchers
-          • Panel discussions on clinical applications
-          • Poster sessions showcasing emerging research
-          • Networking events and social activities
-          • Workshop sessions on research methodologies
+      if (foundEvent) {
+        // Map comprehensive event data to component format
+        const mappedEvent = {
+          ...foundEvent,
+          startDate: foundEvent.date.toISOString(),
+          endDate: foundEvent.endDate.toISOString(),
+          attendeeCount: foundEvent.attendees || 0,
+          maxAttendees: foundEvent.maxAttendees || 500,
+          isAttending: Math.random() > 0.5, // Mock - would check user's RSVP status
+          venue: foundEvent.venue?.name || foundEvent.location,
+          venueAddress: foundEvent.venue?.address || '',
+          organizer: foundEvent.organizer || {
+            id: 1,
+            name: 'GSAPS Events Team',
+            avatar_url: ''
+          },
+          // Mock attendees list - would fetch from API
+          attendees: [
+            { id: 1, name: 'Alice Johnson', username: 'alice_researcher', avatar_url: '' },
+            { id: 2, name: 'Bob Williams', username: 'bob_neuroscience', avatar_url: '' },
+            { id: 3, name: 'Carol Davis', username: 'carol_therapist', avatar_url: '' },
+            { id: 4, name: 'David Martinez', username: 'david_student', avatar_url: '' }
+          ]
+        };
+        setEvent(mappedEvent);
+      }
 
-          Join over 500 attendees from around the world for this transformative event.
-        `,
-        startDate: '2025-03-15T09:00:00',
-        endDate: '2025-03-17T17:00:00',
-        location: 'San Francisco, CA',
-        venue: 'Moscone Center',
-        venueAddress: '747 Howard St, San Francisco, CA 94103',
-        attendeeCount: 156,
-        maxAttendees: 500,
-        isAttending: true,
-        category: 'Conference',
-        organizer: {
-          id: 1,
-          name: 'GSAPS Events Team',
-          avatar_url: ''
-        },
-        attendees: [
-          { id: 1, name: 'Alice Johnson', username: 'alice_researcher', avatar_url: '' },
-          { id: 2, name: 'Bob Williams', username: 'bob_neuroscience', avatar_url: '' },
-          { id: 3, name: 'Carol Davis', username: 'carol_therapist', avatar_url: '' },
-          { id: 4, name: 'David Martinez', username: 'david_student', avatar_url: '' }
-        ]
-      };
-      setEvent(mockEvent);
       setLoading(false);
-    }, 500);
+    }, 400);
   }, [eventId]);
 
   const handleRSVP = () => {

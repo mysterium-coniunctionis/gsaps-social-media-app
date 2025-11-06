@@ -15,16 +15,21 @@ import {
 import {
   Menu as MenuIcon,
   Home as HomeIcon,
+  DynamicFeed as FeedIcon,
   Groups as GroupsIcon,
   Event as EventIcon,
   People as PeopleIcon,
   Message as MessageIcon,
+  LibraryBooks as LibraryIcon,
+  School as CoursesIcon,
+  EmojiEvents as LeaderboardIcon,
   Brightness4,
   Brightness7
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';
+import NotificationCenter from '../notifications/NotificationCenter';
 
 /**
  * Main navigation bar component
@@ -71,6 +76,10 @@ const Navbar = () => {
 
   const navItems = [
     { label: 'Home', path: '/', icon: <HomeIcon /> },
+    { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
+    { label: 'Library', path: '/library', icon: <LibraryIcon /> },
+    { label: 'Courses', path: '/courses', icon: <CoursesIcon /> },
+    { label: 'Leaderboard', path: '/leaderboard', icon: <LeaderboardIcon /> },
     { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },
     { label: 'Groups', path: '/groups', icon: <GroupsIcon />, protected: true },
     { label: 'Events', path: '/events', icon: <EventIcon /> },
@@ -127,6 +136,9 @@ const Navbar = () => {
         <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
           {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
+
+        {/* Notification Center (only for logged-in users) */}
+        {currentUser && <NotificationCenter />}
 
         {/* User Menu or Login Button */}
         {currentUser ? (

@@ -1,0 +1,46 @@
+# GitHub Pages Configuration for GSAPS Social Media App
+
+title: GSAPS Social Media App
+description: A next-generation academic social platform for psychedelic research
+url: https://mysterium-coniunctionis.github.io
+baseurl: /gsaps-social-media-app
+
+# Theme
+theme: jekyll-theme-cayman
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+
+# Exclude from processing
+exclude:
+  - node_modules
+  - package.json
+  - package-lock.json
+  - .git
+  - .gitignore
+  - README.md
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# SEO
+lang: en
+author: GSAPS Development Team
+twitter:
+  username: gsaps_org
+  card: summary_large_image
+social:
+  name: GSAPS
+  links:
+    - https://github.com/mysterium-coniunctionis/gsaps-social-media-app
+
+# Google Analytics (optional - add your tracking ID)
+# google_analytics: UA-XXXXXXXXX-X
+
+# Display settings
+show_downloads: true
+github:
+  repository_url: https://github.com/mysterium-coniunctionis/gsaps-social-media-app

@@ -166,6 +166,7 @@ const Navbar = () => {
               }}
             >
               <MenuItem onClick={handleProfile}>Profile</MenuItem>
+              <MenuItem onClick={() => { navigate('/settings'); handleUserMenuClose(); }}>Settings</MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </>

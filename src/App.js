@@ -54,89 +54,95 @@ function App() {
       <Navbar />
       <XPNotification />
 
-      <Box component="main" sx={{ flexGrow: 1, py: 2, mt: 8, mb: { xs: 7, sm: 0 } }}>
-        <Container maxWidth="lg">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/feed" element={
-              <ProtectedRoute>
-                <Feed />
-              </ProtectedRoute>
-            } />
+      <Box component="main" sx={{ flexGrow: 1, mt: 8, mb: { xs: 7, sm: 0 } }}>
+        <Routes>
+          {/* Full-width routes (Messages, Conversation, CoursePlayer) */}
+          <Route path="/messages" element={
+            <ProtectedRoute>
+              <Messages />
+            </ProtectedRoute>
+          } />
 
-            <Route path="/login" element={
-              currentUser ? <Navigate to="/" /> : <Login />
-            } />
-            
-            <Route path="/register" element={
-              currentUser ? <Navigate to="/" /> : <Register />
-            } />
-            
-            <Route path="/profile/:username" element={
-              <ProtectedRoute>
-                <UserProfile />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/members" element={
-              <ProtectedRoute>
-                <Members />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/groups" element={
-              <ProtectedRoute>
-                <Groups />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/groups/:groupId" element={
-              <ProtectedRoute>
-                <GroupDetail />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/events" element={<Events />} />
+          <Route path="/messages/:conversationId" element={
+            <ProtectedRoute>
+              <Conversation />
+            </ProtectedRoute>
+          } />
 
-            <Route path="/events/:eventId" element={<EventDetail />} />
+          <Route path="/courses/:courseId/learn" element={
+            <ProtectedRoute>
+              <CoursePlayer />
+            </ProtectedRoute>
+          } />
 
-            <Route path="/library" element={<ResearchLibrary />} />
+          {/* Container-wrapped routes (standard pages) */}
+          <Route path="*" element={
+            <Container maxWidth="lg" sx={{ py: 2 }}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/feed" element={
+                  <ProtectedRoute>
+                    <Feed />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/library/:paperId" element={<PaperDetail />} />
+                <Route path="/login" element={
+                  currentUser ? <Navigate to="/" /> : <Login />
+                } />
 
-            <Route path="/courses" element={<Courses />} />
+                <Route path="/register" element={
+                  currentUser ? <Navigate to="/" /> : <Register />
+                } />
 
-            <Route path="/courses/:courseId" element={<CourseDetail />} />
+                <Route path="/profile/:username" element={
+                  <ProtectedRoute>
+                    <UserProfile />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/courses/:courseId/learn" element={
-              <ProtectedRoute>
-                <CoursePlayer />
-              </ProtectedRoute>
-            } />
+                <Route path="/members" element={
+                  <ProtectedRoute>
+                    <Members />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/groups" element={
+                  <ProtectedRoute>
+                    <Groups />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/settings" element={
-              <ProtectedRoute>
-                <Settings />
-              </ProtectedRoute>
-            } />
+                <Route path="/groups/:groupId" element={
+                  <ProtectedRoute>
+                    <GroupDetail />
+                  </ProtectedRoute>
+                } />
 
-            <Route path="/messages" element={
-              <ProtectedRoute>
-                <Messages />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="/messages/:conversationId" element={
-              <ProtectedRoute>
-                <Conversation />
-              </ProtectedRoute>
-            } />
-            
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Container>
+                <Route path="/events" element={<Events />} />
+
+                <Route path="/events/:eventId" element={<EventDetail />} />
+
+                <Route path="/library" element={<ResearchLibrary />} />
+
+                <Route path="/library/:paperId" element={<PaperDetail />} />
+
+                <Route path="/courses" element={<Courses />} />
+
+                <Route path="/courses/:courseId" element={<CourseDetail />} />
+
+                <Route path="/leaderboard" element={<Leaderboard />} />
+
+                <Route path="/settings" element={
+                  <ProtectedRoute>
+                    <Settings />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Container>
+          } />
+        </Routes>
       </Box>
       
       {currentUser && <BottomNavigation />}

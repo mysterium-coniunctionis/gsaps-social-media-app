@@ -24,6 +24,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import COMPREHENSIVE_EVENTS from '../data/eventsData';
 
 /**
  * Events listing page
@@ -39,66 +40,20 @@ const Events = () => {
   const [sortBy, setSortBy] = useState('date');
 
   useEffect(() => {
-    // TODO: Fetch events from API
+    // Load comprehensive events data
     setTimeout(() => {
-      const mockEvents = [
-        {
-          id: 1,
-          title: 'Psychedelic Science Symposium 2025',
-          slug: 'psychedelic-science-symposium-2025',
-          description: 'Annual symposium featuring leading researchers in psychedelic science',
-          startDate: '2025-03-15T09:00:00',
-          endDate: '2025-03-17T17:00:00',
-          location: 'San Francisco, CA',
-          venue: 'Moscone Center',
-          attendeeCount: 156,
-          isAttending: true,
-          category: 'Conference',
-          imageUrl: ''
-        },
-        {
-          id: 2,
-          title: 'MDMA-Assisted Therapy Workshop',
-          slug: 'mdma-therapy-workshop',
-          description: 'Hands-on workshop for therapists interested in MDMA-assisted therapy',
-          startDate: '2025-02-28T10:00:00',
-          endDate: '2025-02-28T16:00:00',
-          location: 'Online',
-          venue: 'Zoom',
-          attendeeCount: 89,
-          isAttending: false,
-          category: 'Workshop',
-          imageUrl: ''
-        },
-        {
-          id: 3,
-          title: 'Research Methods Webinar Series',
-          slug: 'research-methods-webinar',
-          description: 'Monthly webinar series on psychedelic research methodologies',
-          startDate: '2025-03-05T14:00:00',
-          endDate: '2025-03-05T15:30:00',
-          location: 'Online',
-          venue: 'Zoom',
-          attendeeCount: 234,
-          isAttending: true,
-          category: 'Webinar',
-          imageUrl: ''
-        },
-        {
-          id: 4,
-          title: 'Student Networking Mixer',
-          slug: 'student-networking-mixer',
-          description: 'Casual networking event for graduate students in psychedelic studies',
-          startDate: '2025-02-25T18:00:00',
-          endDate: '2025-02-25T21:00:00',
-          location: 'Berkeley, CA',
-          venue: 'The Graduate',
-          attendeeCount: 45,
-          isAttending: false,
-          category: 'Social',
-          imageUrl: ''
-        }
-      ];
+      // Use comprehensive events data
+      const mockEvents = COMPREHENSIVE_EVENTS.map(event => ({
+        ...event,
+        startDate: event.date.toISOString(),
+        endDate: event.endDate.toISOString(),
+        attendeeCount: event.attendees,
+        venue: event.isVirtual ? 'Virtual (Zoom)' : (event.venue?.name || event.location),
+        isAttending: Math.random() > 0.6,
+        category: event.type,
+        imageUrl: event.image
+      }));
+
       setEvents(mockEvents);
       setFilteredEvents(mockEvents);
       setLoading(false);

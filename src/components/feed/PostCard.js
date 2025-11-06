@@ -35,9 +35,9 @@ import ReactionsSummary from '../reactions/ReactionsSummary';
 /**
  * PostCard Component - Displays a single post with all engagement features
  * Modern design with glassmorphism and smooth animations
- * Optimized with React.memo and useCallback to prevent unnecessary re-renders
+ * Optimized with React.memo to prevent unnecessary re-renders
  */
-const PostCard = ({
+const PostCard = React.memo(({
   post,
   onReaction,
   onComment,
@@ -224,6 +224,7 @@ const PostCard = ({
                 component="img"
                 src={image}
                 alt={`Post image ${index + 1}`}
+                loading="lazy"
                 sx={{
                   width: '100%',
                   height: post.images.length === 1 ? 'auto' : 200,
@@ -396,7 +397,9 @@ const PostCard = ({
       </Menu>
     </Card>
   );
-};
+});
+
+PostCard.displayName = 'PostCard';
 
 // Memoize PostCard to prevent unnecessary re-renders
 export default React.memo(PostCard);

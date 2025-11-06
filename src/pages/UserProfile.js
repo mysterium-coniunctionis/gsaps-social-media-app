@@ -12,11 +12,9 @@ import {
   CardContent,
   Chip,
   Button,
-  IconButton,
   LinearProgress,
   useTheme,
-  alpha,
-  Divider
+  alpha
 } from '@mui/material';
 import {
   Settings as SettingsIcon,
@@ -289,7 +287,8 @@ const UserProfile = () => {
                     <Button
                       variant="contained"
                       startIcon={<MessageIcon />}
-                      onClick={() => navigate(`/messages/new?to=${profileData.username}`)}
+                      onClick={() => navigate('/messages')}
+                      title={`Send a message to ${profileData.username}`}
                     >
                       Message
                     </Button>

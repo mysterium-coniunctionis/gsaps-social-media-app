@@ -26,7 +26,9 @@ import ResearchLibrary from './pages/library/ResearchLibrary';
 import PaperDetail from './pages/library/PaperDetail';
 import Courses from './pages/courses/Courses';
 import CourseDetail from './pages/courses/CourseDetail';
+import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
+import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component
@@ -106,7 +108,19 @@ function App() {
 
             <Route path="/courses/:courseId" element={<CourseDetail />} />
 
+            <Route path="/courses/:courseId/learn" element={
+              <ProtectedRoute>
+                <CoursePlayer />
+              </ProtectedRoute>
+            } />
+
             <Route path="/leaderboard" element={<Leaderboard />} />
+
+            <Route path="/settings" element={
+              <ProtectedRoute>
+                <Settings />
+              </ProtectedRoute>
+            } />
 
             <Route path="/messages" element={
               <ProtectedRoute>

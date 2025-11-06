@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -41,6 +41,7 @@ const Leaderboard = () => {
 
   useEffect(() => {
     loadLeaderboard();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   const loadLeaderboard = () => {
@@ -243,17 +244,17 @@ const Leaderboard = () => {
     setLeaderboardData(mockUsers);
   };
 
-  const getRankColor = (rank) => {
+  const getRankColor = useMemo(() => (rank) => {
     const rankEntry = Object.values(RANKS).find(r => r.name === rank);
     return rankEntry ? rankEntry.color : theme.palette.text.secondary;
-  };
+  }, [theme.palette.text.secondary]);
 
-  const getRankIcon = (rank) => {
+  const getRankIcon = useMemo(() => (rank) => {
     const rankEntry = Object.values(RANKS).find(r => r.name === rank);
     return rankEntry ? rankEntry.icon : '🌱';
-  };
+  }, []);
 
-  const getMedalIcon = (position) => {
+  const getMedalIcon = useMemo(() => (position) => {
     switch (position) {
       case 1:
         return '🥇';
@@ -264,9 +265,9 @@ const Leaderboard = () => {
       default:
         return null;
     }
-  };
+  }, []);
 
-  const getMedalColor = (position) => {
+  const getMedalColor = useMemo(() => (position) => {
     switch (position) {
       case 1:
         return '#FFD700'; // Gold
@@ -277,7 +278,7 @@ const Leaderboard = () => {
       default:
         return 'transparent';
     }
-  };
+  }, []);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>

@@ -46,11 +46,21 @@ const ResearchLibrary = () => {
   const [papers, setPapers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const [filterTopic, setFilterTopic] = useState('all');
   const [filterYear, setFilterYear] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [viewMode, setViewMode] = useState('grid'); // grid or list
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+
+  // Debounce search query
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   // Available filter options
   const topics = [
@@ -108,37 +118,34 @@ const ResearchLibrary = () => {
   }, [toast, awardXP, updateStat]);
 
   const handleToggleLibrary = useCallback((paperId) => {
-    setPapers(prevPapers => prevPapers.map(paper =>
-      paper.id === paperId
-        ? { ...paper, inMyLibrary: !paper.inMyLibrary }
-        : paper
-    ));
-    // Note: toast message uses stale `papers` reference, but this is intentional
-    // for simplicity. In production, the success message should come from the API response.
-    const paper = papers.find(p => p.id === paperId);
-    if (paper) {
-      toast.success(paper.inMyLibrary ? 'Removed from your library' : 'Added to your library');
-    }
-  }, [toast]); // papers intentionally not included - functional update pattern used
-
-  // Memoize filtered papers to prevent recalculation on every render
-  const filteredPapers = useMemo(() => {
-    return papers.filter(paper => {
-      // Search filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const matchesTitle = paper.title.toLowerCase().includes(query);
-        const matchesAuthors = paper.authors.some(author => author.toLowerCase().includes(query));
-        const matchesAbstract = paper.abstract.toLowerCase().includes(query);
-        const matchesDOI = paper.doi.toLowerCase().includes(query);
-
-        if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
-          return false;
-        }
+    setPapers(prevPapers => {
+      const updatedPapers = prevPapers.map(paper =>
+        paper.id === paperId
+          ? { ...paper, inMyLibrary: !paper.inMyLibrary }
+          : paper
+      );
+      
+      // Find paper and show toast
+      const paper = updatedPapers.find(p => p.id === paperId);
+      if (paper) {
+        toast.success(paper.inMyLibrary ? 'Added to your library' : 'Removed from your library');
       }
+      
+      return updatedPapers;
+    });
+  }, [toast]);
 
-      // Topic filter
-      if (filterTopic !== 'all' && !paper.topics.includes(filterTopic)) {
+  // Filter papers based on search and filters - memoized for performance
+  const filteredPapers = useMemo(() => papers.filter(paper => {
+    // Search filter - use debounced query
+    if (debouncedSearchQuery) {
+      const query = debouncedSearchQuery.toLowerCase();
+      const matchesTitle = paper.title.toLowerCase().includes(query);
+      const matchesAuthors = paper.authors.some(author => author.toLowerCase().includes(query));
+      const matchesAbstract = paper.abstract.toLowerCase().includes(query);
+      const matchesDOI = paper.doi.toLowerCase().includes(query);
+
+      if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
         return false;
       }
 
@@ -148,9 +155,8 @@ const ResearchLibrary = () => {
         if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
       }
 
-      return true;
-    });
-  }, [papers, searchQuery, filterTopic, filterYear]);
+    return true;
+  }), [papers, debouncedSearchQuery, filterTopic, filterYear]);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>

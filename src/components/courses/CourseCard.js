@@ -9,14 +9,12 @@ import {
   Chip,
   Avatar,
   Rating,
-  alpha,
-  LinearProgress
+  alpha
 } from '@mui/material';
 import {
   Person as PersonIcon,
   Schedule as ScheduleIcon,
   MenuBook as LessonsIcon,
-  Star as StarIcon,
   Verified as VerifiedIcon,
   School as CEIcon
 } from '@mui/icons-material';

@@ -54,64 +54,6 @@ const Events = () => {
         imageUrl: event.image
       }));
 
-      const fallbackEvents = [
-        {
-          id: 1,
-          title: 'Psychedelic Science Symposium 2025',
-          slug: 'psychedelic-science-symposium-2025',
-          description: 'Annual symposium featuring leading researchers in psychedelic science',
-          startDate: '2025-03-15T09:00:00',
-          endDate: '2025-03-17T17:00:00',
-          location: 'San Francisco, CA',
-          venue: 'Moscone Center',
-          attendeeCount: 156,
-          isAttending: true,
-          category: 'Conference',
-          imageUrl: ''
-        },
-        {
-          id: 2,
-          title: 'MDMA-Assisted Therapy Workshop',
-          slug: 'mdma-therapy-workshop',
-          description: 'Hands-on workshop for therapists interested in MDMA-assisted therapy',
-          startDate: '2025-02-28T10:00:00',
-          endDate: '2025-02-28T16:00:00',
-          location: 'Online',
-          venue: 'Zoom',
-          attendeeCount: 89,
-          isAttending: false,
-          category: 'Workshop',
-          imageUrl: ''
-        },
-        {
-          id: 3,
-          title: 'Research Methods Webinar Series',
-          slug: 'research-methods-webinar',
-          description: 'Monthly webinar series on psychedelic research methodologies',
-          startDate: '2025-03-05T14:00:00',
-          endDate: '2025-03-05T15:30:00',
-          location: 'Online',
-          venue: 'Zoom',
-          attendeeCount: 234,
-          isAttending: true,
-          category: 'Webinar',
-          imageUrl: ''
-        },
-        {
-          id: 4,
-          title: 'Student Networking Mixer',
-          slug: 'student-networking-mixer',
-          description: 'Casual networking event for graduate students in psychedelic studies',
-          startDate: '2025-02-25T18:00:00',
-          endDate: '2025-02-25T21:00:00',
-          location: 'Berkeley, CA',
-          venue: 'The Graduate',
-          attendeeCount: 45,
-          isAttending: false,
-          category: 'Social',
-          imageUrl: ''
-        }
-      ];
       setEvents(mockEvents);
       setFilteredEvents(mockEvents);
       setLoading(false);

@@ -10,7 +10,6 @@ import {
   Paper,
   Container,
   Chip,
-  Avatar,
   alpha,
   useTheme
 } from '@mui/material';

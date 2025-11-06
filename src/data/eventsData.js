@@ -415,9 +415,9 @@ Format: Interactive lectures, demonstrations, small group practice, case discuss
     fullDescription: `The 5th Annual Women in Psychedelic Science Conference brings together female researchers, clinicians, indigenous wisdom keepers, and advocates to share knowledge, build networks, and advance gender equity in the field.
 
 Conference Themes:
-- Women\'s leadership in psychedelic research
+- Women's leadership in psychedelic research
 - Gender considerations in therapy and clinical trials
-- Indigenous women\'s wisdom traditions
+- Indigenous women's wisdom traditions
 - Reproductive health and psychedelics
 - Sexual trauma healing with MDMA and psilocybin
 - Building inclusive, equitable organizations

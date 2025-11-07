@@ -1,119 +1,192 @@
+import bcrypt from 'bcryptjs';
+
 /**
  * Mock Authentication Service
  * Provides local authentication without requiring a backend
  */
 
-// Mock users database (stored in memory)
-const MOCK_USERS = [
+const USER_STORAGE_KEY = 'gsaps_mock_users';
+const TOKEN_STORAGE_KEY = 'gsaps_mock_tokens';
+const TOKEN_EXPIRY_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+const DEFAULT_USERS = [
   {
     id: 1,
     username: 'demo_user',
     email: 'demo@gsaps.org',
-    password: 'demo123', // In production, this would be hashed
+    password: '$2b$10$ccocGdC6BGpc5DHT7Wc.b.MJNLti/.3ad7xcb.EeSKR3rrmHjJ08e',
     name: 'Demo User',
     role: 'member',
     avatar_url: 'https://i.pravatar.cc/150?img=1',
     credentials: 'Graduate Student',
     bio: 'Psychedelic researcher interested in therapeutic applications',
-    joined: new Date('2024-01-15'),
+    joined: '2024-01-15T00:00:00.000Z',
     verified: true
   },
   {
     id: 2,
     username: 'admin',
     email: 'admin@gsaps.org',
-    password: 'admin_secure_123',
+    password: '$2b$10$fbaoQAixE0hS6uG1ariTWeV86Cyneq/N5VXUsNeUVHzsOyAKq.yuC',
     name: 'Admin User',
     role: 'administrator',
     avatar_url: 'https://i.pravatar.cc/150?img=2',
     credentials: 'PhD, Administrator',
     bio: 'GSAPS platform administrator',
-    joined: new Date('2023-01-01'),
+    joined: '2023-01-01T00:00:00.000Z',
     verified: true
   },
   {
     id: 3,
     username: 'researcher_jane',
     email: 'jane@gsaps.org',
-    password: 'research123',
+    password: '$2b$10$TMwMz8Pv30UHOYYTlT/9p.nGzgznGTff4Wtbtx45C7yIzW/LT.vDW',
     name: 'Dr. Jane Smith',
     role: 'member',
     avatar_url: 'https://i.pravatar.cc/150?img=5',
     credentials: 'PhD, Clinical Psychology',
     bio: 'Researching psilocybin-assisted therapy for depression',
-    joined: new Date('2023-06-20'),
+    joined: '2023-06-20T00:00:00.000Z',
     verified: true
   }
 ];
 
-// Get all users from localStorage or initialize with defaults
+const delay = (ms = 500) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const getCrypto = () => {
+  if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+    return window.crypto;
+  }
+
+  return null;
+};
+
+const generateRandomToken = (size = 32) => {
+  const cryptoImpl = getCrypto();
+
+  if (cryptoImpl) {
+    const bytes = cryptoImpl.getRandomValues(new Uint8Array(size));
+    return Array.from(bytes)
+      .map((value) => value.toString(16).padStart(2, '0'))
+      .join('');
+  }
+
+  return Array.from({ length: size * 2 })
+    .map(() => Math.floor(Math.random() * 16).toString(16))
+    .join('');
+};
+
+const serialiseUsers = (users) =>
+  users.map((user) => ({
+    ...user,
+    joined: user.joined instanceof Date ? user.joined.toISOString() : user.joined
+  }));
+
 const getStoredUsers = () => {
-  const stored = localStorage.getItem('gsaps_mock_users');
+  const stored = localStorage.getItem(USER_STORAGE_KEY);
+
   if (stored) {
-    return JSON.parse(stored);
-  }
-  // Initialize with default users
-  localStorage.setItem('gsaps_mock_users', JSON.stringify(MOCK_USERS));
-  return MOCK_USERS;
-};
-
-// Save users to localStorage
-const saveUsers = (users) => {
-  localStorage.setItem('gsaps_mock_users', JSON.stringify(users));
-};
-
-// Generate a mock JWT token
-const generateMockToken = (userId) => {
-  const payload = {
-    user_id: userId,
-    exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-    iat: Date.now()
-  };
-  // In a real app, this would be a proper JWT. For mock, we just base64 encode
-  return btoa(JSON.stringify(payload));
-};
-
-// Decode mock token
-const decodeMockToken = (token) => {
-  try {
-    const payload = JSON.parse(atob(token));
-    // Check if token is expired
-    if (payload.exp < Date.now()) {
-      throw new Error('Token expired');
+    try {
+      return JSON.parse(stored);
+    } catch (error) {
+      console.warn('Failed to parse stored mock users. Reinitialising store.', error);
+      localStorage.removeItem(USER_STORAGE_KEY);
     }
-    return payload;
+  }
+
+  const defaults = serialiseUsers(DEFAULT_USERS);
+  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(defaults));
+  return defaults;
+};
+
+const saveUsers = (users) => {
+  localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(serialiseUsers(users)));
+};
+
+const getStoredTokens = () => {
+  const stored = localStorage.getItem(TOKEN_STORAGE_KEY);
+
+  if (!stored) {
+    return [];
+  }
+
+  try {
+    return JSON.parse(stored);
   } catch (error) {
-    throw new Error('Invalid token');
+    console.warn('Failed to parse stored mock tokens. Clearing token store.', error);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    return [];
   }
 };
 
-// Simulate API delay
-const delay = (ms = 500) => new Promise(resolve => setTimeout(resolve, ms));
+const saveTokens = (tokens) => {
+  localStorage.setItem(TOKEN_STORAGE_KEY, JSON.stringify(tokens));
+};
+
+const pruneExpiredTokens = (tokens) => {
+  const now = Date.now();
+  return tokens.filter((entry) => entry.exp > now);
+};
+
+const generateMockToken = (userId) => {
+  const existingTokens = pruneExpiredTokens(getStoredTokens());
+  const token = generateRandomToken();
+  const updatedTokens = [
+    ...existingTokens,
+    {
+      token,
+      userId,
+      exp: Date.now() + TOKEN_EXPIRY_MS
+    }
+  ];
+
+  saveTokens(updatedTokens);
+  return token;
+};
+
+const findTokenRecord = (token) => {
+  const tokens = pruneExpiredTokens(getStoredTokens());
+  const record = tokens.find((entry) => entry.token === token) || null;
+  saveTokens(tokens);
+  return record;
+};
+
+const removeToken = (token) => {
+  const tokens = pruneExpiredTokens(getStoredTokens()).filter((entry) => entry.token !== token);
+  saveTokens(tokens);
+};
+
+const sanitiseUser = (user) => {
+  const { password, ...rest } = user;
+  return {
+    ...rest,
+    joined: rest.joined ? new Date(rest.joined) : null
+  };
+};
 
 /**
  * Mock Login
  */
 export const mockLogin = async (username, password) => {
-  await delay(); // Simulate network delay
+  await delay();
 
   const users = getStoredUsers();
-  const user = users.find(
-    u => (u.username === username || u.email === username) && u.password === password
-  );
+  const user = users.find((u) => u.username === username || u.email === username);
 
   if (!user) {
     throw new Error('Invalid username or password');
   }
 
-  // Generate token
+  const isPasswordValid = bcrypt.compareSync(password, user.password);
+
+  if (!isPasswordValid) {
+    throw new Error('Invalid username or password');
+  }
+
   const token = generateMockToken(user.id);
-
-  // Return user data (without password) and token
-  const { password: _, ...userData } = user;
-
   return {
     token,
-    user: userData
+    user: sanitiseUser(user)
   };
 };
 
@@ -121,58 +194,49 @@ export const mockLogin = async (username, password) => {
  * Mock Registration
  */
 export const mockRegister = async (userData) => {
-  await delay(); // Simulate network delay
+  await delay();
 
   const users = getStoredUsers();
 
-  // Validate required fields
   if (!userData.username || !userData.email || !userData.password) {
     throw new Error('Username, email, and password are required');
   }
 
-  // Check if username already exists
-  if (users.find(u => u.username === userData.username)) {
+  if (users.find((u) => u.username === userData.username)) {
     throw new Error('Username already exists');
   }
 
-  // Check if email already exists
-  if (users.find(u => u.email === userData.email)) {
+  if (users.find((u) => u.email === userData.email)) {
     throw new Error('Email already exists');
   }
 
-  // Validate password strength
-  if (userData.password.length < 6) {
-    throw new Error('Password must be at least 6 characters');
+  if (userData.password.length < 8) {
+    throw new Error('Password must be at least 8 characters');
   }
 
-  // Create new user
+  const hashedPassword = bcrypt.hashSync(userData.password, 10);
+
   const newUser = {
     id: users.length + 1,
     username: userData.username,
     email: userData.email,
-    password: userData.password,
+    password: hashedPassword,
     name: userData.name || userData.username,
     role: 'member',
     avatar_url: `https://i.pravatar.cc/150?img=${users.length + 1}`,
     credentials: userData.credentials || 'Member',
     bio: userData.bio || '',
-    joined: new Date(),
+    joined: new Date().toISOString(),
     verified: false
   };
 
-  // Add to users array
-  users.push(newUser);
-  saveUsers(users);
+  const updatedUsers = [...users, newUser];
+  saveUsers(updatedUsers);
 
-  // Generate token
   const token = generateMockToken(newUser.id);
-
-  // Return user data (without password) and token
-  const { password: _, ...userDataResponse } = newUser;
-
   return {
     token,
-    user: userDataResponse
+    user: sanitiseUser(newUser)
   };
 };
 
@@ -180,33 +244,39 @@ export const mockRegister = async (userData) => {
  * Mock Get Current User
  */
 export const mockGetCurrentUser = async (token) => {
-  await delay(300); // Simulate network delay
+  await delay(300);
 
   if (!token) {
     throw new Error('No authentication token provided');
   }
 
-  // Decode token
-  const payload = decodeMockToken(token);
+  const tokenRecord = findTokenRecord(token);
 
-  // Get user from storage
+  if (!tokenRecord) {
+    throw new Error('Invalid or expired session token');
+  }
+
   const users = getStoredUsers();
-  const user = users.find(u => u.id === payload.user_id);
+  const user = users.find((u) => u.id === tokenRecord.userId);
 
   if (!user) {
     throw new Error('User not found');
   }
 
-  // Return user data (without password)
-  const { password: _, ...userData } = user;
-  return userData;
+  return sanitiseUser(user);
 };
 
 /**
  * Mock Logout
  */
 export const mockLogout = async () => {
-  await delay(200); // Simulate network delay
+  await delay(200);
+  const token = localStorage.getItem('gsaps_token');
+
+  if (token) {
+    removeToken(token);
+  }
+
   return { success: true };
 };
 

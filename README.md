@@ -18,6 +18,8 @@
 
 ## 🎯 Vision
 
+> **Important:** This project currently operates as a front-end prototype. All data is served from curated mock fixtures and a hardened local authentication service so teams can demo the UX while the BuddyBoss/WordPress integration is still in flight.
+
 **GSAPS Social Media App** is revolutionizing academic collaboration in psychedelic research by combining **cutting-edge social features** with a **member-driven research repository**. We're building a platform that goes beyond typical social networks to create a thriving knowledge-sharing ecosystem for researchers, students, and practitioners.
 
 ### What Makes Us Different?
@@ -32,8 +34,8 @@
 
 ## 📊 Project Status
 
-### Current Release: **Phase 7 Complete** 🎉 **[GOLD STANDARD]**
-**Build Size:** 323.76 kB (gzipped) | **Completion:** 95%+ feature parity with major platforms
+### Current Release: **Prototype Alignment Update**
+**Build Size:** 323.76 kB (gzipped) | **Status:** Front-end prototype with secure mock services and production integration stubs
 
 > 📚 **Documentation**: See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for a complete guide to all project documentation.
 
@@ -180,7 +182,7 @@ Our **game-changing feature** that differentiates GSAPS from generic social plat
 
 ### ✅ Fully Functional Demo
 
-The app is **100% functional** with comprehensive mock data. All features work out-of-the-box:
+The app runs entirely on secure mock services so every feature can be exercised without a backend. Swap in the production BuddyBoss/WordPress APIs once they are ready by providing real credentials.
 
 ```bash
 # 1. Clone the repository
@@ -198,10 +200,14 @@ The app will open automatically at **http://localhost:3000**
 
 ### 🧪 Test Credentials
 
+The secure mock authentication service seeds a small set of hashed demo accounts in `localStorage`. You can log in with the following sandbox user or register a new one directly in the UI.
+
 ```
 Username: demo_user
 Password: demo123
 ```
+
+> The password is hashed in storage and tokens are short-lived random strings. Clear your browser storage to reset the mock database.
 
 ### 🎯 What Works Right Now
 
@@ -318,9 +324,22 @@ npm start
 ```bash
 npm start          # Start development server (localhost:3000)
 npm test           # Run test suite
+npm run lint       # Lint the project with ESLint (no warnings allowed)
+npm run format     # Check code style with Prettier
 npm run build      # Create production build
 npm run eject      # Eject from Create React App (one-way)
 ```
+
+> Prettier will currently flag legacy files that have not yet been reformatted. Use `npm run format` to spot issues in any modules you touch while we incrementally adopt consistent styling.
+
+### Environment configuration
+
+Create a `.env` file (see `.env.example`) to point the frontend at a BuddyBoss/WordPress backend when it becomes available. Without these variables the app stays in mock mode.
+
+Key variables:
+
+- `REACT_APP_API_URL` – Base URL for the production API
+- `REACT_APP_MEDIA_URL` – Optional CDN or media host
 
 ### Build for Production
 
@@ -391,6 +410,8 @@ gsaps-social-media-app/
 │   ├── data/                        # Demo data
 │   │   ├── coursesData.js           # Demo courses
 │   │   ├── eventsData.js            # Demo events
+│   │   ├── feed/                    # Activity feed fixtures
+│   │   │   └── mockPosts.js         # Structured mock posts and reactions
 │   │   └── researchPapersData.js    # Demo papers
 │   │
 │   ├── pages/                       # Route pages

@@ -15,8 +15,8 @@ import {
   ThumbUp as LikeIcon,
   ThumbUpOutlined as LikeOutlinedIcon
 } from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '../common';
+import { formatRelativeTime } from '../../utils/dateUtils';
 
 /**
  * PaperDiscussion Component
@@ -198,7 +198,7 @@ const PaperDiscussion = ({ paperId }) => {
             </Typography>
           )}
           <Typography variant="caption" color="text.secondary">
-            • {formatDistanceToNow(new Date(comment.createdAt), { addSuffix: true })}
+            • {formatRelativeTime(comment.createdAt)}
           </Typography>
         </Box>
 

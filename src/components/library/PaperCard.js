@@ -24,7 +24,7 @@ import {
   Star as StarIcon,
   Article as ArticleIcon
 } from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeTime } from '../../utils/dateUtils';
 
 /**
  * PaperCard Component
@@ -255,7 +255,7 @@ const PaperCard = ({ paper, viewMode = 'grid', onToggleLibrary, onClick }) => {
           </Avatar>
           <Typography variant="caption" color="text.secondary">
             Uploaded by <strong>{paper.uploadedBy.name}</strong> •{' '}
-            {formatDistanceToNow(new Date(paper.uploadedAt), { addSuffix: true })}
+            {formatRelativeTime(paper.uploadedAt)}
           </Typography>
         </Box>
       </CardContent>

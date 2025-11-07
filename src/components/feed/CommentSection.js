@@ -16,7 +16,7 @@ import {
   ThumbUp as ThumbUpIcon,
   ThumbUpOutlined as ThumbUpOutlinedIcon
 } from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
+import { formatRelativeTime } from '../../utils/dateUtils';
 
 /**
  * CommentSection Component - Display and add comments
@@ -156,14 +156,6 @@ const CommentSection = ({ postId, onComment }) => {
     setCommentText('');
   }, []);
 
-  const formatTimestamp = useCallback((date) => {
-    try {
-      return formatDistanceToNow(new Date(date), { addSuffix: true });
-    } catch {
-      return 'recently';
-    }
-  }, []);
-
   const CommentItem = ({ comment, isReply = false, parentId = null }) => {
     const [anchorEl, setAnchorEl] = useState(null);
 
@@ -274,7 +266,7 @@ const CommentSection = ({ postId, onComment }) => {
             )}
 
             <Typography variant="caption" color="text.secondary" sx={{ pt: 0.5 }}>
-              {formatTimestamp(comment.timestamp)}
+              {formatRelativeTime(comment.timestamp)}
             </Typography>
           </Box>
 

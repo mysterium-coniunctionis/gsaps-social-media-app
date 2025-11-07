@@ -27,10 +27,10 @@ import {
   Report as ReportIcon,
   Verified as VerifiedIcon
 } from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
 import CommentSection from './CommentSection';
 import ReactionButton from '../reactions/ReactionButton';
 import ReactionsSummary from '../reactions/ReactionsSummary';
+import { formatRelativeTime } from '../../utils/dateUtils';
 
 /**
  * PostCard Component - Displays a single post with all engagement features
@@ -85,13 +85,10 @@ const PostCard = React.memo(({
     handleMenuClose();
   }, [onDelete, post.id, handleMenuClose]);
 
-  const formattedTimestamp = useMemo(() => {
-    try {
-      return formatDistanceToNow(new Date(post.timestamp), { addSuffix: true });
-    } catch {
-      return 'recently';
-    }
-  }, [post.timestamp]);
+  const formattedTimestamp = useMemo(() => 
+    formatRelativeTime(post.timestamp), 
+    [post.timestamp]
+  );
 
   return (
     <Card

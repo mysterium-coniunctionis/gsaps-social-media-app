@@ -148,12 +148,18 @@ const ResearchLibrary = () => {
       if (!matchesTitle && !matchesAuthors && !matchesAbstract && !matchesDOI) {
         return false;
       }
+    }
 
-      // Year filter
-      if (filterYear !== 'all') {
-        if (filterYear === 'older' && paper.year >= 2020) return false;
-        if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
-      }
+    // Topic filter
+    if (filterTopic !== 'all' && !paper.topics.includes(filterTopic)) {
+      return false;
+    }
+
+    // Year filter
+    if (filterYear !== 'all') {
+      if (filterYear === 'older' && paper.year >= 2020) return false;
+      if (filterYear !== 'older' && paper.year !== parseInt(filterYear)) return false;
+    }
 
     return true;
   }), [papers, debouncedSearchQuery, filterTopic, filterYear]);

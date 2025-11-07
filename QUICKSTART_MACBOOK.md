@@ -190,7 +190,7 @@ Once you've verified the app works:
 
 1. **Full Feature Demo**: See [DEMO_INSTRUCTIONS.md](DEMO_INSTRUCTIONS.md) for comprehensive walkthrough
 2. **Component Documentation**: Check [UI_COMPONENTS_GUIDE.md](UI_COMPONENTS_GUIDE.md)
-3. **Technical Details**: Read [PHASE_1_COMPLETION_REPORT.md](PHASE_1_COMPLETION_REPORT.md)
+3. **Technical Details**: Read [Phase 1 Completion Report](.archive/phase-reports/PHASE_1_COMPLETION_REPORT.md) (archived)
 
 ---
 

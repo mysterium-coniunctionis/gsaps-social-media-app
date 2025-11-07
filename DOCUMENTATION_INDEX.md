@@ -61,6 +61,10 @@ This document provides a comprehensive index of all documentation in the GSAPS S
 ### Project Information
 - **[PROJECT_INFO.md](PROJECT_INFO.md)** - Basic project information
 
+### Documentation Maintenance
+- **[DOCUMENTATION_CLEANUP_SUMMARY.md](DOCUMENTATION_CLEANUP_SUMMARY.md)** - Summary of Nov 7, 2025 documentation cleanup
+- **[DOCUMENTATION_CLEANUP_PLAN.md](DOCUMENTATION_CLEANUP_PLAN.md)** - Cleanup strategy and implementation plan
+
 ---
 
 ## 📦 Archive Structure
@@ -145,11 +149,12 @@ Historical documents and detailed reports have been moved to `.archive/` to keep
 - 🔄 **Consolidated** - Multiple documents merged into one
 
 ### Recent Changes (Nov 7, 2025)
-- ✅ Archived 20+ historical documents to `.archive/`
+- ✅ Archived 28 historical documents to `.archive/`
 - ✅ Consolidated 4 QA reports into `QUALITY_ASSURANCE.md`
 - ✅ Removed duplicate demo documentation
 - ✅ Organized archive with subdirectories
 - ✅ Updated this index to reflect new structure
+- ✅ Created `DOCUMENTATION_CLEANUP_SUMMARY.md` with full cleanup report
 
 ### Maintenance Guidelines
 This index should be updated whenever:

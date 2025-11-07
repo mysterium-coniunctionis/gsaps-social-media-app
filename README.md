@@ -439,9 +439,14 @@ gsaps-social-media-app/
 │   ├── App.js                       # Main app with routing
 │   └── index.js                     # React entry point
 │
+├── .archive/                         # Archived historical documentation
+│   ├── README.md                     # Archive directory guide
+│   ├── sessions/                     # Session notes
+│   ├── phase-reports/                # Phase completion reports
+│   └── upgrade-summaries/            # Feature upgrade summaries
+│
 ├── DEMO_INSTRUCTIONS.md             # Comprehensive demo guide
 ├── UI_COMPONENTS_GUIDE.md           # Component documentation
-├── PHASE_1_COMPLETION_REPORT.md     # Phase 1 technical report
 ├── package.json                     # Dependencies and scripts
 └── README.md                        # This file
 ```

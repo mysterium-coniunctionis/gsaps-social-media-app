@@ -20,6 +20,7 @@ export const XP_ACTIONS = {
   // Comments & Engagement
   COMMENT: 5,
   REPLY_TO_COMMENT: 3,
+  ADD_REACTION: 3,
   RECEIVE_COMMENT_REACTION: 1,
 
   // Research Library
@@ -41,6 +42,7 @@ export const XP_ACTIONS = {
   REVIEW_COURSE: 15,
 
   // Social
+  SHARE_POST: 8,
   FOLLOW_USER: 2,
   GAIN_FOLLOWER: 5,
   JOIN_GROUP: 5,

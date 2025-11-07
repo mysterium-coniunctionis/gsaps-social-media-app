@@ -12,7 +12,6 @@ import {
   Divider
 } from '@mui/material';
 import {
-  People as PeopleIcon,
   Schedule as ScheduleIcon,
   Place as PlaceIcon,
   VideoCall as VideoIcon

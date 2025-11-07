@@ -43,6 +43,8 @@ export const XP_ACTIONS = {
   // Social
   FOLLOW_USER: 2,
   GAIN_FOLLOWER: 5,
+  ADD_REACTION: 3,
+  SHARE_POST: 8,
   JOIN_GROUP: 5,
   ATTEND_EVENT: 10,
   SEND_MESSAGE: 1,

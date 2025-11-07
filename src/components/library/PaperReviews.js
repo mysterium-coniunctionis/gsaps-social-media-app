@@ -13,8 +13,8 @@ import {
   Grid
 } from '@mui/material';
 import { Star as StarIcon, Edit as EditIcon } from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
 import { useToast } from '../common';
+import { formatRelativeTime } from '../../utils/dateUtils';
 
 /**
  * PaperReviews Component
@@ -244,7 +244,7 @@ const PaperReviews = ({ paper }) => {
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
                   <Rating value={review.rating} readOnly size="small" />
                   <Typography variant="caption" color="text.secondary">
-                    {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                    {formatRelativeTime(review.createdAt)}
                   </Typography>
                 </Box>
 

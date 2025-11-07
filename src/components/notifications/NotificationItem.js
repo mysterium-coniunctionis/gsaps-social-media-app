@@ -16,8 +16,8 @@ import {
   Event as EventIcon,
   Close as CloseIcon
 } from '@mui/icons-material';
-import { formatDistanceToNow } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
+import { formatRelativeTime } from '../../utils/dateUtils';
 
 /**
  * Individual notification item component
@@ -134,7 +134,7 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
         }
         secondary={
           <Typography variant="caption" color="text.secondary">
-            {formatDistanceToNow(new Date(notification.timestamp), { addSuffix: true })}
+            {formatRelativeTime(notification.timestamp)}
           </Typography>
         }
       />

@@ -34,12 +34,12 @@ import {
   School as SchoolIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
-import { formatDistanceToNow } from 'date-fns';
 import { fadeInUp } from '../../theme/animations';
 import { useToast } from '../../components/common';
 import PaperDiscussion from '../../components/library/PaperDiscussion';
 import PaperReviews from '../../components/library/PaperReviews';
 import CitationExport from '../../components/library/CitationExport';
+import { formatRelativeTime } from '../../utils/dateUtils';
 import RelatedPapers from '../../components/library/RelatedPapers';
 
 /**
@@ -475,7 +475,7 @@ const PaperDetail = () => {
                 </Box>
 
                 <Typography variant="caption" color="text.secondary">
-                  Uploaded {formatDistanceToNow(new Date(paper.uploadedAt), { addSuffix: true })}
+                  Uploaded {formatRelativeTime(paper.uploadedAt)}
                 </Typography>
               </CardContent>
             </Card>

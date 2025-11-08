@@ -1,8 +1,10 @@
 # 📚 GSAPS Documentation Index
 
-**Last Updated**: November 2, 2025
+**Last Updated**: November 7, 2025
 
 This document provides a comprehensive index of all documentation in the GSAPS Social Media App repository, organized by purpose and relevance.
+
+> **📌 Note:** Historical documents and detailed reports have been archived to `.archive/` to reduce clutter. See [Archive Structure](#-archive-structure) below.
 
 ---
 
@@ -46,52 +48,69 @@ This document provides a comprehensive index of all documentation in the GSAPS S
 - **[.env.example](.env.example)** - Environment variables template
 
 ### Quality & Performance
+- **[QUALITY_ASSURANCE.md](QUALITY_ASSURANCE.md)** - Consolidated QA documentation and testing reports
 - **[PERFORMANCE_IMPROVEMENTS.md](PERFORMANCE_IMPROVEMENTS.md)** - Performance optimization strategies
-- **[PERFORMANCE_OPTIMIZATION_SUMMARY.md](PERFORMANCE_OPTIMIZATION_SUMMARY.md)** - Summary of performance improvements
-- **[HEALTH_CHECK.md](HEALTH_CHECK.md)** - System health monitoring
 
 ### Production Readiness
 - **[MASTER_PRODUCTION_READINESS_PLAN.md](MASTER_PRODUCTION_READINESS_PLAN.md)** - Production deployment checklist and plan
 
 ---
 
-## 📊 Reports & Analysis
+## 📝 Additional Documentation
 
-### Quality Assurance
-- **[QA_COMPREHENSIVE_REPORT.md](QA_COMPREHENSIVE_REPORT.md)** - Comprehensive QA test results
-- **[QUIZ_ASSESSMENT_REPORT.md](QUIZ_ASSESSMENT_REPORT.md)** - Quiz system assessment
-- **[DEMO_DATA_QUALITY_AUDIT.md](DEMO_DATA_QUALITY_AUDIT.md)** - Demo data quality audit
+### Project Information
+- **[PROJECT_INFO.md](PROJECT_INFO.md)** - Basic project information
 
-### Phase Reports
-- **[PHASE_1_ANALYSIS_REPORT.md](PHASE_1_ANALYSIS_REPORT.md)** - Phase 1 analysis
-- **[PHASE_1_COMPLETION_REPORT.md](PHASE_1_COMPLETION_REPORT.md)** - Phase 1 completion report
-- **[PHASE_1_CLEANUP_ANALYSIS.md](PHASE_1_CLEANUP_ANALYSIS.md)** - Phase 1 cleanup analysis
-- **[PHASE_2_CLEANUP_SUMMARY.md](PHASE_2_CLEANUP_SUMMARY.md)** - Phase 2 cleanup summary
-
-### Feature Reports
-- **[COURSES_ANALYSIS_REPORT.md](COURSES_ANALYSIS_REPORT.md)** - Course system analysis
-- **[COURSES_MESSAGES_UPGRADE_SUMMARY.md](COURSES_MESSAGES_UPGRADE_SUMMARY.md)** - Courses/Messages upgrade summary
-- **[DEMO_CONTENT_EXPANSION_SUMMARY.md](DEMO_CONTENT_EXPANSION_SUMMARY.md)** - Demo content expansion summary
-- **[REPO_REVIEW_SUMMARY.md](REPO_REVIEW_SUMMARY.md)** - Repository review summary
+### Documentation Maintenance
+- **[DOCUMENTATION_CLEANUP_SUMMARY.md](DOCUMENTATION_CLEANUP_SUMMARY.md)** - Summary of Nov 7, 2025 documentation cleanup
+- **[DOCUMENTATION_CLEANUP_PLAN.md](DOCUMENTATION_CLEANUP_PLAN.md)** - Cleanup strategy and implementation plan
 
 ---
 
-## 📝 Historical/Reference Documents
+## 📦 Archive Structure
 
-### Planning & Strategy
-- **[EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)** - Executive summary of the project
-- **[PROJECT_INFO.md](PROJECT_INFO.md)** - Basic project information
-- **[AGENTIC_STRATEGIC_EVALUATION.md](AGENTIC_STRATEGIC_EVALUATION.md)** - Strategic evaluation
+Historical documents and detailed reports have been moved to `.archive/` to keep the root directory clean:
 
-### Session Notes (Historical)
-- **[SESSION_CONTINUATION_NOTES.md](SESSION_CONTINUATION_NOTES.md)** - Session continuation notes (October 31, 2025)
-- **[SESSION_SUMMARY.md](SESSION_SUMMARY.md)** - Session summary (October 31, 2025)
+### `.archive/` - Historical Documents
+- `EXECUTIVE_SUMMARY.md` - Strategic planning (historical)
+- `AGENTIC_STRATEGIC_EVALUATION.md` - Strategic evaluation (historical)
+- `AGENT_TEAM_ARCHITECTURE.md` - Team architecture (historical)
+- `TRANSFORMATION_STRATEGY.md` - Early transformation strategy (historical)
+- `FIX_LOGIN.md` - Login troubleshooting (issue resolved)
+- `MERGE_INSTRUCTIONS.md` - Merge instructions (historical)
+- `SYNC_TO_MAIN_INSTRUCTIONS.md` - Sync instructions (historical)
+- `.claude-cleanup.md` - Cleanup notes (historical)
+- `REPO_REVIEW_SUMMARY.md` - Repository review (historical)
 
-### Archived/Obsolete
-- **[FIX_LOGIN.md](FIX_LOGIN.md)** - Login troubleshooting (issue resolved)
-- **[MERGE_INSTRUCTIONS.md](MERGE_INSTRUCTIONS.md)** - Merge instructions (historical)
-- **[SYNC_TO_MAIN_INSTRUCTIONS.md](SYNC_TO_MAIN_INSTRUCTIONS.md)** - Sync to main instructions (historical)
-- **[COURSES_MESSAGES_UPGRADE_PLAN.md](COURSES_MESSAGES_UPGRADE_PLAN.md)** - Upgrade plan (completed)
+### `.archive/sessions/` - Session Notes
+- `SESSION_CONTINUATION_NOTES.md` - October 31, 2025
+- `SESSION_SUMMARY.md` - October 31, 2025
+- `SESSION_IMPROVEMENTS_SUMMARY.md` - Session improvements
+
+### `.archive/phase-reports/` - Phase Completion Reports
+- `PHASE_1_ANALYSIS_REPORT.md`
+- `PHASE_1_COMPLETION_REPORT.md`
+- `PHASE_1_CLEANUP_ANALYSIS.md`
+- `PHASE_2_CLEANUP_SUMMARY.md`
+
+### `.archive/upgrade-summaries/` - Feature Upgrade Summaries
+- `COURSES_MESSAGES_UPGRADE_SUMMARY.md`
+- `COURSES_MESSAGES_UPGRADE_PLAN.md`
+- `DEMO_CONTENT_EXPANSION_SUMMARY.md`
+- `DOCUMENTATION_UPDATE_SUMMARY.md`
+- `PERFORMANCE_OPTIMIZATION_SUMMARY.md`
+- `REFACTORING_SUMMARY.md`
+
+### `.archive/` - Detailed QA Reports
+- `QA_COMPREHENSIVE_REPORT.md` - Detailed test results (consolidated into QUALITY_ASSURANCE.md)
+- `CONTENT_VERIFICATION_REPORT.md` - Content validation
+- `DEMO_DATA_QUALITY_AUDIT.md` - Data quality audit
+- `QUIZ_ASSESSMENT_REPORT.md` - Quiz system testing
+- `COURSES_ANALYSIS_REPORT.md` - Course system analysis
+- `IMMEDIATE_ACTIONS.md` - Action items (historical)
+- `HEALTH_CHECK.md` - System monitoring (historical)
+
+---
 
 ---
 
@@ -105,39 +124,44 @@ This document provides a comprehensive index of all documentation in the GSAPS S
 5. Check [PROJECT_STATUS.md](PROJECT_STATUS.md) for current state
 
 ### For Product Managers
-1. [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md) - High-level overview
-2. [PROJECT_STATUS.md](PROJECT_STATUS.md) - Current status and roadmap
-3. [GOLD_STANDARD_STATUS.md](GOLD_STANDARD_STATUS.md) - Feature completeness
-4. [GENAI_FEATURES_ROADMAP.md](GENAI_FEATURES_ROADMAP.md) - Future AI features
+1. [PROJECT_STATUS.md](PROJECT_STATUS.md) - Current status and roadmap
+2. [GOLD_STANDARD_STATUS.md](GOLD_STANDARD_STATUS.md) - Feature completeness
+3. [GENAI_FEATURES_ROADMAP.md](GENAI_FEATURES_ROADMAP.md) - Future AI features
+4. `.archive/EXECUTIVE_SUMMARY.md` - Strategic planning (archived)
 
 ### For QA/Testing
-1. [QA_COMPREHENSIVE_REPORT.md](QA_COMPREHENSIVE_REPORT.md) - Test coverage
+1. [QUALITY_ASSURANCE.md](QUALITY_ASSURANCE.md) - Consolidated QA documentation
 2. [DEMO_INSTRUCTIONS.md](DEMO_INSTRUCTIONS.md) - Feature walkthrough
-3. [DEMO_DATA_QUALITY_AUDIT.md](DEMO_DATA_QUALITY_AUDIT.md) - Data quality
+3. `.archive/QA_COMPREHENSIVE_REPORT.md` - Detailed test results (archived)
 
 ### For DevOps/Deployment
 1. [GITHUB_PAGES_SETUP.md](GITHUB_PAGES_SETUP.md) - Deployment setup
 2. [MASTER_PRODUCTION_READINESS_PLAN.md](MASTER_PRODUCTION_READINESS_PLAN.md) - Production checklist
-3. [PERFORMANCE_OPTIMIZATION_SUMMARY.md](PERFORMANCE_OPTIMIZATION_SUMMARY.md) - Performance metrics
+3. [PERFORMANCE_IMPROVEMENTS.md](PERFORMANCE_IMPROVEMENTS.md) - Performance optimization
 
 ---
 
-## 📌 Document Status Legend
+## 📌 Documentation Maintenance
 
-- ✅ **Current & Active** - Up-to-date, actively maintained
-- 📊 **Reference** - Historical record, useful for context
-- 📦 **Archived** - Outdated but preserved for history
-- 🔄 **In Progress** - Being updated or created
+### Status Legend
+- ✅ **Active** - Current, actively maintained documentation
+- 📦 **Archived** - Historical documents in `.archive/` directory
+- 🔄 **Consolidated** - Multiple documents merged into one
 
----
+### Recent Changes (Nov 7, 2025)
+- ✅ Archived 28 historical documents to `.archive/`
+- ✅ Consolidated 4 QA reports into `QUALITY_ASSURANCE.md`
+- ✅ Removed duplicate demo documentation
+- ✅ Organized archive with subdirectories
+- ✅ Updated this index to reflect new structure
+- ✅ Created `DOCUMENTATION_CLEANUP_SUMMARY.md` with full cleanup report
 
-## 🔄 Maintenance
-
+### Maintenance Guidelines
 This index should be updated whenever:
 - New documentation is added
 - Documentation is deprecated or archived
 - Major sections are reorganized
 - Documentation roles/purposes change
 
-**Maintained by**: Development team
+**Maintained by**: Development team  
 **Review frequency**: Monthly or with major releases

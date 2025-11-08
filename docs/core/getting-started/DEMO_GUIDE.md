@@ -422,7 +422,7 @@ These are intentional for the demo:
 4. **No Real API:** Not connected to WordPress yet
 5. **Simulated Actions:** Join/Leave/RSVP just show alerts
 
-These will be fixed when you integrate the WordPress API (see IMPLEMENTATION_GUIDE.md)!
+These will be fixed when you integrate the WordPress API (see [IMPLEMENTATION_GUIDE.md](../development-guides/IMPLEMENTATION_GUIDE.md))!
 
 ---
 

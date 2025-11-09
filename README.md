@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Features](#-features) • [Demo](#-quick-demo) • [Tech Stack](#-technology-stack) • [Getting Started](#-getting-started) • [Roadmap](#-roadmap)
+[Features](#-features) • [Demo](#-quick-demo) • [Tech Stack](#-technology-stack) • [Getting Started](#-getting-started) • [Documentation](#documentation-layout) • [Roadmap](#-roadmap)
 
 </div>
 
@@ -37,7 +37,7 @@
 ### Current Release: **Prototype Alignment Update**
 **Build Size:** 323.76 kB (gzipped) | **Status:** Front-end prototype with secure mock services and production integration stubs
 
-> 📚 **Documentation**: See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for a complete guide to all project documentation.
+> 📚 **Documentation**: See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for a complete guide to all project documentation and the themed folders under [`docs/`](docs/).
 
 <table>
 <tr>
@@ -109,7 +109,7 @@
   - AI Research Assistant
   - And 11 more innovative features!
 
-  📋 See [GENAI_FEATURES_ROADMAP.md](GENAI_FEATURES_ROADMAP.md)
+  📋 See [GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md)
 
 ### 📅 Future Phases
 
@@ -253,7 +253,7 @@ Password: demo123
 
 ### 📖 Comprehensive Demo Guide
 
-For a detailed feature walkthrough, see **[DEMO_INSTRUCTIONS.md](DEMO_INSTRUCTIONS.md)**
+For a detailed feature walkthrough, see **[DEMO_INSTRUCTIONS.md](docs/core/getting-started/DEMO_INSTRUCTIONS.md)**
 
 ### 📸 Live Screenshots
 
@@ -318,6 +318,8 @@ cp .env.example .env
 # 4. Start development server
 npm start
 ```
+
+> 📘 **Need a guided tour?** Jump to the [MacBook Quick Start](docs/core/getting-started/QUICKSTART_MACBOOK.md) for a five-minute walkthrough, or browse every reference in the [documentation index](DOCUMENTATION_INDEX.md).
 
 ### Available Scripts
 
@@ -439,17 +441,48 @@ gsaps-social-media-app/
 │   ├── App.js                       # Main app with routing
 │   └── index.js                     # React entry point
 │
-├── .archive/                         # Archived historical documentation
-│   ├── README.md                     # Archive directory guide
-│   ├── sessions/                     # Session notes
-│   ├── phase-reports/                # Phase completion reports
-│   └── upgrade-summaries/            # Feature upgrade summaries
+├── docs/                            # Comprehensive documentation hub
+│   ├── _config.yml
+│   ├── index.html
+│   ├── core/
+│   │   ├── getting-started/         # Quick start guides & demo runbooks
+│   │   ├── development-guides/      # Architecture and implementation guides
+│   │   └── project-status/          # Executive and status reporting
+│   ├── features/
+│   │   ├── lms/                     # LMS feature documentation
+│   │   └── research-library/        # Research library overview
+│   ├── planning-strategy/           # Roadmaps and strategic plans
+│   ├── reports/
+│   │   ├── qa/                      # QA evidence
+│   │   ├── phase/                   # Milestone summaries
+│   │   ├── performance/             # Performance and refactoring notes
+│   │   └── features/                # Feature-focused reports
+│   ├── operations/
+│   │   ├── active/                  # Current operational runbooks
+│   │   └── archived/                # Historical procedures
+│   └── history/
+│       └── session-notes/           # Session summaries and retrospectives
 │
-├── DEMO_INSTRUCTIONS.md             # Comprehensive demo guide
-├── UI_COMPONENTS_GUIDE.md           # Component documentation
+├── DOCUMENTATION_INDEX.md           # Curated documentation guide
+├── LICENSE                          # Project license
 ├── package.json                     # Dependencies and scripts
 └── README.md                        # This file
 ```
+
+### Documentation Layout
+
+The dedicated documentation tree keeps everything organized by theme:
+
+- `docs/core/getting-started/` – Quick start guides and demo scripts.
+- `docs/core/development-guides/` – Engineering playbooks, architecture briefs, and component guidance.
+- `docs/core/project-status/` – Executive status reporting and project snapshots.
+- `docs/planning-strategy/` – Roadmaps, strategic evaluations, and immediate action plans.
+- `docs/features/{lms,research-library}/` – Feature-specific manuals.
+- `docs/reports/{qa,phase,performance,features}/` – QA evidence, milestone reports, performance improvements, and feature analyses.
+- `docs/operations/{active,archived}/` – Production runbooks plus historical procedures.
+- `docs/history/session-notes/` – Archived session notes for future reference.
+
+See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each document.
 
 ---
 
@@ -504,7 +537,7 @@ gsaps-social-media-app/
 - [x] Activity tab and stats tab
 
 ### 🚀 Phase 8: GenAI-Powered Features (PLANNED - Not Yet Started)
-**18 AI Features Planned** - See [GENAI_FEATURES_ROADMAP.md](GENAI_FEATURES_ROADMAP.md)
+**18 AI Features Planned** - See [GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md)
 
 ⚠️ **Status**: Planning complete, implementation requires WordPress API integration + AI infrastructure
 

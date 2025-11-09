@@ -112,7 +112,7 @@ The GSAPS Social Media web application is a custom front-end interface that inte
 ### Critical Note: Integration Circles Status
 
 **Integration Circles (Sprint 1) is NOT YET IMPLEMENTED** despite having:
-- ✅ Detailed implementation plan (SPRINT_1_IMPLEMENTATION_PLAN.md)
+- ✅ Detailed implementation plan ([SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md))
 - ✅ Mock data files (circlesData.js, circleResources.js)
 - ✅ One component (CircleCard.js)
 - ❌ Main pages (IntegrationCircles.js, CircleDetail.js) - NOT CREATED
@@ -184,7 +184,7 @@ Several issues were identified and fixed during development:
 
 ### Medium-term Goals (3-6 Months)
 
-1. **Phase 8: GenAI-Powered Features** (see GENAI_FEATURES_ROADMAP.md)
+1. **Phase 8: GenAI-Powered Features** (see [GENAI_FEATURES_ROADMAP.md](../../planning-strategy/GENAI_FEATURES_ROADMAP.md))
    - AI Course Assistant & Q&A Bot
    - Smart Research Paper Recommendations
    - AI Content Moderation & Safety

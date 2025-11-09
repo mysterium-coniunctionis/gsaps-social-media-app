@@ -10,14 +10,14 @@ This document provides a comprehensive index of all documentation in the GSAPS S
 
 Use this quick map to understand how the repository’s Markdown documentation is organized under the `docs/` tree:
 
-- `docs/core/getting-started/` – Quick start guides and demo runbooks.
-- `docs/core/development-guides/` – Architecture notes, implementation briefs, and component references.
-- `docs/core/project-status/` – Executive summaries, project health, and milestone status snapshots.
-- `docs/features/{lms,research-library}/` – Feature-specific manuals for major product pillars.
-- `docs/planning-strategy/` – Strategic roadmaps, transformation plans, and immediate action lists.
-- `docs/reports/{qa,phase,performance,features}/` – QA evidence, milestone closeout reports, performance reviews, and feature audits.
-- `docs/operations/{active,archived}/` – Active runbooks and historical operational procedures.
-- `docs/history/session-notes/` – Archived session notes and facilitation summaries.
+- [`docs/core/getting-started/`](docs/core/getting-started/) – Quick start guides and demo runbooks.
+- [`docs/core/development-guides/`](docs/core/development-guides/) – Architecture notes, implementation briefs, and component references.
+- [`docs/core/project-status/`](docs/core/project-status/) – Executive summaries, project health, and milestone status snapshots.
+- [`docs/features/lms/`](docs/features/lms/) & [`docs/features/research-library/`](docs/features/research-library/) – Feature-specific manuals for major product pillars.
+- [`docs/planning-strategy/`](docs/planning-strategy/) – Strategic roadmaps, transformation plans, and immediate action lists.
+- [`docs/reports/qa/`](docs/reports/qa/), [`docs/reports/phase/`](docs/reports/phase/), [`docs/reports/performance/`](docs/reports/performance/), [`docs/reports/features/`](docs/reports/features/) – QA evidence, milestone closeout reports, performance reviews, and feature audits.
+- [`docs/operations/active/`](docs/operations/active/) & [`docs/operations/archived/`](docs/operations/archived/) – Active runbooks and historical operational procedures.
+- [`docs/history/session-notes/`](docs/history/session-notes/) – Archived session notes and facilitation summaries.
 
 ---
 

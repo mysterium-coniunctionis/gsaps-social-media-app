@@ -319,6 +319,8 @@ cp .env.example .env
 npm start
 ```
 
+> 📘 **Need a guided tour?** Jump to the [MacBook Quick Start](docs/core/getting-started/QUICKSTART_MACBOOK.md) for a five-minute walkthrough, or browse every reference in the [documentation index](DOCUMENTATION_INDEX.md).
+
 ### Available Scripts
 
 ```bash

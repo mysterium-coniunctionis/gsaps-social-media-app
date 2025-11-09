@@ -2,7 +2,7 @@
 
 **Time to demo: ~5 minutes** ⏱️
 
-This guide will get the GSAPS Social Media App running on your MacBook Pro in just a few steps. For additional reference material, consult the [DOCUMENTATION_INDEX.md](../../../DOCUMENTATION_INDEX.md) to browse the complete documentation library.
+This guide will get the GSAPS Social Media App running on your MacBook Pro in just a few steps. It now lives under `docs/core/getting-started/`, so any cross-links back to the repo root use `../../../`. For additional reference material, consult the [DOCUMENTATION_INDEX.md](../../../DOCUMENTATION_INDEX.md) to browse the complete documentation library.
 
 ---
 

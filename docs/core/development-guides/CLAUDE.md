@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **📁 Documentation Organization**: This file is located at `docs/core/development-guides/CLAUDE.md`. All documentation has been organized into themed folders under `docs/`. See [DOCUMENTATION_INDEX.md](../../../DOCUMENTATION_INDEX.md) for the complete structure.
+
 ## Project Overview
 
 GSAPS Social Media App is a React-based academic social platform for the Graduate Student Association for Psychedelic Studies. It combines social networking features (posts, messaging, groups, events) with unique academic features including a Research Library (papers with ratings/reviews/discussions) and a Learning Management System (courses with CE credits, quizzes, and certifications). The app is designed to integrate with WordPress/BuddyBoss via REST API but currently runs with comprehensive mock data.
@@ -274,16 +276,30 @@ When implementing real API integration:
 
 ## Roadmap and Documentation
 
-- **README.md**: Comprehensive project overview, features, roadmap
-- **DEMO_INSTRUCTIONS.md**: Full feature walkthrough for demos
-- **PROJECT_STATUS.md**: Current status, completed phases, priorities, next steps
-- **GOLD_STANDARD_STATUS.md**: Detailed achievements report and feature breakdown
-- **[SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)**: Integration Circles implementation plan (PLANNED FEATURE - NOT YET IMPLEMENTED)
+Documentation is organized in themed folders under `docs/`:
+
+**Core Documentation:**
+- **[README.md](../../../README.md)**: Comprehensive project overview, features, roadmap
+- **[DOCUMENTATION_INDEX.md](../../../DOCUMENTATION_INDEX.md)**: Complete documentation navigation hub
+- **[DEMO_INSTRUCTIONS.md](../getting-started/DEMO_INSTRUCTIONS.md)**: Full feature walkthrough for demos
+- **[QUICKSTART_MACBOOK.md](../getting-started/QUICKSTART_MACBOOK.md)**: Quick start guide for local development
+
+**Development Guides (this directory):**
+- **[IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)**: Implementation details for all completed features
+- **[UI_COMPONENTS_GUIDE.md](UI_COMPONENTS_GUIDE.md)**: Component documentation and usage
+
+**Project Status:**
+- **[PROJECT_STATUS.md](../project-status/PROJECT_STATUS.md)**: Current status, completed phases, priorities, next steps
+- **[GOLD_STANDARD_STATUS.md](../project-status/GOLD_STANDARD_STATUS.md)**: Detailed achievements report and feature breakdown
+
+**Feature Documentation:**
+- **[LMS_SYSTEM_DOCUMENTATION.md](../../features/lms/LMS_SYSTEM_DOCUMENTATION.md)**: Learning Management System documentation
+- **[RESEARCH_LIBRARY_SUMMARY.md](../../features/research-library/RESEARCH_LIBRARY_SUMMARY.md)**: Research Library features
+
+**Planning & Roadmap:**
+- **[SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)**: Integration Circles implementation plan (PLANNED - NOT YET IMPLEMENTED)
 - **[GENAI_FEATURES_ROADMAP.md](../../planning-strategy/GENAI_FEATURES_ROADMAP.md)**: Phase 8 AI features roadmap (18 planned features for future)
-- **UI_COMPONENTS_GUIDE.md**: Component documentation and usage
-- **IMPLEMENTATION_GUIDE.md**: Implementation details for all completed features
-- **LMS_SYSTEM_DOCUMENTATION.md**: Learning Management System documentation
-- **QUICKSTART_MACBOOK.md**: Quick start guide for local development
+- **[INNOVATION_ROADMAP.md](../../planning-strategy/INNOVATION_ROADMAP.md)**: Long-term innovation roadmap
 
 ## Build and Deployment
 

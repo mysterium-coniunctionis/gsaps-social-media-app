@@ -247,7 +247,7 @@ Production build is:
 
 ## 📞 Need Help?
 
-- **Documentation**: Check [README.md](../../README.md) for full details
+- **Documentation**: Check [README.md](../../../README.md) for full details
 - **Issues**: Report bugs on [GitHub Issues](https://github.com/mysterium-coniunctionis/gsaps-social-media-app/issues)
 - **Questions**: Ask in [GitHub Discussions](https://github.com/mysterium-coniunctionis/gsaps-social-media-app/discussions)
 
@@ -268,6 +268,6 @@ Production build is:
 
 **Ready to explore?** 🎉
 
-[⬆ Back to README](../../README.md) • [📖 Full Demo Guide](DEMO_INSTRUCTIONS.md)
+[⬆ Back to README](../../../README.md) • [📖 Full Demo Guide](DEMO_INSTRUCTIONS.md)
 
 </div>

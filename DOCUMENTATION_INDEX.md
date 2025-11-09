@@ -76,10 +76,7 @@ Use this quick map to understand how the repository’s Markdown documentation i
 
 ### Production Readiness
 - **[docs/operations/active/MASTER_PRODUCTION_READINESS_PLAN.md](docs/operations/active/MASTER_PRODUCTION_READINESS_PLAN.md)** - Production deployment checklist and plan
-- **[docs/operations/archived/COURSES_MESSAGES_UPGRADE_PLAN.md](docs/operations/archived/COURSES_MESSAGES_UPGRADE_PLAN.md)** - Historical upgrade plan for courses/messages
-- **[docs/operations/archived/FIX_LOGIN.md](docs/operations/archived/FIX_LOGIN.md)** - Login troubleshooting (issue resolved)
-- **[docs/operations/archived/MERGE_INSTRUCTIONS.md](docs/operations/archived/MERGE_INSTRUCTIONS.md)** - Merge instructions (historical)
-- **[docs/operations/archived/SYNC_TO_MAIN_INSTRUCTIONS.md](docs/operations/archived/SYNC_TO_MAIN_INSTRUCTIONS.md)** - Sync to main instructions (historical)
+- _Historical runbooks have moved to the [Archived Operations & Plans](#archived-operations--plans) section below._
 
 ---
 

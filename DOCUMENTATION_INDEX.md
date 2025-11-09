@@ -1,8 +1,23 @@
 # 📚 GSAPS Documentation Index
 
-**Last Updated**: November 2, 2025
+**Last Updated**: November 9, 2025
 
 This document provides a comprehensive index of all documentation in the GSAPS Social Media App repository, organized by purpose and relevance.
+
+---
+
+## 📂 Directory Overview
+
+Use this quick map to understand how the repository’s Markdown documentation is organized under the `docs/` tree:
+
+- `docs/core/getting-started/` – Quick start guides and demo runbooks.
+- `docs/core/development-guides/` – Architecture notes, implementation briefs, and component references.
+- `docs/core/project-status/` – Executive summaries, project health, and milestone status snapshots.
+- `docs/features/{lms,research-library}/` – Feature-specific manuals for major product pillars.
+- `docs/planning-strategy/` – Strategic roadmaps, transformation plans, and immediate action lists.
+- `docs/reports/{qa,phase,performance,features}/` – QA evidence, milestone closeout reports, performance reviews, and feature audits.
+- `docs/operations/{active,archived}/` – Active runbooks and historical operational procedures.
+- `docs/history/session-notes/` – Archived session notes and facilitation summaries.
 
 ---
 
@@ -36,7 +51,7 @@ This document provides a comprehensive index of all documentation in the GSAPS S
 ### Research Library
 - **[docs/features/research-library/RESEARCH_LIBRARY_SUMMARY.md](docs/features/research-library/RESEARCH_LIBRARY_SUMMARY.md)** - Research library features and capabilities
 
-### Planned Features
+### Planning & Strategy
 - **[docs/planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md](docs/planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)** - Integration Circles implementation plan (PLANNED - NOT YET IMPLEMENTED)
 - **[docs/planning-strategy/GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md)** - Phase 8 AI features roadmap (18 planned features)
 - **[docs/planning-strategy/INNOVATION_ROADMAP.md](docs/planning-strategy/INNOVATION_ROADMAP.md)** - Long-term innovation and feature roadmap
@@ -93,22 +108,15 @@ This document provides a comprehensive index of all documentation in the GSAPS S
 
 ## 📝 Historical/Reference Documents
 
-### Planning & Strategy
-- **[docs/core/project-status/EXECUTIVE_SUMMARY.md](docs/core/project-status/EXECUTIVE_SUMMARY.md)** - Executive summary of the project
-- **[docs/core/project-status/PROJECT_INFO.md](docs/core/project-status/PROJECT_INFO.md)** - Basic project information
-- **[docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md](docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md)** - Strategic evaluation
-- **[docs/planning-strategy/TRANSFORMATION_STRATEGY.md](docs/planning-strategy/TRANSFORMATION_STRATEGY.md)** - Transformation program overview
-- **[docs/planning-strategy/IMMEDIATE_ACTIONS.md](docs/planning-strategy/IMMEDIATE_ACTIONS.md)** - Immediate tactical actions
-
 ### Session Notes (Historical)
 - **[docs/history/session-notes/SESSION_CONTINUATION_NOTES.md](docs/history/session-notes/SESSION_CONTINUATION_NOTES.md)** - Session continuation notes (October 31, 2025)
 - **[docs/history/session-notes/SESSION_SUMMARY.md](docs/history/session-notes/SESSION_SUMMARY.md)** - Session summary (October 31, 2025)
 
-### Archived/Obsolete
+### Archived Operations & Plans
+- **[docs/operations/archived/COURSES_MESSAGES_UPGRADE_PLAN.md](docs/operations/archived/COURSES_MESSAGES_UPGRADE_PLAN.md)** - Upgrade plan (completed)
 - **[docs/operations/archived/FIX_LOGIN.md](docs/operations/archived/FIX_LOGIN.md)** - Login troubleshooting (issue resolved)
 - **[docs/operations/archived/MERGE_INSTRUCTIONS.md](docs/operations/archived/MERGE_INSTRUCTIONS.md)** - Merge instructions (historical)
 - **[docs/operations/archived/SYNC_TO_MAIN_INSTRUCTIONS.md](docs/operations/archived/SYNC_TO_MAIN_INSTRUCTIONS.md)** - Sync to main instructions (historical)
-- **[docs/operations/archived/COURSES_MESSAGES_UPGRADE_PLAN.md](docs/operations/archived/COURSES_MESSAGES_UPGRADE_PLAN.md)** - Upgrade plan (completed)
 
 ---
 

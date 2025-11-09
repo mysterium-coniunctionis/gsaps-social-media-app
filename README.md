@@ -10,7 +10,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-[Features](#-features) • [Demo](#-quick-demo) • [Tech Stack](#-technology-stack) • [Getting Started](#-getting-started) • [Roadmap](#-roadmap)
+[Features](#-features) • [Demo](#-quick-demo) • [Tech Stack](#-technology-stack) • [Getting Started](#-getting-started) • [Documentation](#documentation-layout) • [Roadmap](#-roadmap)
 
 </div>
 

@@ -2,7 +2,7 @@
 
 **Time to demo: ~5 minutes** ⏱️
 
-This guide will get the GSAPS Social Media App running on your MacBook Pro in just a few steps.
+This guide will get the GSAPS Social Media App running on your MacBook Pro in just a few steps. For additional reference material, consult the [DOCUMENTATION_INDEX.md](../../../DOCUMENTATION_INDEX.md) to browse the complete documentation library.
 
 ---
 

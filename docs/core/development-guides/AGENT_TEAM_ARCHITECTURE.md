@@ -200,7 +200,7 @@ This document defines a specialized agent team structure for completing the GSAP
 **Role:** Implement AI-powered features from roadmap
 
 **Responsibilities:**
-- Implement features from GENAI_FEATURES_ROADMAP.md
+- Implement features from [GENAI_FEATURES_ROADMAP.md](../../planning-strategy/GENAI_FEATURES_ROADMAP.md)
 - AI-powered course recommendations
 - Intelligent content moderation
 - Smart search with semantic understanding
@@ -788,7 +788,7 @@ gsaps-social-media-app/
 │
 ├── AGENT_TEAM_ARCHITECTURE.md      # This document
 ├── SESSION_IMPROVEMENTS_SUMMARY.md  # Current status
-├── GENAI_FEATURES_ROADMAP.md       # AI features roadmap
+├── docs/planning-strategy/GENAI_FEATURES_ROADMAP.md # AI features roadmap
 └── README.md                        # Main README (ENHANCED)
 ```
 
@@ -800,7 +800,7 @@ gsaps-social-media-app/
 
 1. **Review Current Status**
    - Read `SESSION_IMPROVEMENTS_SUMMARY.md`
-   - Review `GENAI_FEATURES_ROADMAP.md`
+  - Review [`GENAI_FEATURES_ROADMAP.md`](../../planning-strategy/GENAI_FEATURES_ROADMAP.md)
    - Understand remaining work
 
 2. **Initialize Project Coordinator**

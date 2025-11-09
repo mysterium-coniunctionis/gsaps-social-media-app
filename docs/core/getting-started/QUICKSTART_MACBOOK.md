@@ -2,7 +2,7 @@
 
 **Time to demo: ~5 minutes** ⏱️
 
-This guide will get the GSAPS Social Media App running on your MacBook Pro in just a few steps.
+This guide will get the GSAPS Social Media App running on your MacBook Pro in just a few steps. It now lives under `docs/core/getting-started/`, so any cross-links back to the repo root use `../../../`. For additional reference material, consult the [DOCUMENTATION_INDEX.md](../../../DOCUMENTATION_INDEX.md) to browse the complete documentation library.
 
 ---
 
@@ -189,8 +189,8 @@ Manually navigate to: http://localhost:3000
 Once you've verified the app works:
 
 1. **Full Feature Demo**: See [DEMO_INSTRUCTIONS.md](DEMO_INSTRUCTIONS.md) for comprehensive walkthrough
-2. **Component Documentation**: Check [UI_COMPONENTS_GUIDE.md](UI_COMPONENTS_GUIDE.md)
-3. **Technical Details**: Read [Phase 1 Completion Report](.archive/phase-reports/PHASE_1_COMPLETION_REPORT.md) (archived)
+2. **Component Documentation**: Check [UI_COMPONENTS_GUIDE.md](../development-guides/UI_COMPONENTS_GUIDE.md)
+3. **Technical Details**: Read [PHASE_1_COMPLETION_REPORT.md](../../reports/phase/PHASE_1_COMPLETION_REPORT.md)
 
 ---
 
@@ -247,7 +247,7 @@ Production build is:
 
 ## 📞 Need Help?
 
-- **Documentation**: Check [README.md](README.md) for full details
+- **Documentation**: Check [README.md](../../../README.md) for full details
 - **Issues**: Report bugs on [GitHub Issues](https://github.com/mysterium-coniunctionis/gsaps-social-media-app/issues)
 - **Questions**: Ask in [GitHub Discussions](https://github.com/mysterium-coniunctionis/gsaps-social-media-app/discussions)
 
@@ -268,6 +268,6 @@ Production build is:
 
 **Ready to explore?** 🎉
 
-[⬆ Back to README](README.md) • [📖 Full Demo Guide](DEMO_INSTRUCTIONS.md)
+[⬆ Back to README](../../../README.md) • [📖 Full Demo Guide](DEMO_INSTRUCTIONS.md)
 
 </div>

@@ -144,7 +144,7 @@ Protected routes: Feed, Profile, Members, Groups, Messages, Research Library, Co
 **IMPORTANT**: Integration Circles is a **planned feature**, NOT a completed feature.
 
 **What exists**:
-- ✅ Implementation plan (SPRINT_1_IMPLEMENTATION_PLAN.md) - detailed 4-week roadmap
+- ✅ Implementation plan ([SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)) - detailed 4-week roadmap
 - ✅ Mock data files (`src/data/circlesData.js`, `circleResources.js`)
 - ✅ One component (`src/components/circles/CircleCard.js`)
 
@@ -157,7 +157,7 @@ Protected routes: Feed, Profile, Members, Groups, Messages, Research Library, Co
 - ❌ Facilitator tools
 - ❌ Circle management features
 
-**DO NOT reference Integration Circles as a completed feature.** It is planned for future development per SPRINT_1_IMPLEMENTATION_PLAN.md.
+**DO NOT reference Integration Circles as a completed feature.** It is planned for future development per [SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md).
 
 ## Important Development Patterns
 
@@ -278,8 +278,8 @@ When implementing real API integration:
 - **DEMO_INSTRUCTIONS.md**: Full feature walkthrough for demos
 - **PROJECT_STATUS.md**: Current status, completed phases, priorities, next steps
 - **GOLD_STANDARD_STATUS.md**: Detailed achievements report and feature breakdown
-- **SPRINT_1_IMPLEMENTATION_PLAN.md**: Integration Circles implementation plan (PLANNED FEATURE - NOT YET IMPLEMENTED)
-- **GENAI_FEATURES_ROADMAP.md**: Phase 8 AI features roadmap (18 planned features for future)
+- **[SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)**: Integration Circles implementation plan (PLANNED FEATURE - NOT YET IMPLEMENTED)
+- **[GENAI_FEATURES_ROADMAP.md](../../planning-strategy/GENAI_FEATURES_ROADMAP.md)**: Phase 8 AI features roadmap (18 planned features for future)
 - **UI_COMPONENTS_GUIDE.md**: Component documentation and usage
 - **IMPLEMENTATION_GUIDE.md**: Implementation details for all completed features
 - **LMS_SYSTEM_DOCUMENTATION.md**: Learning Management System documentation

@@ -193,7 +193,7 @@ npm run eject # Eject from Create React App (not recommended)
 - ❌ No E2E tests
 
 ### Recommendation:
-Add testing in Phase 4 (see IMPLEMENTATION_GUIDE.md)
+Add testing in Phase 4 (see [IMPLEMENTATION_GUIDE.md](../../core/development-guides/IMPLEMENTATION_GUIDE.md))
 
 ```bash
 # Install testing tools

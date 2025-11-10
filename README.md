@@ -69,8 +69,8 @@ GSAPS Social Media App is an academic collaboration platform designed specifical
 **Gamification:**
 
 - 50 progressive levels and 10 ranks (Novice → Mythic)
-- XP system with 50+ earning actions
-- 20+ achievements with unlock conditions
+- XP system with 37 earning actions across all activities
+- 19 achievements with unlock conditions
 - Leaderboards with period filters (All Time, Week, Month)
 - Daily streak tracking
 - User profiles with stats and achievements

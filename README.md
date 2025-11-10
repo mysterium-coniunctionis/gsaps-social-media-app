@@ -35,6 +35,7 @@
 ## 📊 Project Status
 
 ### Current Release: **Prototype Alignment Update**
+
 **Build Size:** 323.76 kB (gzipped) | **Status:** Front-end prototype with secure mock services and production integration stubs
 
 > 📚 **Documentation**: See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for a complete guide to all project documentation and the themed folders under [`docs/`](docs/).
@@ -46,6 +47,7 @@
 ### ✅ Completed (7 Phases)
 
 - **Phase 1: Activity Feed System**
+
   - Feed with post composer
   - Rich text posts with image upload
   - Comment system with threading
@@ -53,11 +55,13 @@
   - Modern UI component library
 
 - **Phase 2: Advanced Engagement**
+
   - 8-emoji reaction system (👍❤️😂😮😢😡🎉🤔)
   - @mention autocomplete
   - Tag system for posts
 
 - **Phase 3: Research Library**
+
   - Browse & search papers
   - Upload with metadata (DOI, PMID, authors)
   - Paper detail pages
@@ -66,6 +70,7 @@
   - Citation export (BibTeX, APA, MLA)
 
 - **Phase 4: Learning Management System (LMS)**
+
   - Course platform (TutorLMS-style)
   - Course creation & enrollment
   - CE Credits tracking (APA, CME, CNE, etc.)
@@ -73,6 +78,7 @@
   - Quiz and assessment system
 
 - **Phase 5: Gamification System** 🎮
+
   - 50 progressive levels
   - 10 ranks (Novice → Mythic)
   - 50+ XP actions
@@ -81,6 +87,7 @@
   - Progress persistence
 
 - **Phase 6: Leaderboards & Competition** 🏆
+
   - Top 3 podium display
   - Full rankings table
   - Period filters (All Time, Week, Month)
@@ -100,6 +107,7 @@
 ### 🚀 Next Phase
 
 - **Phase 8: GenAI-Powered Features** (18 features planned)
+
   - AI Course Assistant & Q&A Bot
   - Smart Research Paper Recommendations
   - AI Content Moderation & Safety
@@ -114,12 +122,14 @@
 ### 📅 Future Phases
 
 - **Phase 9: Real-time Features**
+
   - WebSocket integration
   - Live notifications
   - Real-time chat
   - Online presence
 
 - **Phase 10: PWA Implementation**
+
   - Offline support
   - Push notifications
   - App install prompt
@@ -214,10 +224,11 @@ Password: demo123
 **All features are live and working:**
 
 ✅ **4 Complete Courses** - Production-ready for CE credits:
-  - Introduction to Psychedelic-Assisted Therapy (24 lessons, Free)
-  - MDMA-Assisted Therapy for PTSD (36 lessons, $299)
-  - Neuroscience of Psychedelics (32 lessons, $349)  
-  - Harm Reduction & Safety Protocols (22 lessons, $199)
+
+- Introduction to Psychedelic-Assisted Therapy (24 lessons, Free)
+- MDMA-Assisted Therapy for PTSD (36 lessons, $299)
+- Neuroscience of Psychedelics (32 lessons, $349)
+- Harm Reduction & Safety Protocols (22 lessons, $199)
 
 ✅ **93 Working Videos** - Real YouTube embeds, all functional
 
@@ -242,6 +253,7 @@ Password: demo123
 ✅ **Messages** - Private messaging between members
 
 **Course Experience Features:**
+
 - 📹 Video lessons with YouTube player
 - 📝 Quizzes with multiple choice questions
 - 🏆 Certificates with print/download
@@ -258,7 +270,7 @@ For a detailed feature walkthrough, see **[DEMO_INSTRUCTIONS.md](docs/core/getti
 ### 📸 Live Screenshots
 
 ![Course Curriculum Working](https://github.com/user-attachments/assets/eade0424-24be-44d7-97ef-3921462c6253)
-*Course detail page showing full curriculum with lessons and video content*
+_Course detail page showing full curriculum with lessons and video content_
 
 ---
 
@@ -266,13 +278,13 @@ For a detailed feature walkthrough, see **[DEMO_INSTRUCTIONS.md](docs/core/getti
 
 ### Core Technologies
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **React** | 18.2.0 | UI framework with hooks and functional components |
-| **Material-UI** | 5.13.1 | Comprehensive component library with theming |
-| **React Router** | 6.11.2 | Client-side routing with protected routes |
-| **Axios** | 1.4.0 | HTTP client with interceptors |
-| **date-fns** | 2.30.0 | Date formatting and manipulation |
+| Technology       | Version | Purpose                                           |
+| ---------------- | ------- | ------------------------------------------------- |
+| **React**        | 18.2.0  | UI framework with hooks and functional components |
+| **Material-UI**  | 5.13.1  | Comprehensive component library with theming      |
+| **React Router** | 6.11.2  | Client-side routing with protected routes         |
+| **Axios**        | 1.4.0   | HTTP client with interceptors                     |
+| **date-fns**     | 2.30.0  | Date formatting and manipulation                  |
 
 ### Architecture & Patterns
 
@@ -350,6 +362,7 @@ npm run build
 ```
 
 Creates an optimized production build in the `build/` folder:
+
 - Minified and bundled JavaScript
 - Optimized assets and images
 - Production React build
@@ -489,6 +502,7 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 ## 🗺 Roadmap
 
 ### ✅ Phase 1: Activity Feed System (Complete)
+
 - [x] Feed page with post composer
 - [x] Post cards with reactions and comments
 - [x] Notification center
@@ -496,11 +510,13 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [x] 25+ custom animations
 
 ### ✅ Phase 2: Advanced Engagement (Complete)
+
 - [x] 8-emoji reaction system
 - [x] @mention autocomplete
 - [x] Tag system for posts
 
 ### ✅ Phase 3: Research Library (Complete)
+
 - [x] Paper repository with search/filter
 - [x] Upload papers with metadata
 - [x] Paper detail pages
@@ -509,6 +525,7 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [x] Citation export (BibTeX, APA, MLA)
 
 ### ✅ Phase 4: Learning Management System (Complete)
+
 - [x] Course platform (TutorLMS-style)
 - [x] Course creation and enrollment
 - [x] CE Credits tracking (7 categories)
@@ -516,6 +533,7 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [x] Quiz and assessment system
 
 ### ✅ Phase 5: Gamification System (Complete)
+
 - [x] 50 progressive levels
 - [x] 10 ranks (Novice → Mythic)
 - [x] 50+ XP-earning actions
@@ -523,6 +541,7 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [x] Daily streak tracking
 
 ### ✅ Phase 6: Leaderboards & Competition (Complete)
+
 - [x] Top 3 podium with medals
 - [x] Full rankings table
 - [x] Period filters (All Time, Week, Month)
@@ -530,6 +549,7 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [x] User highlighting
 
 ### ✅ Phase 7: User Profiles with Stats (Complete)
+
 - [x] Beautiful profile headers with rank badges
 - [x] Level progress bars
 - [x] Achievement showcase grid
@@ -537,6 +557,7 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [x] Activity tab and stats tab
 
 ### 🚀 Phase 8: GenAI-Powered Features (PLANNED - Not Yet Started)
+
 **18 AI Features Planned** - See [GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md)
 
 ⚠️ **Status**: Planning complete, implementation requires WordPress API integration + AI infrastructure
@@ -551,18 +572,21 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for direct links to each do
 - [ ] 11+ more innovative features
 
 ### 📅 Phase 9: Real-time Features (PLANNED - Not Yet Started)
+
 - [ ] WebSocket integration
 - [ ] Live notifications
 - [ ] Real-time chat
 - [ ] Online presence indicators
 
 ### 📅 Phase 10: PWA Implementation (PLANNED - Not Yet Started)
+
 - [ ] Service worker setup
 - [ ] Offline support
 - [ ] Push notifications
 - [ ] App install prompt
 
 ### 📅 Phase 11: Production Deployment (IMMEDIATE PRIORITY)
+
 **Current Status**: Ready for WordPress/BuddyBoss API integration
 
 - [ ] WordPress REST API integration
@@ -587,7 +611,7 @@ npx serve -s build
 
 # Or deploy to:
 # - GitHub Pages
-# - Netlify  
+# - Netlify
 # - Vercel
 # - AWS S3 + CloudFront
 ```
@@ -601,6 +625,7 @@ npm start  # Runs on http://localhost:3000
 ### Common Issues & Solutions
 
 **Issue: "Dependencies not installed"**
+
 ```bash
 # Delete node_modules and reinstall
 rm -rf node_modules package-lock.json
@@ -608,6 +633,7 @@ npm install
 ```
 
 **Issue: "Port 3000 already in use"**
+
 ```bash
 # Kill the process on port 3000
 lsof -ti:3000 | xargs kill
@@ -617,6 +643,7 @@ PORT=3001 npm start
 ```
 
 **Issue: "Blank page or build errors"**
+
 ```bash
 # Clear cache and rebuild
 rm -rf node_modules build
@@ -625,6 +652,7 @@ npm run build
 ```
 
 **Issue: "Images not loading"**
+
 - External images (Unsplash, Pravatar) may be blocked by ad blockers
 - Course videos use real YouTube URLs and work properly
 - Disable ad blockers for best experience
@@ -632,6 +660,7 @@ npm run build
 ### Viewing the Live Demo
 
 If you're seeing an outdated version:
+
 1. **Clear browser cache** (Cmd/Ctrl + Shift + R)
 2. **Build fresh** from latest code: `npm install && npm run build`
 3. **Check you're on the right branch**: `git branch --show-current`

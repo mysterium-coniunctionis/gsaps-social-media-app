@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 
 const ThemeContext = createContext();
@@ -11,18 +11,13 @@ export const ThemeProvider = ({ children }) => {
     return savedMode || 'light';
   });
 
-  const colorMode = useMemo(
-    () => ({
-      toggleColorMode: () => {
-        setMode((prevMode) => {
-          const newMode = prevMode === 'light' ? 'dark' : 'light';
-          localStorage.setItem('theme_mode', newMode);
-          return newMode;
-        });
-      },
-    }),
-    [],
-  );
+  const toggleTheme = useCallback(() => {
+    setMode((prevMode) => {
+      const newMode = prevMode === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme_mode', newMode);
+      return newMode;
+    });
+  }, []);
 
   const theme = useMemo(
     () =>
@@ -100,8 +95,13 @@ export const ThemeProvider = ({ children }) => {
     [mode],
   );
 
+  const contextValue = useMemo(() => ({
+    mode,
+    toggleTheme,
+  }), [mode, toggleTheme]);
+
   return (
-    <ThemeContext.Provider value={{ mode, colorMode }}>
+    <ThemeContext.Provider value={contextValue}>
       <MuiThemeProvider theme={theme}>
         {children}
       </MuiThemeProvider>

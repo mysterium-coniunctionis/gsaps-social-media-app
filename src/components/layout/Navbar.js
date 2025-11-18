@@ -38,7 +38,8 @@ import NotificationCenter from '../notifications/NotificationCenter';
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { toggleTheme, mode } = useCustomTheme();
+  const { mode, toggleTheme } = useCustomTheme();
+  const handleThemeToggle = toggleTheme || (() => {});
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -133,7 +134,12 @@ const Navbar = () => {
         <Box sx={{ flexGrow: 1 }} />
 
         {/* Theme Toggle */}
-        <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+        <IconButton
+          color="inherit"
+          aria-label="Toggle theme"
+          onClick={handleThemeToggle}
+          sx={{ mr: 1 }}
+        >
           {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
 

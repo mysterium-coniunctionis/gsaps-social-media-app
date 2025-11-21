@@ -299,7 +299,7 @@ const Home = () => {
                 <Box sx={{ color: theme.palette.primary.main, mb: 1 }}>
                   {stat.icon}
                 </Box>
-                <Typography variant="h3" fontWeight="bold" color="primary">
+                <Typography variant="h3" component="p" fontWeight="bold" color="primary">
                   {stat.value}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
@@ -314,6 +314,7 @@ const Home = () => {
         <Box sx={{ mb: 8 }}>
           <Typography
             variant="h3"
+            component="h2"
             fontWeight="bold"
             textAlign="center"
             gutterBottom
@@ -387,7 +388,7 @@ const Home = () => {
         {/* Featured Courses Section */}
         <Box sx={{ mb: 8 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-            <Typography variant="h3" fontWeight="bold">
+            <Typography variant="h3" component="h2" fontWeight="bold">
               Featured Courses
             </Typography>
             <Button
@@ -430,7 +431,7 @@ const Home = () => {
                       color="primary"
                       sx={{ mb: 2 }}
                     />
-                    <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    <Typography variant="h6" component="p" fontWeight="bold" gutterBottom>
                       {course.title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary" gutterBottom>
@@ -444,7 +445,7 @@ const Home = () => {
                           ({course.students})
                         </Typography>
                       </Box>
-                      <Typography variant="h6" fontWeight="bold" color="primary">
+                      <Typography variant="h6" component="p" fontWeight="bold" color="primary">
                         {course.price}
                       </Typography>
                     </Box>
@@ -466,10 +467,10 @@ const Home = () => {
               mb: 6
             }}
           >
-            <Typography variant="h3" fontWeight="bold" gutterBottom>
+            <Typography variant="h3" component="h2" fontWeight="bold" gutterBottom>
               Ready to Join the Community?
             </Typography>
-            <Typography variant="h6" color="text.secondary" paragraph>
+            <Typography variant="h6" component="p" color="text.secondary" paragraph>
               Start learning, contributing, and advancing your career in psychedelic science today.
             </Typography>
             <Button
@@ -486,7 +487,7 @@ const Home = () => {
 
         {/* About Section */}
         <Box sx={{ mb: 6 }}>
-          <Typography variant="h3" fontWeight="bold" gutterBottom>
+          <Typography variant="h3" component="h2" fontWeight="bold" gutterBottom>
             About GSAPS
           </Typography>
           <Typography variant="body1" paragraph sx={{ fontSize: '1.1rem', lineHeight: 1.8 }}>

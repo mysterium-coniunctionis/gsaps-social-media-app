@@ -44,6 +44,7 @@ import Quiz from '../../components/courses/Quiz';
 import Certificate from '../../components/courses/Certificate';
 import COMPREHENSIVE_COURSES from '../../data/coursesData';
 import QUIZ_DATA from '../../data/quizData';
+import { useAccessibility } from '../../context/AccessibilityContext';
 
 /**
  * CoursePlayer Component
@@ -54,6 +55,7 @@ const CoursePlayer = () => {
   const navigate = useNavigate();
   const { awardXP, updateStat } = useGamification();
   const toast = useToast();
+  const { preferences } = useAccessibility();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -65,6 +67,7 @@ const CoursePlayer = () => {
   const [showCertificate, setShowCertificate] = useState(false);
   const [quizScores, setQuizScores] = useState({});
   const [courseCompleted, setCourseCompleted] = useState(false);
+  const [showTranscript, setShowTranscript] = useState(preferences.captions);
 
   useEffect(() => {
     // Simulate API call
@@ -104,6 +107,10 @@ const CoursePlayer = () => {
       localStorage.setItem(`course_progress_${course.id}`, JSON.stringify(progress));
     }
   }, [course, completedLessons, currentModule, currentLesson, quizScores, courseCompleted]);
+
+  useEffect(() => {
+    setShowTranscript(preferences.captions);
+  }, [preferences.captions, currentLesson, currentModule]);
 
   const handleModuleToggle = (moduleIndex) => {
     setExpandedModules(prev =>
@@ -245,11 +252,15 @@ const CoursePlayer = () => {
   }
 
   const activeLessonData = course.syllabus[currentModule]?.lessons[currentLesson];
+  const transcriptId = `lesson-transcript-${currentModule}-${currentLesson}`;
 
   return (
     <Box sx={{ display: 'flex', height: 'calc(100vh - 64px)', overflow: 'hidden' }}>
       {/* Sidebar - Course Navigation */}
       <Box
+        component="nav"
+        role="navigation"
+        aria-label={`${course.title} modules`}
         sx={{
           width: showSidebar ? 320 : 0,
           transition: 'width 0.3s',
@@ -298,7 +309,11 @@ const CoursePlayer = () => {
                       mb: 0.5
                     }}
                   >
-                    <ListItemButton onClick={() => handleModuleToggle(moduleIndex)}>
+                    <ListItemButton
+                      onClick={() => handleModuleToggle(moduleIndex)}
+                      aria-expanded={expandedModules.includes(moduleIndex)}
+                      aria-controls={`module-${moduleIndex}-lessons`}
+                    >
                       <ListItemText
                         primary={`Module ${moduleIndex + 1}: ${module.title}`}
                         primaryTypographyProps={{
@@ -311,7 +326,7 @@ const CoursePlayer = () => {
                   </ListItem>
 
                   <Collapse in={expandedModules.includes(moduleIndex)} timeout="auto">
-                    <List component="div" disablePadding dense>
+                    <List component="div" disablePadding dense id={`module-${moduleIndex}-lessons`}>
                       {module.lessons.map((lesson, lessonIndex) => {
                         const isCompleted = isLessonCompleted(moduleIndex, lessonIndex);
                         const isActive = moduleIndex === currentModule && lessonIndex === currentLesson;
@@ -326,6 +341,7 @@ const CoursePlayer = () => {
                               selected={isActive}
                               onClick={() => handleLessonSelect(moduleIndex, lessonIndex)}
                               sx={{ borderRadius: 1 }}
+                              aria-current={isActive ? 'true' : undefined}
                             >
                               <ListItemIcon sx={{ minWidth: 36 }}>
                                 {isCompleted ? (
@@ -372,7 +388,10 @@ const CoursePlayer = () => {
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <IconButton onClick={() => setShowSidebar(!showSidebar)}>
+            <IconButton
+              onClick={() => setShowSidebar(!showSidebar)}
+              aria-label={showSidebar ? 'Hide module navigation' : 'Show module navigation'}
+            >
               <MenuIcon />
             </IconButton>
             <Box>
@@ -388,6 +407,7 @@ const CoursePlayer = () => {
             variant="outlined"
             startIcon={<BackIcon />}
             onClick={() => navigate(`/courses/${course.slug}`)}
+            aria-label="Return to course overview"
           >
             Exit Course
           </Button>
@@ -441,6 +461,7 @@ const CoursePlayer = () => {
                             title={activeLessonData.title}
                             frameBorder="0"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            aria-describedby={showTranscript ? transcriptId : undefined}
                             allowFullScreen
                             style={{
                               position: 'absolute',
@@ -519,13 +540,48 @@ const CoursePlayer = () => {
                         </Typography>
                       )}
 
+                      {activeLessonData && (
+                        <Box component="section" aria-label="Captions and transcript" sx={{ mb: 3 }}>
+                          <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Typography variant="h6" component="h3">
+                              Captions & Transcript
+                            </Typography>
+                            <Button
+                              size="small"
+                              variant="outlined"
+                              onClick={() => setShowTranscript(!showTranscript)}
+                              aria-pressed={showTranscript}
+                              aria-controls={transcriptId}
+                            >
+                              {showTranscript ? 'Hide transcript' : 'Show transcript'}
+                            </Button>
+                          </Box>
+                          {showTranscript && (
+                            <Typography
+                              id={transcriptId}
+                              variant="body2"
+                              component="div"
+                              sx={{
+                                mt: 1.5,
+                                p: 2,
+                                bgcolor: 'action.hover',
+                                borderRadius: 2,
+                                lineHeight: 1.6
+                              }}
+                            >
+                              {activeLessonData?.content || 'Transcript will be available soon.'}
+                            </Typography>
+                          )}
+                        </Box>
+                      )}
+
                       {/* Resources */}
                       {activeLessonData?.resources && activeLessonData.resources.length > 0 && (
-                        <Box sx={{ mt: 4 }}>
+                        <Box component="section" aria-label="Lesson resources" sx={{ mt: 4 }}>
                           <Typography variant="h6" gutterBottom fontWeight="bold">
                             Additional Resources
                           </Typography>
-                          <List>
+                          <List aria-label="Resource list">
                             {activeLessonData.resources.map((resource, index) => {
                               const resourceData = typeof resource === 'string'
                                 ? { title: resource, url: null, type: 'document' }
@@ -535,11 +591,14 @@ const CoursePlayer = () => {
                                 <ListItem
                                   key={index}
                                   divider
+                                  component={resourceData.url ? 'a' : 'div'}
+                                  href={resourceData.url || undefined}
+                                  target={resourceData.url ? '_blank' : undefined}
+                                  rel={resourceData.url ? 'noreferrer' : undefined}
                                   sx={{
                                     cursor: resourceData.url ? 'pointer' : 'default',
                                     '&:hover': resourceData.url ? { bgcolor: 'action.hover' } : {}
                                   }}
-                                  onClick={() => resourceData.url && window.open(resourceData.url, '_blank')}
                                 >
                                   <ListItemIcon>
                                     <DocumentIcon color={resourceData.url ? 'primary' : 'default'} />
@@ -579,6 +638,7 @@ const CoursePlayer = () => {
             startIcon={<BackIcon />}
             onClick={handlePreviousLesson}
             disabled={currentModule === 0 && currentLesson === 0}
+            aria-label="Go to previous lesson"
           >
             Previous Lesson
           </Button>
@@ -590,6 +650,7 @@ const CoursePlayer = () => {
                 color="success"
                 startIcon={<TrophyIcon />}
                 onClick={() => setShowCertificate(true)}
+                aria-label="Open completion certificate"
               >
                 View Certificate
               </Button>
@@ -600,6 +661,7 @@ const CoursePlayer = () => {
                 color="success"
                 startIcon={<CompleteIcon />}
                 onClick={handleCompleteLesson}
+                aria-label="Mark lesson complete"
               >
                 Mark Complete
               </Button>
@@ -612,6 +674,7 @@ const CoursePlayer = () => {
                 currentModule === course.syllabus.length - 1 &&
                 currentLesson === course.syllabus[currentModule].lessons.length - 1
               }
+              aria-label="Go to next lesson"
             >
               Next Lesson
             </Button>

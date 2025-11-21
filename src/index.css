@@ -7,6 +7,52 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root {
+  --focus-outline-color: #1a73e8;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus-outline-color);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  z-index: 1000;
+  background: #111;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.skip-link:focus-visible {
+  left: 12px;
+}
+
+body.high-contrast-mode {
+  background: #000;
+  color: #fff;
+}
+
+body.high-contrast-mode a {
+  color: #4da3ff;
+}
+
+body.large-text-mode {
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+body.reduced-motion * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

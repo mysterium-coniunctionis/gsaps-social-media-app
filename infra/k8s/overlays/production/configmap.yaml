@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: social-media-frontend-config
+  namespace: social-media
+data:
+  apiBaseUrl: https://api.example.com
+  cdnBaseUrl: https://cdn.example.com
+  mediaBucket: social-media-media
+  featureFlags: '{"betaFeed": false}'

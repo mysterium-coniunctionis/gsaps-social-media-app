@@ -1,0 +1,10 @@
+resources:
+  - ../../base
+patches:
+  - path: rollout-patch.yaml
+  - path: ingress-patch.yaml
+  - path: configmap.yaml
+images:
+  - name: ghcr.io/example/gsaps-social-media-app
+    newName: ghcr.io/example/gsaps-social-media-app
+    newTag: latest

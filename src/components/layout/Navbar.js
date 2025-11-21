@@ -30,6 +30,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';
 import NotificationCenter from '../notifications/NotificationCenter';
+import AccessibilityMenu from '../accessibility/AccessibilityMenu';
 
 /**
  * Main navigation bar component
@@ -123,6 +124,7 @@ const Navbar = () => {
                   color="inherit"
                   startIcon={item.icon}
                   onClick={() => navigate(item.path)}
+                  aria-label={`Go to ${item.label}`}
                 >
                   {item.label}
                 </Button>
@@ -132,8 +134,15 @@ const Navbar = () => {
 
         <Box sx={{ flexGrow: 1 }} />
 
+        <AccessibilityMenu />
+
         {/* Theme Toggle */}
-        <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+        <IconButton
+          color="inherit"
+          onClick={toggleTheme}
+          sx={{ mr: 1 }}
+          aria-label={`Activate ${mode === 'dark' ? 'light' : 'dark'} mode`}
+        >
           {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
 
@@ -143,7 +152,11 @@ const Navbar = () => {
         {/* User Menu or Login Button */}
         {currentUser ? (
           <>
-            <IconButton onClick={handleUserMenuOpen} sx={{ p: 0 }}>
+            <IconButton
+              onClick={handleUserMenuOpen}
+              sx={{ p: 0 }}
+              aria-label="Open user menu"
+            >
               <Avatar
                 alt={currentUser.name || currentUser.username}
                 src={currentUser.avatar_url}

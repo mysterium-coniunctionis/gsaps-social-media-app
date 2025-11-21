@@ -26,7 +26,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx}' --max-warnings=0",
-    "format": "prettier --check \"src/**/*.{js,jsx,json}\" README.md"
+    "format": "prettier --check \"src/**/*.{js,jsx,json}\" README.md",
+    "test:a11y": "CI=true react-scripts test --watch=false --runInBand __tests__/a11y.test.js",
+    "ci:a11y": "npm run build && lhci autorun --config=lighthouserc.json"
   },
   "eslintConfig": {
     "extends": [
@@ -49,6 +51,8 @@
   "devDependencies": {
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0",
-    "prettier": "^3.2.5"
+    "jest-axe": "^9.0.0",
+    "prettier": "^3.2.5",
+    "@lhci/cli": "^0.15.1"
   }
 }

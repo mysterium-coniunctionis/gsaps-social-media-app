@@ -26,6 +26,7 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { fadeInUp } from '../theme/animations';
+import { useAccessibility } from '../context/AccessibilityContext';
 
 /**
  * Settings/Edit Profile Page
@@ -34,6 +35,7 @@ import { fadeInUp } from '../theme/animations';
 const Settings = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { preferences, togglePreference } = useAccessibility();
   const [activeTab, setActiveTab] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -125,6 +127,7 @@ const Settings = () => {
             <Tab label="Profile" />
             <Tab label="Account" />
             <Tab label="Privacy" />
+            <Tab label="Accessibility" />
           </Tabs>
         </Paper>
 
@@ -436,6 +439,62 @@ const Settings = () => {
                 Save Privacy Settings
               </Button>
             </Box>
+          </Paper>
+        )}
+
+        {/* Accessibility Tab */}
+        {activeTab === 3 && (
+          <Paper sx={{ p: 3, animation: `${fadeInUp} 0.5s ease-out` }}>
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Accessibility Preferences
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              Tune contrast, text size, motion, and learning support to reduce visual noise and provide transcripts across all lessons.
+            </Typography>
+
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={preferences.highContrast}
+                  onChange={() => togglePreference('highContrast')}
+                  inputProps={{ 'aria-label': 'Toggle high contrast mode' }}
+                />
+              }
+              label="High contrast mode"
+            />
+
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={preferences.largeText}
+                  onChange={() => togglePreference('largeText')}
+                  inputProps={{ 'aria-label': 'Toggle large text mode' }}
+                />
+              }
+              label="Large text and spacing"
+            />
+
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={preferences.reduceMotion}
+                  onChange={() => togglePreference('reduceMotion')}
+                  inputProps={{ 'aria-label': 'Toggle reduced motion animations' }}
+                />
+              }
+              label="Reduce motion"
+            />
+
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={preferences.captions}
+                  onChange={() => togglePreference('captions')}
+                  inputProps={{ 'aria-label': 'Toggle captions and transcripts for lessons' }}
+                />
+              }
+              label="Always show captions and lesson transcripts"
+            />
           </Paper>
         )}
       </Box>

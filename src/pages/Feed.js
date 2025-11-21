@@ -1,19 +1,25 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
+  Alert,
   Box,
   Container,
   Typography,
   Fab,
   useTheme,
   useMediaQuery,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import PostCard from '../components/feed/PostCard';
 import PostComposer from '../components/feed/PostComposer';
 import { fadeInUp } from '../theme/animations';
 import { useGamification } from '../context/GamificationContext';
+import { useAuth } from '../context/AuthContext';
 import fetchMockPosts from '../data/feed/mockPosts';
+import GuidelinesGate from '../components/moderation/GuidelinesGate';
+import { communityGuidelines } from '../data/moderation/moderationData';
+import { acceptGuidelines, hasAcceptedGuidelines, recordAuditEvent } from '../utils/moderation';
 
 /**
  * Activity Feed Page - The heart of the social platform
@@ -23,9 +29,12 @@ const Feed = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { awardXP, updateStat } = useGamification();
+  const { currentUser } = useAuth();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [composerOpen, setComposerOpen] = useState(false);
+  const [guidelinesOpen, setGuidelinesOpen] = useState(false);
+  const [hasAccepted, setHasAccepted] = useState(() => hasAcceptedGuidelines());
   // eslint-disable-next-line no-unused-vars
   const [filter, setFilter] = useState('all'); // all, following, trending - TODO: implement filter UI
 
@@ -45,6 +54,27 @@ const Feed = () => {
   useEffect(() => {
     fetchPosts();
   }, [fetchPosts]);
+
+  const handleRequestCompose = useCallback(() => {
+    if (!hasAccepted) {
+      setGuidelinesOpen(true);
+      return;
+    }
+
+    setComposerOpen(true);
+  }, [hasAccepted]);
+
+  const handleAcceptGuidelines = () => {
+    acceptGuidelines(communityGuidelines.version);
+    recordAuditEvent(
+      'Guidelines accepted',
+      currentUser?.username || 'member',
+      `Version ${communityGuidelines.version}`
+    );
+    setHasAccepted(true);
+    setGuidelinesOpen(false);
+    setComposerOpen(true);
+  };
 
   const handleCreatePost = useCallback((newPost) => {
     // Add new post to the feed
@@ -176,6 +206,21 @@ const Feed = () => {
           </Typography>
         </Box>
 
+        {!hasAccepted && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 2 }}
+            action={
+              <Button color="inherit" size="small" onClick={() => setGuidelinesOpen(true)}>
+                Review
+              </Button>
+            }
+          >
+            Posting and messaging are gated behind the latest community guidelines to keep reports,
+            appeals, and safety checks consistent.
+          </Alert>
+        )}
+
         {/* Filter Tabs - Future enhancement */}
         {/* <Tabs value={filter} onChange={(e, v) => setFilter(v)}>
           <Tab label="All Posts" value="all" />
@@ -231,7 +276,7 @@ const Feed = () => {
             <Fab
               variant="extended"
               color="primary"
-              onClick={() => setComposerOpen(true)}
+              onClick={handleRequestCompose}
             >
               <AddIcon sx={{ mr: 1 }} />
               Create Post
@@ -244,7 +289,7 @@ const Feed = () => {
           <Fab
             color="primary"
             aria-label="create post"
-            onClick={() => setComposerOpen(true)}
+            onClick={handleRequestCompose}
             sx={{
               position: 'fixed',
               bottom: isMobile ? 80 : 24,
@@ -266,6 +311,13 @@ const Feed = () => {
           open={composerOpen}
           onClose={() => setComposerOpen(false)}
           onSubmit={handleCreatePost}
+        />
+
+        <GuidelinesGate
+          open={guidelinesOpen}
+          guidelines={communityGuidelines}
+          onAccept={handleAcceptGuidelines}
+          onClose={() => setGuidelinesOpen(false)}
         />
       </Container>
     </Box>

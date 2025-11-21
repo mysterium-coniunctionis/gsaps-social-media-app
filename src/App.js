@@ -30,6 +30,7 @@ import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import ResearchWorkspace from './pages/workspaces/ResearchWorkspace';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -125,6 +126,15 @@ function App() {
                 <Route path="/library" element={<ResearchLibrary />} />
 
                 <Route path="/library/:paperId" element={<PaperDetail />} />
+
+                <Route
+                  path="/workspaces"
+                  element={
+                    <ProtectedRoute>
+                      <ResearchWorkspace />
+                    </ProtectedRoute>
+                  }
+                />
 
                 <Route path="/courses" element={<Courses />} />
 

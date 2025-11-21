@@ -30,6 +30,8 @@ import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import PasswordReset from './pages/PasswordReset';
+import VerifyEmail from './pages/VerifyEmail';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -93,6 +95,9 @@ function App() {
                 <Route path="/register" element={
                   currentUser ? <Navigate to="/" /> : <Register />
                 } />
+
+                <Route path="/reset" element={<PasswordReset />} />
+                <Route path="/verify" element={<VerifyEmail />} />
 
                 <Route path="/profile/:username" element={
                   <ProtectedRoute>

@@ -1,0 +1,10 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: social-media-frontend
+spec:
+  replicas: 5
+  strategy:
+    blueGreen:
+      autoPromotionEnabled: true
+      previewReplicaCount: 2

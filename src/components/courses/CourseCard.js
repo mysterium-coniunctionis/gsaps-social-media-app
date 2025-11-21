@@ -24,10 +24,13 @@ import { useNavigate } from 'react-router-dom';
  * CourseCard Component
  * Display course in grid or list view
  */
-const CourseCard = ({ course, viewMode = 'grid' }) => {
+const CourseCard = ({ course, viewMode = 'grid', onSelect }) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
+    if (onSelect) {
+      onSelect(course);
+    }
     navigate(`/courses/${course.slug}`);
   };
 

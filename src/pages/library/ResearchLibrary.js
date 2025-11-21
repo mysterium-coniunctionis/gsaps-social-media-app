@@ -33,6 +33,13 @@ import PaperUploadDialog from '../../components/library/PaperUploadDialog';
 import { useToast } from '../../components/common';
 import { useGamification } from '../../context/GamificationContext';
 import { RESEARCH_PAPERS } from '../../data/researchPapersData';
+import {
+  getRecommendations,
+  logInteraction,
+  recordExperimentConversion,
+  recordExperimentImpression,
+  useExperiment
+} from '../../utils/recommendationService';
 
 /**
  * ResearchLibrary Page
@@ -52,6 +59,8 @@ const ResearchLibrary = () => {
   const [sortBy, setSortBy] = useState('recent');
   const [viewMode, setViewMode] = useState('grid'); // grid or list
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [recommendedPapers, setRecommendedPapers] = useState([]);
+  const recommendationVariant = useExperiment('library-feed', ['control', 'personalized']);
 
   // Debounce search query
   useEffect(() => {
@@ -61,6 +70,27 @@ const ResearchLibrary = () => {
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (!loading && papers.length) {
+      const recommendations = getRecommendations('paper', papers, {
+        variant: recommendationVariant,
+        limit: 6
+      });
+      setRecommendedPapers(recommendations);
+      recordExperimentImpression('library-feed', recommendationVariant, recommendations.length);
+    }
+  }, [papers, loading, recommendationVariant]);
+
+  useEffect(() => {
+    if (debouncedSearchQuery) {
+      logInteraction(
+        'paper',
+        { id: `search-${debouncedSearchQuery}`, keywords: [debouncedSearchQuery] },
+        'search'
+      );
+    }
+  }, [debouncedSearchQuery]);
 
   // Available filter options
   const topics = [
@@ -117,6 +147,12 @@ const ResearchLibrary = () => {
     updateStat('papers_uploaded');
   }, [toast, awardXP, updateStat]);
 
+  const handlePaperClick = useCallback((paper) => {
+    logInteraction('paper', paper, 'click');
+    recordExperimentConversion('library-feed', recommendationVariant, 1);
+    navigate(`/library/${paper.id}`);
+  }, [navigate, recommendationVariant]);
+
   const handleToggleLibrary = useCallback((paperId) => {
     setPapers(prevPapers => {
       const updatedPapers = prevPapers.map(paper =>
@@ -124,16 +160,18 @@ const ResearchLibrary = () => {
           ? { ...paper, inMyLibrary: !paper.inMyLibrary }
           : paper
       );
-      
+
       // Find paper and show toast
       const paper = updatedPapers.find(p => p.id === paperId);
       if (paper) {
         toast.success(paper.inMyLibrary ? 'Added to your library' : 'Removed from your library');
+        logInteraction('paper', paper, paper.inMyLibrary ? 'save' : 'view');
+        recordExperimentConversion('library-feed', recommendationVariant, 0.5);
       }
-      
+
       return updatedPapers;
     });
-  }, [toast]);
+  }, [toast, recommendationVariant]);
 
   // Filter papers based on search and filters - memoized for performance
   const filteredPapers = useMemo(() => papers.filter(paper => {
@@ -163,6 +201,12 @@ const ResearchLibrary = () => {
 
     return true;
   }), [papers, debouncedSearchQuery, filterTopic, filterYear]);
+
+  const relatedTopics = useMemo(() => {
+    const topics = new Set();
+    recommendedPapers.forEach(paper => paper.topics?.forEach(topic => topics.add(topic)));
+    return Array.from(topics).slice(0, 6);
+  }, [recommendedPapers]);
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>
@@ -220,11 +264,39 @@ const ResearchLibrary = () => {
               label={`${papers.reduce((sum, p) => sum + p.views, 0).toLocaleString()} Total Views`}
               variant="outlined"
             />
-            <Chip
-              label={`${papers.reduce((sum, p) => sum + p.citations, 0)} Citations`}
-              variant="outlined"
-            />
+          <Chip
+            label={`${papers.reduce((sum, p) => sum + p.citations, 0)} Citations`}
+            variant="outlined"
+          />
+        </Box>
+
+        {recommendedPapers.length > 0 && (
+          <Box sx={{ mb: 4, mt: 2 }}>
+            <Typography variant="h6" sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+              For You
+              <Chip
+                size="small"
+                color={recommendationVariant === 'control' ? 'default' : 'primary'}
+                label={recommendationVariant === 'control' ? 'Baseline' : 'Personalized'}
+              />
+            </Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+              We capture your searches, saves, and clicks to tune this feed and compare lift against a trending baseline.
+            </Typography>
+            <Grid container spacing={2}>
+              {recommendedPapers.map(paper => (
+                <Grid item xs={12} md={4} key={`rec-${paper.id}`}>
+                  <PaperCard
+                    paper={paper}
+                    viewMode="grid"
+                    onToggleLibrary={handleToggleLibrary}
+                    onClick={() => handlePaperClick(paper)}
+                  />
+                </Grid>
+              ))}
+            </Grid>
           </Box>
+        )}
         </Box>
 
         {/* Search and Filters */}
@@ -358,6 +430,24 @@ const ResearchLibrary = () => {
           {filteredPapers.length} {filteredPapers.length === 1 ? 'paper' : 'papers'} found
         </Typography>
 
+        {!loading && relatedTopics.length > 0 && (
+          <Box sx={{ mb: 3, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Related topics from your signals:
+            </Typography>
+            {relatedTopics.map(topic => (
+              <Chip
+                key={topic}
+                size="small"
+                label={topic}
+                color="primary"
+                variant="outlined"
+                onClick={() => setFilterTopic(topic)}
+              />
+            ))}
+          </Box>
+        )}
+
         {/* Loading State */}
         {loading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
@@ -383,7 +473,7 @@ const ResearchLibrary = () => {
                   paper={paper}
                   viewMode={viewMode}
                   onToggleLibrary={handleToggleLibrary}
-                  onClick={() => navigate(`/library/${paper.id}`)}
+                  onClick={() => handlePaperClick(paper)}
                 />
               </Grid>
             ))}

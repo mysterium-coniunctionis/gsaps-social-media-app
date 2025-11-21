@@ -24,6 +24,13 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import {
+  getRecommendations,
+  logInteraction,
+  recordExperimentConversion,
+  recordExperimentImpression,
+  useExperiment
+} from '../utils/recommendationService';
 
 /**
  * Groups listing page
@@ -37,6 +44,8 @@ const Groups = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('active');
+  const [recommendedGroups, setRecommendedGroups] = useState([]);
+  const groupVariant = useExperiment('group-feed', ['control', 'personalized']);
 
   useEffect(() => {
     // TODO: Fetch groups from API
@@ -262,9 +271,28 @@ const Groups = () => {
     setFilteredGroups(filtered);
   }, [searchQuery, filterType, sortBy, groups]);
 
+  useEffect(() => {
+    if (groups.length) {
+      const recommendations = getRecommendations('group', groups, {
+        variant: groupVariant,
+        limit: 6
+      });
+      setRecommendedGroups(recommendations);
+      recordExperimentImpression('group-feed', groupVariant, recommendations.length);
+    }
+  }, [groups, groupVariant]);
+
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  const handleGroupClick = (group) => {
+    logInteraction('group', group, 'click');
+    recordExperimentConversion('group-feed', groupVariant, 1);
+    navigate(`/groups/${group.slug}`);
+  };
+
+  const relatedGroupCategories = Array.from(new Set(recommendedGroups.map(group => group.category))).slice(0, 4);
 
   return (
     <Box sx={{ py: 3 }}>
@@ -285,6 +313,59 @@ const Groups = () => {
           Create Group
         </Button>
       </Box>
+
+      {recommendedGroups.length > 0 && (
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" fontWeight="bold">
+                For You
+                <Chip
+                  sx={{ ml: 1 }}
+                  size="small"
+                  color={groupVariant === 'control' ? 'default' : 'primary'}
+                  label={groupVariant === 'control' ? 'Baseline' : 'Personalized'}
+                />
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Clicks, joins, and searches help rank relevant communities.
+              </Typography>
+            </Box>
+            <Grid container spacing={2}>
+              {recommendedGroups.map(group => (
+                <Grid item xs={12} md={6} key={`rec-group-${group.id}`}>
+                  <Card
+                    sx={{
+                      cursor: 'pointer',
+                      transition: 'transform 0.2s, box-shadow 0.2s',
+                      '&:hover': { transform: 'translateY(-2px)', boxShadow: 4 }
+                    }}
+                    onClick={() => handleGroupClick(group)}
+                  >
+                    <CardContent>
+                      <Box sx={{ display: 'flex', gap: 2 }}>
+                        <Avatar src={group.avatar_url} sx={{ width: 48, height: 48 }} />
+                        <Box>
+                          <Typography variant="subtitle1" fontWeight="bold">
+                            {group.name}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                            {group.description.slice(0, 90)}...
+                          </Typography>
+                          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                            <Chip label={group.category} size="small" variant="outlined" />
+                            <Chip label={`${group.memberCount} members`} size="small" />
+                          </Box>
+                        </Box>
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search and Filters */}
       <Card sx={{ mb: 3 }}>
@@ -338,6 +419,27 @@ const Groups = () => {
         </CardContent>
       </Card>
 
+      {relatedGroupCategories.length > 0 && (
+        <Box sx={{ mb: 3, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            Related categories from your activity:
+          </Typography>
+            {relatedGroupCategories.map(category => (
+              <Chip
+                key={category}
+                label={category}
+                size="small"
+                variant="outlined"
+                color="primary"
+                onClick={() => {
+                  setFilterType('all');
+                  setSearchQuery(category);
+                }}
+              />
+            ))}
+          </Box>
+        )}
+
       {/* Groups List */}
       {filteredGroups.length === 0 ? (
         <Card>
@@ -355,16 +457,16 @@ const Groups = () => {
         <Grid container spacing={3}>
           {filteredGroups.map((group) => (
             <Grid item xs={12} md={6} key={group.id}>
-              <Card
-                sx={{
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-4px)',
-                    boxShadow: 4
-                  }
-                }}
-                onClick={() => navigate(`/groups/${group.slug}`)}
+                <Card
+                  sx={{
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4
+                    }
+                  }}
+                onClick={() => handleGroupClick(group)}
               >
                 <CardContent>
                   <Box sx={{ display: 'flex', gap: 2 }}>
@@ -421,6 +523,8 @@ const Groups = () => {
                           onClick={(e) => {
                             e.stopPropagation();
                             // TODO: Implement join/leave functionality
+                            logInteraction('group', group, 'join');
+                            recordExperimentConversion('group-feed', groupVariant, 0.5);
                             alert(group.isJoined ? 'Leave group' : 'Join group');
                           }}
                         >

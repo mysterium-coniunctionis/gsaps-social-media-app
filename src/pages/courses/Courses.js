@@ -15,7 +15,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Card,
-  CardContent
+  CardContent,
+  Chip as MuiChip
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -31,6 +32,13 @@ import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
 import { fadeInUp } from '../../theme/animations';
 import { useGamification } from '../../context/GamificationContext';
 import COMPREHENSIVE_COURSES from '../../data/coursesData';
+import {
+  getRecommendations,
+  logInteraction,
+  recordExperimentConversion,
+  recordExperimentImpression,
+  useExperiment
+} from '../../utils/recommendationService';
 
 /**
  * Courses Page - Main LMS course listing
@@ -48,6 +56,8 @@ const Courses = () => {
   const [filterLevel, setFilterLevel] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const courseVariant = useExperiment('course-feed', ['control', 'personalized']);
 
   // Course categories
   const categories = [
@@ -69,6 +79,17 @@ const Courses = () => {
   useEffect(() => {
     fetchCourses();
   }, []);
+
+  useEffect(() => {
+    if (courses.length) {
+      const recommendations = getRecommendations('course', courses, {
+        variant: courseVariant,
+        limit: 6
+      });
+      setRecommendedCourses(recommendations);
+      recordExperimentImpression('course-feed', courseVariant, recommendations.length);
+    }
+  }, [courses, courseVariant]);
 
   const fetchCourses = () => {
     setLoading(true);
@@ -143,6 +164,15 @@ const Courses = () => {
     setCreateDialogOpen(true);
   };
 
+  const handleCourseSelected = (course) => {
+    logInteraction('course', course, 'click');
+    recordExperimentConversion('course-feed', courseVariant, 1);
+  };
+
+  const relatedCategories = Array.from(
+    new Set(recommendedCourses.map(course => course.category.replace(/-/g, ' ')))
+  ).slice(0, 4);
+
   const handleCourseCreated = (newCourse) => {
     setCourses([newCourse, ...courses]);
     setCreateDialogOpen(false);
@@ -197,6 +227,34 @@ const Courses = () => {
         </Box>
 
         {/* Search and Filters */}
+        {recommendedCourses.length > 0 && (
+          <Card sx={{ mb: 3, animation: `${fadeInUp} 0.6s ease-out 0.05s backwards` }}>
+            <CardContent>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+                <Typography variant="h6" fontWeight="bold">
+                  For You
+                  <MuiChip
+                    sx={{ ml: 1 }}
+                    size="small"
+                    color={courseVariant === 'control' ? 'default' : 'primary'}
+                    label={courseVariant === 'control' ? 'Baseline' : 'Personalized'}
+                  />
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Signals from enroll intent and clicks feed this experiment.
+                </Typography>
+              </Box>
+              <Grid container spacing={2}>
+                {recommendedCourses.map(course => (
+                  <Grid item xs={12} md={4} key={`rec-course-${course.id}`}>
+                    <CourseCard course={course} viewMode="grid" onSelect={handleCourseSelected} />
+                  </Grid>
+                ))}
+              </Grid>
+            </CardContent>
+          </Card>
+        )}
+
         <Card sx={{ mb: 4, animation: `${fadeInUp} 0.6s ease-out 0.1s backwards` }}>
           <CardContent>
             <Grid container spacing={2} alignItems="center">
@@ -323,6 +381,24 @@ const Courses = () => {
           {filteredCourses.length} {filteredCourses.length === 1 ? 'course' : 'courses'} found
         </Typography>
 
+        {!loading && relatedCategories.length > 0 && (
+          <Box sx={{ mb: 3, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+            <Typography variant="body2" color="text.secondary">
+              Related tracks based on your activity:
+            </Typography>
+            {relatedCategories.map(category => (
+              <MuiChip
+                key={category}
+                label={category}
+                size="small"
+                color="primary"
+                variant="outlined"
+                onClick={() => setFilterCategory(category.replace(/\s/g, '-'))}
+              />
+            ))}
+          </Box>
+        )}
+
         {/* Courses Grid/List */}
         {loading ? (
           <Typography>Loading courses...</Typography>
@@ -349,7 +425,7 @@ const Courses = () => {
                   animation: `${fadeInUp} 0.6s ease-out ${0.2 + index * 0.1}s backwards`
                 }}
               >
-                <CourseCard course={course} viewMode={viewMode} />
+                <CourseCard course={course} viewMode={viewMode} onSelect={handleCourseSelected} />
               </Grid>
             ))}
           </Grid>

@@ -20,7 +20,7 @@ import { useAuth } from '../../context/AuthContext';
  * Certificate Component
  * Generates a professional certificate of completion for courses
  */
-const Certificate = ({ course, completionDate, ceCredits, score }) => {
+const Certificate = ({ course, completionDate, ceCredits, score, credential }) => {
   const { currentUser } = useAuth();
   const certificateRef = useRef();
 
@@ -49,7 +49,8 @@ const Certificate = ({ course, completionDate, ceCredits, score }) => {
     }
   };
 
-  const certificateId = `GSAPS-${course.id}-${new Date(completionDate).getTime()}`;
+  const certificateId = credential?.id || `GSAPS-${course.id}-${new Date(completionDate).getTime()}`;
+  const verificationUrl = credential?.verificationUrl || 'https://gsaps.org/certificates/verify';
   const formattedDate = new Date(completionDate).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
@@ -234,8 +235,13 @@ const Certificate = ({ course, completionDate, ceCredits, score }) => {
                 Certificate ID: {certificateId}
               </Typography>
               <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 0.5 }}>
-                Verify at: gsaps.org/certificates/verify
+                Verify at: {verificationUrl}
               </Typography>
+              {credential && (
+                <Typography variant="caption" display="block" color="text.secondary" sx={{ mt: 0.5 }}>
+                  Issued to {credential.issuedTo} • {credential.ceCredits || ceCredits || course.ceCredits} CE
+                </Typography>
+              )}
             </Box>
           </CardContent>
         </Card>
@@ -244,7 +250,7 @@ const Certificate = ({ course, completionDate, ceCredits, score }) => {
       {/* Additional Info */}
       <Box sx={{ mt: 3, textAlign: 'center', '@media print': { display: 'none' } }}>
         <Typography variant="body2" color="text.secondary">
-          This certificate is issued in recognition of course completion.
+          This certificate is issued in recognition of course completion and is backed by a verifiable credential.
           For official CE credit submission, please contact your licensing board.
         </Typography>
       </Box>

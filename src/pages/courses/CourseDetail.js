@@ -17,6 +17,7 @@ import {
   AccordionSummary,
   AccordionDetails,
   LinearProgress,
+  Alert,
   Tab,
   Tabs,
   Rating,
@@ -42,6 +43,7 @@ import {
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useGamification } from '../../context/GamificationContext';
+import { useSubscription } from '../../context/SubscriptionContext';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import COMPREHENSIVE_COURSES from '../../data/coursesData';
 import { fadeInUp } from '../../theme/animations';
@@ -55,12 +57,14 @@ const CourseDetail = () => {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const { awardXP, updateStat } = useGamification();
+  const { getAccessStatus, registerEnrollment, releaseSeat } = useSubscription();
   const [loading, setLoading] = useState(true);
   const [course, setCourse] = useState(null);
   const [activeTab, setActiveTab] = useState(0);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
+  const [accessStatus, setAccessStatus] = useState({ allowed: true });
 
   useEffect(() => {
     // Find course by ID or slug
@@ -71,6 +75,7 @@ const CourseDetail = () => {
 
       if (foundCourse) {
         setCourse(foundCourse);
+        setAccessStatus(getAccessStatus(foundCourse));
 
         // Check if user is enrolled (from localStorage)
         const enrollmentKey = `course_enrolled_${foundCourse.id}`;
@@ -96,7 +101,7 @@ const CourseDetail = () => {
 
       setLoading(false);
     }, 600);
-  }, [courseId]);
+  }, [courseId, getAccessStatus]);
 
   const handleEnroll = () => {
     if (!currentUser) {
@@ -104,7 +109,17 @@ const CourseDetail = () => {
       return;
     }
 
+    if (!accessStatus.allowed) {
+      alert(accessStatus.reason || 'Your subscription does not allow this course yet.');
+      return;
+    }
+
     setIsEnrolled(true);
+
+    registerEnrollment(course);
+
+    // Refresh access status after using a seat
+    setAccessStatus(getAccessStatus(course));
 
     // Save enrollment to localStorage
     const enrollmentKey = `course_enrolled_${course.id}`;
@@ -131,6 +146,8 @@ const CourseDetail = () => {
     if (window.confirm('Are you sure you want to unenroll from this course?')) {
       setIsEnrolled(false);
       setHasStarted(false);
+
+      releaseSeat(course);
 
       // Remove enrollment from localStorage
       const enrollmentKey = `course_enrolled_${course.id}`;
@@ -344,6 +361,14 @@ const CourseDetail = () => {
                         />
                       </ListItem>
                     </List>
+
+                    {accessStatus.license && (
+                      <Alert severity={accessStatus.allowed ? 'success' : 'warning'} sx={{ mb: 2 }}>
+                        {accessStatus.allowed
+                          ? `License: ${accessStatus.license.label} • Seats remaining: ${accessStatus.seatsRemaining}`
+                          : accessStatus.reason}
+                      </Alert>
+                    )}
 
                     {/* Enroll Button */}
                     {isEnrolled ? (

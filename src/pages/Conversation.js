@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   Box,
   Avatar,
@@ -35,9 +35,11 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useRealtime, useRealtimeSubscription } from '../context/RealtimeContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { mockConversations, getMockConversationById, getMockMessages } from '../utils/mockConversations';
 import { formatShortRelativeTime } from '../utils/dateUtils';
+import useOptimisticList from '../hooks/useOptimisticList';
 
 /**
  * Conversation page
@@ -47,6 +49,7 @@ const Conversation = () => {
   const { conversationId } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
+  const { typingByRoom, presenceByRoom, sendTypingIndicator, updatePresence } = useRealtime();
   const [loading, setLoading] = useState(true);
   const [conversation, setConversation] = useState(null);
   const [conversations, setConversations] = useState([]);
@@ -56,6 +59,13 @@ const Conversation = () => {
   const [showConversationsList, setShowConversationsList] = useState(true);
   const [showProfileSidebar, setShowProfileSidebar] = useState(true);
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
+
+  const { addOptimisticItem, confirmFromServer } = useOptimisticList({
+    roomId: conversationId,
+    namespace: 'chat',
+    setItems: setMessages
+  });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -78,22 +88,71 @@ const Conversation = () => {
     scrollToBottom();
   }, [messages]);
 
-  const handleSendMessage = (e) => {
+  useEffect(() => {
+    if (!conversationId) return undefined;
+
+    updatePresence(conversationId, 'online');
+
+    return () => {
+      updatePresence(conversationId, 'offline');
+      sendTypingIndicator(conversationId, false);
+    };
+  }, [conversationId, sendTypingIndicator, updatePresence]);
+
+  const handleIncomingRealtimeMessage = useCallback((incomingMessage) => {
+    confirmFromServer(incomingMessage);
+  }, [confirmFromServer]);
+
+  useRealtimeSubscription({
+    channel: `chat:${conversationId}`,
+    handlers: {
+      'message:created': handleIncomingRealtimeMessage,
+      'comment:created': handleIncomingRealtimeMessage
+    },
+    enabled: Boolean(conversationId),
+    joinPayload: { conversationId }
+  });
+
+  useEffect(() => {
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const handleMessageChange = useCallback((value) => {
+    setNewMessage(value);
+
+    if (!conversationId) return;
+
+    sendTypingIndicator(conversationId, true);
+
+    if (typingTimeoutRef.current) {
+      clearTimeout(typingTimeoutRef.current);
+    }
+
+    typingTimeoutRef.current = setTimeout(() => {
+      sendTypingIndicator(conversationId, false);
+    }, 1600);
+  }, [conversationId, sendTypingIndicator]);
+
+  const handleSendMessage = useCallback((e) => {
     e.preventDefault();
 
     if (!newMessage.trim()) return;
 
     const message = {
-      id: messages.length + 1,
       senderId: currentUser?.id || 1,
-      text: newMessage,
+      text: newMessage.trim(),
       timestamp: new Date().toISOString(),
       read: false
     };
 
-    setMessages([...messages, message]);
     setNewMessage('');
-  };
+    addOptimisticItem('chat:message:create', message);
+    sendTypingIndicator(conversationId, false);
+  }, [addOptimisticItem, conversationId, currentUser, newMessage, sendTypingIndicator]);
 
   const formatMessageTime = (timestamp) => {
     const date = new Date(timestamp);
@@ -165,6 +224,12 @@ const Conversation = () => {
       </Box>
     );
   }
+
+  const roomTyping = typingByRoom[conversationId] || {};
+  const isParticipantTyping = Object.entries(roomTyping).some(([userId, isTyping]) =>
+    isTyping && `${userId}` !== `${currentUser?.id || 1}`
+  );
+  const participantPresence = presenceByRoom[conversationId]?.[conversation.participant.id];
 
   const messageGroups = groupMessagesByDate(messages);
 
@@ -349,6 +414,18 @@ const Conversation = () => {
               <Typography variant="caption" color="text.secondary">
                 @{conversation.participant.username}
               </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}>
+                <Typography
+                  variant="caption"
+                  color={participantPresence === 'online' ? 'success.main' : 'text.secondary'}
+                  sx={{ fontWeight: 600 }}
+                >
+                  {participantPresence === 'online' ? 'Online now' : participantPresence || 'Offline'}
+                </Typography>
+                {isParticipantTyping && (
+                  <Chip label="Typing" size="small" color="secondary" variant="outlined" sx={{ height: 20 }} />
+                )}
+              </Box>
             </Box>
           </Box>
           <Box sx={{ display: 'flex', gap: 1 }}>
@@ -482,6 +559,15 @@ const Conversation = () => {
               })}
             </Box>
           ))}
+          {isParticipantTyping && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 1, fontStyle: 'italic', pl: 1 }}
+            >
+              {conversation.participant.name} is typing...
+            </Typography>
+          )}
           <div ref={messagesEndRef} />
         </Box>
 
@@ -513,7 +599,7 @@ const Conversation = () => {
               fullWidth
               placeholder="Type a message..."
               value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
+              onChange={(e) => handleMessageChange(e.target.value)}
               variant="outlined"
               size="medium"
               multiline

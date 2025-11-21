@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
+import { RealtimeProvider } from './context/RealtimeContext';
 import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
 
@@ -15,14 +16,16 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <GamificationProvider>
-          <ThemeProvider>
-            <ToastProvider>
-              <CssBaseline />
-              <App />
-            </ToastProvider>
-          </ThemeProvider>
-        </GamificationProvider>
+        <RealtimeProvider>
+          <GamificationProvider>
+            <ThemeProvider>
+              <ToastProvider>
+                <CssBaseline />
+                <App />
+              </ToastProvider>
+            </ThemeProvider>
+          </GamificationProvider>
+        </RealtimeProvider>
       </AuthProvider>
     </BrowserRouter>
   </React.StrictMode>

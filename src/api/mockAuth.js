@@ -48,6 +48,19 @@ const DEFAULT_USERS = [
     bio: 'Researching psilocybin-assisted therapy for depression',
     joined: '2023-06-20T00:00:00.000Z',
     verified: true
+  },
+  {
+    id: 4,
+    username: 'moderator',
+    email: 'moderator@gsaps.org',
+    password: '$2b$10$o.B3P0keRrXTO0d.e5e7UuJH7cSPbQSkkUWkifSvn86l4S4CW4goe',
+    name: 'Moderator User',
+    role: 'moderator',
+    avatar_url: 'https://i.pravatar.cc/150?img=8',
+    credentials: 'Community Safety Lead',
+    bio: 'Helps review reports, appeals, and escalations for the community.',
+    joined: '2023-10-01T00:00:00.000Z',
+    verified: true
   }
 ];
 

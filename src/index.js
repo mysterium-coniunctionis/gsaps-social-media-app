@@ -7,6 +7,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
+import { SubscriptionProvider } from './context/SubscriptionContext';
 import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
 
@@ -19,7 +20,9 @@ root.render(
           <ThemeProvider>
             <ToastProvider>
               <CssBaseline />
-              <App />
+              <SubscriptionProvider>
+                <App />
+              </SubscriptionProvider>
             </ToastProvider>
           </ThemeProvider>
         </GamificationProvider>

@@ -38,6 +38,8 @@ import {
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useGamification } from '../../context/GamificationContext';
+import { useSubscription } from '../../context/SubscriptionContext';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../components/common';
 import LoadingSpinner from '../../components/common/LoadingSpinner';
 import Quiz from '../../components/courses/Quiz';
@@ -53,6 +55,8 @@ const CoursePlayer = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
   const { awardXP, updateStat } = useGamification();
+  const { issueVerifiableCredential, getAccessStatus } = useSubscription();
+  const { currentUser } = useAuth();
   const toast = useToast();
 
   const [course, setCourse] = useState(null);
@@ -65,6 +69,8 @@ const CoursePlayer = () => {
   const [showCertificate, setShowCertificate] = useState(false);
   const [quizScores, setQuizScores] = useState({});
   const [courseCompleted, setCourseCompleted] = useState(false);
+  const [credential, setCredential] = useState(null);
+  const [accessStatus, setAccessStatus] = useState({ allowed: true });
 
   useEffect(() => {
     // Simulate API call
@@ -75,6 +81,7 @@ const CoursePlayer = () => {
 
       if (foundCourse) {
         setCourse(foundCourse);
+        setAccessStatus(getAccessStatus(foundCourse));
         // Load progress from localStorage
         const savedProgress = localStorage.getItem(`course_progress_${foundCourse.id}`);
         if (savedProgress) {
@@ -88,7 +95,7 @@ const CoursePlayer = () => {
       }
       setLoading(false);
     }, 500);
-  }, [courseId]);
+  }, [courseId, getAccessStatus]);
 
   useEffect(() => {
     // Save progress whenever it changes
@@ -183,9 +190,17 @@ const CoursePlayer = () => {
       setCourseCompleted(true);
       awardXP('COMPLETE_COURSE');
       updateStat('courses_completed');
-      
+
+      const issued = issueVerifiableCredential({
+        course,
+        user: currentUser,
+        completionDate: new Date().toISOString(),
+        score: calculateProgress()
+      });
+      setCredential(issued);
+
       toast.success(`🎉 Congratulations! You've completed the course! +150 XP`);
-      
+
       // Show certificate after a moment
       setTimeout(() => {
         setShowCertificate(true);
@@ -360,6 +375,15 @@ const CoursePlayer = () => {
 
       {/* Main Content Area */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+        {accessStatus.allowed ? (
+          <Alert severity="info" sx={{ borderRadius: 0 }}>
+            Seat-based license in effect: {accessStatus.license?.label} · CE Eligible: {accessStatus.ceEligible ? 'Yes' : 'No'}
+          </Alert>
+        ) : (
+          <Alert severity="warning" sx={{ borderRadius: 0 }}>
+            {accessStatus.reason || 'No available license for this course.'}
+          </Alert>
+        )}
         {/* Top Bar */}
         <Paper
           sx={{
@@ -642,6 +666,7 @@ const CoursePlayer = () => {
             completionDate={new Date().toISOString()}
             ceCredits={course.ceCredits}
             score={calculateProgress()}
+            credential={credential}
           />
         </DialogContent>
       </Dialog>

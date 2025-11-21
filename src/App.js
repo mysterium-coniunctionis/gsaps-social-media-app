@@ -30,6 +30,8 @@ import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import SubscriptionBilling from './pages/billing/SubscriptionBilling';
+import OrgReporting from './pages/admin/OrgReporting';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -129,6 +131,18 @@ function App() {
                 <Route path="/courses" element={<Courses />} />
 
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
+
+                <Route path="/billing" element={
+                  <ProtectedRoute>
+                    <SubscriptionBilling />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/admin/reporting" element={
+                  <ProtectedRoute>
+                    <OrgReporting />
+                  </ProtectedRoute>
+                } />
 
                 <Route path="/leaderboard" element={<Leaderboard />} />
 

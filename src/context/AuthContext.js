@@ -1,5 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, registerUser, logoutUser, getCurrentUser } from '../api/auth';
+import {
+  loginUser,
+  registerUser,
+  logoutUser,
+  getCurrentUser,
+  refreshTokens,
+  oauthLogin
+} from '../api/auth';
 
 const AuthContext = createContext();
 
@@ -34,12 +41,12 @@ export const AuthProvider = ({ children }) => {
     checkLoggedIn();
   }, []);
 
-  const login = async (username, password) => {
+  const login = async (username, password, otpCode = '') => {
     setLoading(true);
     setError(null);
     
     try {
-      const userData = await loginUser(username, password);
+      const userData = await loginUser(username, password, otpCode);
       setCurrentUser(userData);
       return userData;
     } catch (err) {
@@ -81,13 +88,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const refresh = async () => {
+    try {
+      await refreshTokens();
+      const userData = await getCurrentUser();
+      setCurrentUser(userData);
+      return userData;
+    } catch (err) {
+      console.error('Refresh error:', err);
+      localStorage.removeItem('gsaps_token');
+      localStorage.removeItem('gsaps_refresh_token');
+      setCurrentUser(null);
+      setError(err.message || 'Session expired');
+      throw err;
+    }
+  };
+
+  const loginWithProvider = async (provider) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const userData = await oauthLogin(provider);
+      setCurrentUser(userData);
+      return userData;
+    } catch (err) {
+      setError(err.message || 'Failed to login with provider');
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const value = {
     currentUser,
     loading,
     error,
     login,
     register,
-    logout
+    logout,
+    refresh,
+    loginWithProvider
   };
 
   return (

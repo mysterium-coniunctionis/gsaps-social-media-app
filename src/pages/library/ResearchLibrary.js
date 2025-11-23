@@ -34,6 +34,8 @@ const ResearchLibrary = () => {
   const [sortBy, setSortBy] = useState('recent');
   const [viewMode, setViewMode] = useState('grid');
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [recommendedPapers, setRecommendedPapers] = useState([]);
+  const recommendationVariant = useExperiment('library-feed', ['control', 'personalized']);
 
   const { data: papers = [], isLoading } = useQuery({ queryKey: ['research-assets'], queryFn: fetchResearchAssets });
 
@@ -82,6 +84,12 @@ const ResearchLibrary = () => {
       type: payload.topic || 'paper'
     });
   };
+
+  const relatedTopics = useMemo(() => {
+    const topics = new Set();
+    recommendedPapers.forEach(paper => paper.topics?.forEach(topic => topics.add(topic)));
+    return Array.from(topics).slice(0, 6);
+  }, [recommendedPapers]);
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>

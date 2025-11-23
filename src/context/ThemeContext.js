@@ -108,6 +108,11 @@ export const ThemeProvider = ({ children }) => {
     [mode],
   );
 
+  const contextValue = useMemo(() => ({
+    mode,
+    toggleTheme,
+  }), [mode, toggleTheme]);
+
   return (
     <ThemeContext.Provider value={{ mode, toggleTheme, colorMode }}>
       <MuiThemeProvider theme={theme}>

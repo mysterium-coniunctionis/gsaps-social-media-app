@@ -10,13 +10,16 @@ import { GamificationProvider } from './context/GamificationContext';
 import { RealtimeProvider } from './context/RealtimeContext';
 import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <RealtimeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
           <GamificationProvider>
             <ThemeProvider>
               <ToastProvider>
@@ -25,8 +28,8 @@ root.render(
               </ToastProvider>
             </ThemeProvider>
           </GamificationProvider>
-        </RealtimeProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

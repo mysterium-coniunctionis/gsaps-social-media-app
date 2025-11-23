@@ -1,54 +1,158 @@
-name: Build and Deploy
+name: Build and Deploy to Kubernetes
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: ["main"]
+    tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      environment:
+        description: "Environment to deploy"
+        required: true
+        default: "staging"
+        type: choice
+        options: ["staging", "production"]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/gsaps-social-media-app
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  build:
+  build-and-push:
     runs-on: ubuntu-latest
-    
+    outputs:
+      image: ${{ steps.define-image.outputs.image }}
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-        cache: 'npm'
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: npm ci
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
-    - name: Build
-      run: npm run build
-      env:
-        CI: false # This prevents treating warnings as errors
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Upload build artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: build-files
-        path: build/
+      - name: Build app
+        run: npm run build
 
-  deploy:
-    needs: build
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.GHCR_USERNAME || github.actor }}
+          password: ${{ secrets.GHCR_TOKEN || secrets.GITHUB_TOKEN }}
+
+      - name: Define image tag
+        id: define-image
+        run: echo "image=${IMAGE_NAME}:${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ steps.define-image.outputs.image }}
+            ${{ env.IMAGE_NAME }}:latest
+          file: Dockerfile
+
+  deploy-staging:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' # Only deploy on main branch
-    
+    needs: build-and-push
+    if: github.ref == 'refs/heads/main' || github.event.inputs.environment == 'staging'
+    environment: staging
+    env:
+      IMAGE: ${{ needs.build-and-push.outputs.image }}
     steps:
-    - name: Download build artifacts
-      uses: actions/download-artifact@v4
-      with:
-        name: build-files
-        path: build
-    
-    # GitHub Pages deployment
-    - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@v4
-      with:
-        branch: gh-pages
-        folder: build
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.4
+
+      - name: Install kustomize
+        uses: imranismail/setup-kustomize@v2
+        with:
+          version: "5.0.1"
+
+      - name: Install argo-rollouts plugin
+        run: |
+          curl -sLo kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/download/v1.7.3/kubectl-argo-rollouts-linux-amd64
+          chmod +x kubectl-argo-rollouts
+          sudo mv kubectl-argo-rollouts /usr/local/bin/
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${KUBE_CONFIG_STAGING}" > $HOME/.kube/config
+        env:
+          KUBE_CONFIG_STAGING: ${{ secrets.KUBE_CONFIG_STAGING }}
+
+      - name: Set rollout image
+        working-directory: infra/k8s/overlays/staging
+        run: kustomize edit set image ghcr.io/example/gsaps-social-media-app=${IMAGE}
+
+      - name: Apply manifests
+        run: kubectl apply -k infra/k8s/overlays/staging
+
+      - name: Promote rollout
+        run: kubectl argo rollouts promote social-media-frontend -n social-media
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.environment == 'production'
+    environment: production
+    env:
+      IMAGE: ${{ needs.build-and-push.outputs.image }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+        with:
+          version: v1.29.4
+
+      - name: Install kustomize
+        uses: imranismail/setup-kustomize@v2
+        with:
+          version: "5.0.1"
+
+      - name: Install argo-rollouts plugin
+        run: |
+          curl -sLo kubectl-argo-rollouts https://github.com/argoproj/argo-rollouts/releases/download/v1.7.3/kubectl-argo-rollouts-linux-amd64
+          chmod +x kubectl-argo-rollouts
+          sudo mv kubectl-argo-rollouts /usr/local/bin/
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${KUBE_CONFIG_PRODUCTION}" > $HOME/.kube/config
+        env:
+          KUBE_CONFIG_PRODUCTION: ${{ secrets.KUBE_CONFIG_PRODUCTION }}
+
+      - name: Set rollout image
+        working-directory: infra/k8s/overlays/production
+        run: kustomize edit set image ghcr.io/example/gsaps-social-media-app=${IMAGE}
+
+      - name: Apply manifests
+        run: kubectl apply -k infra/k8s/overlays/production
+
+      - name: Promote rollout
+        run: kubectl argo rollouts promote social-media-frontend -n social-media

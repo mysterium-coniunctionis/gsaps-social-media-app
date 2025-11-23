@@ -1,0 +1,24 @@
+apiVersion: s3.services.k8s.aws/v1alpha1
+kind: Bucket
+metadata:
+  name: social-media-media
+  namespace: social-media
+spec:
+  name: social-media-media
+  publicAccessBlock:
+    blockPublicAcls: true
+    blockPublicPolicy: false
+    ignorePublicAcls: true
+    restrictPublicBuckets: false
+  lifecycleConfiguration:
+    rules:
+      - id: expire-temp-media
+        status: Enabled
+        expirationInDays: 30
+        filter: {}
+  tagging:
+    tagSet:
+      - key: environment
+        value: shared
+  versioningConfiguration:
+    status: Enabled

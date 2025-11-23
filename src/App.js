@@ -152,6 +152,18 @@ function App() {
 
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
 
+                <Route path="/billing" element={
+                  <ProtectedRoute>
+                    <SubscriptionBilling />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/admin/reporting" element={
+                  <ProtectedRoute>
+                    <OrgReporting />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/leaderboard" element={<Leaderboard />} />
 
                 <Route path="/notifications" element={

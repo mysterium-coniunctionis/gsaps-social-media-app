@@ -27,6 +27,7 @@ import {
   Brightness4,
   Brightness7
 } from '@mui/icons-material';
+import { CreditCard as CreditCardIcon, Analytics as AnalyticsIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';

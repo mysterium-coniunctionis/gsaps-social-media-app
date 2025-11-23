@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with base configuration
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL || 'https://gsaps.org/wp-json',
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   headers: {
     'Content-Type': 'application/json'
   }

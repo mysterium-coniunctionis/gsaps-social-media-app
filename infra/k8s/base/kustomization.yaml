@@ -1,0 +1,11 @@
+resources:
+  - namespace.yaml
+  - serviceaccounts.yaml
+  - rollout.yaml
+  - service.yaml
+  - ingress.yaml
+  - hpa.yaml
+  - configmap.yaml
+  - external-secret.yaml
+  - object-storage.yaml
+  - otel-collector.yaml

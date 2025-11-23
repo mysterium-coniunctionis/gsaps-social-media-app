@@ -41,6 +41,7 @@ import { enableMfa, disableMfa, getSessions, revokeSession, requestEmailVerifica
 const Settings = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { preferences, togglePreference } = useAccessibility();
   const [activeTab, setActiveTab] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

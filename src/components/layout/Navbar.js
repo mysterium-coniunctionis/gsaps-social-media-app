@@ -33,6 +33,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';
 import NotificationCenter from '../notifications/NotificationCenter';
+import AccessibilityMenu from '../accessibility/AccessibilityMenu';
 
 /**
  * Main navigation bar component
@@ -41,9 +42,11 @@ import NotificationCenter from '../notifications/NotificationCenter';
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { toggleTheme, mode } = useCustomTheme();
+  const { toggleTheme, mode, colorMode } = useCustomTheme();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleThemeToggle = toggleTheme || colorMode?.toggleColorMode || (() => {});
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);
@@ -130,6 +133,7 @@ const Navbar = () => {
                   color="inherit"
                   startIcon={item.icon}
                   onClick={() => navigate(item.path)}
+                  aria-label={`Go to ${item.label}`}
                 >
                   {item.label}
                 </Button>
@@ -139,8 +143,15 @@ const Navbar = () => {
 
         <Box sx={{ flexGrow: 1 }} />
 
+        <AccessibilityMenu />
+
         {/* Theme Toggle */}
-        <IconButton color="inherit" onClick={toggleTheme} sx={{ mr: 1 }}>
+        <IconButton
+          color="inherit"
+          onClick={toggleTheme}
+          sx={{ mr: 1 }}
+          aria-label={`Activate ${mode === 'dark' ? 'light' : 'dark'} mode`}
+        >
           {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
         </IconButton>
 
@@ -150,7 +161,11 @@ const Navbar = () => {
         {/* User Menu or Login Button */}
         {currentUser ? (
           <>
-            <IconButton onClick={handleUserMenuOpen} sx={{ p: 0 }}>
+            <IconButton
+              onClick={handleUserMenuOpen}
+              sx={{ p: 0 }}
+              aria-label="Open user menu"
+            >
               <Avatar
                 alt={currentUser.name || currentUser.username}
                 src={currentUser.avatar_url}

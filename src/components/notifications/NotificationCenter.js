@@ -172,6 +172,7 @@ const NotificationCenter = () => {
         color="inherit"
         onClick={handleOpen}
         sx={{ mr: 1 }}
+        aria-label="Open notifications"
       >
         <Badge
           badgeContent={unreadCount}

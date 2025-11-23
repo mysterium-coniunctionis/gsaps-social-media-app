@@ -1,138 +1,60 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  loginUser,
-  registerUser,
-  logoutUser,
-  getCurrentUser,
-  refreshTokens,
-  oauthLogin
-} from '../api/auth';
+import React, { createContext, useContext, useMemo, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { loginUser, registerUser, logoutUser, getCurrentUser } from '../api/auth';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
+  const [token, setToken] = useState(() => localStorage.getItem('gsaps_token'));
 
-  useEffect(() => {
-    const checkLoggedIn = async () => {
-      setLoading(true);
-      try {
-        // Check if there's a token in localStorage
-        const token = localStorage.getItem('gsaps_token');
-        
-        if (token) {
-          const userData = await getCurrentUser();
-          setCurrentUser(userData);
-        }
-      } catch (err) {
-        console.error('Authentication error:', err);
-        // Clear any invalid tokens
-        localStorage.removeItem('gsaps_token');
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const {
+    data: currentUser,
+    isLoading,
+    error
+  } = useQuery({
+    queryKey: ['currentUser', token],
+    queryFn: getCurrentUser,
+    enabled: Boolean(token)
+  });
 
-    checkLoggedIn();
-  }, []);
-
-  const login = async (username, password, otpCode = '') => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const userData = await loginUser(username, password, otpCode);
-      setCurrentUser(userData);
-      return userData;
-    } catch (err) {
-      setError(err.message || 'Failed to login');
-      throw err;
-    } finally {
-      setLoading(false);
+  const loginMutation = useMutation({
+    mutationFn: ({ username, password }) => loginUser(username, password),
+    onSuccess: () => {
+      const newToken = localStorage.getItem('gsaps_token');
+      setToken(newToken);
+      queryClient.invalidateQueries(['currentUser']);
     }
-  };
+  });
 
-  const register = async (userData) => {
-    setLoading(true);
-    setError(null);
-    
-    try {
-      const newUser = await registerUser(userData);
-      setCurrentUser(newUser);
-      return newUser;
-    } catch (err) {
-      setError(err.message || 'Failed to register');
-      throw err;
-    } finally {
-      setLoading(false);
+  const registerMutation = useMutation({
+    mutationFn: (payload) => registerUser(payload),
+    onSuccess: () => {
+      const newToken = localStorage.getItem('gsaps_token');
+      setToken(newToken);
+      queryClient.invalidateQueries(['currentUser']);
     }
-  };
+  });
 
   const logout = async () => {
-    setLoading(true);
-    
-    try {
-      await logoutUser();
-      setCurrentUser(null);
-      localStorage.removeItem('gsaps_token');
-    } catch (err) {
-      console.error('Logout error:', err);
-      setError(err.message || 'Failed to logout');
-    } finally {
-      setLoading(false);
-    }
+    await logoutUser();
+    setToken(null);
+    queryClient.removeQueries(['currentUser']);
   };
 
-  const refresh = async () => {
-    try {
-      await refreshTokens();
-      const userData = await getCurrentUser();
-      setCurrentUser(userData);
-      return userData;
-    } catch (err) {
-      console.error('Refresh error:', err);
-      localStorage.removeItem('gsaps_token');
-      localStorage.removeItem('gsaps_refresh_token');
-      setCurrentUser(null);
-      setError(err.message || 'Session expired');
-      throw err;
-    }
-  };
-
-  const loginWithProvider = async (provider) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const userData = await oauthLogin(provider);
-      setCurrentUser(userData);
-      return userData;
-    } catch (err) {
-      setError(err.message || 'Failed to login with provider');
-      throw err;
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const value = {
-    currentUser,
-    loading,
-    error,
-    login,
-    register,
-    logout,
-    refresh,
-    loginWithProvider
-  };
-
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      currentUser,
+      loading: isLoading,
+      error,
+      login: (username, password) => loginMutation.mutateAsync({ username, password }),
+      register: (payload) => registerMutation.mutateAsync(payload),
+      logout
+    }),
+    [currentUser, isLoading, error, loginMutation, registerMutation]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

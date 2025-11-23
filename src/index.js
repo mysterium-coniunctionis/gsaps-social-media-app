@@ -7,23 +7,29 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
+import { RealtimeProvider } from './context/RealtimeContext';
 import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <GamificationProvider>
-          <ThemeProvider>
-            <ToastProvider>
-              <CssBaseline />
-              <App />
-            </ToastProvider>
-          </ThemeProvider>
-        </GamificationProvider>
-      </AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <GamificationProvider>
+            <ThemeProvider>
+              <ToastProvider>
+                <CssBaseline />
+                <App />
+              </ToastProvider>
+            </ThemeProvider>
+          </GamificationProvider>
+        </AuthProvider>
+      </QueryClientProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

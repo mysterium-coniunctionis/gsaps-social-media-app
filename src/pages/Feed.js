@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   Box,
   Container,
@@ -9,151 +9,128 @@ import {
   CircularProgress
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import PostCard from '../components/feed/PostCard';
 import PostComposer from '../components/feed/PostComposer';
 import { fadeInUp } from '../theme/animations';
 import { useGamification } from '../context/GamificationContext';
-import fetchMockPosts from '../data/feed/mockPosts';
+import { useAuth } from '../context/AuthContext';
+import { createPost, deletePost, fetchPosts, reactToPost } from '../api/backend';
 
-/**
- * Activity Feed Page - The heart of the social platform
- * Displays posts from the community with engagement features
- */
 const Feed = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { awardXP, updateStat } = useGamification();
-  const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { currentUser } = useAuth();
+  const queryClient = useQueryClient();
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ['posts'],
+    queryFn: fetchPosts
+  });
   const [composerOpen, setComposerOpen] = useState(false);
-  // eslint-disable-next-line no-unused-vars
-  const [filter, setFilter] = useState('all'); // all, following, trending - TODO: implement filter UI
 
-  const fetchPosts = useCallback(async () => {
-    setLoading(true);
+  const createPostMutation = useMutation({
+    mutationFn: createPost,
+    onSuccess: () => queryClient.invalidateQueries(['posts'])
+  });
 
-    try {
-      const mockPosts = await fetchMockPosts(filter);
-      setPosts(mockPosts);
-    } catch (error) {
-      console.error('Failed to load feed posts', error);
-    } finally {
-      setLoading(false);
+  const reactMutation = useMutation({
+    mutationFn: reactToPost,
+    onSuccess: ({ postId, reactions }) => {
+      queryClient.setQueryData(['posts'], (previous) => {
+        if (!previous) return previous;
+        return previous.map((post) =>
+          post.id === postId
+            ? {
+                ...post,
+                reactions,
+                currentUserReaction: reactions.find((r) => r.userId === currentUser?.id)?.type || null
+              }
+            : post
+        );
+      });
     }
-  }, [filter]);
+  });
 
-  useEffect(() => {
-    fetchPosts();
-  }, [fetchPosts]);
+  const deletePostMutation = useMutation({
+    mutationFn: deletePost,
+    onSuccess: () => queryClient.invalidateQueries(['posts'])
+  });
 
-  const handleCreatePost = useCallback((newPost) => {
-    // Add new post to the feed
-    const post = {
-      id: Date.now(),
-      author: {
-        id: 'current-user',
-        name: 'You',
-        username: 'your_username',
-        avatar: ''
-      },
-      content: newPost.content,
-      images: newPost.images || [],
-      timestamp: new Date(),
-      reactions: [],
-      currentUserReaction: null,
-      comments: 0,
-      shares: 0,
-      isBookmarked: false,
-      tags: newPost.tags || []
-    };
+  const handleCreatePost = useCallback(
+    (newPost) => {
+      createPostMutation.mutate({
+        ...newPost,
+        tags: newPost.tags || []
+      });
+      setComposerOpen(false);
 
-    setPosts(prevPosts => [post, ...prevPosts]);
-    setComposerOpen(false);
-
-    // Award XP for creating post
-    if (newPost.images && newPost.images.length > 0) {
-      awardXP('POST_WITH_IMAGE'); // +15 XP for post with image
-    } else {
-      awardXP('CREATE_POST'); // +10 XP for regular post
-    }
-
-    // Bonus XP for using tags
-    if (newPost.tags && newPost.tags.length > 0) {
-      awardXP('POST_WITH_TAGS'); // +5 XP bonus for tagging
-    }
-
-    // Update stats
-    updateStat('posts_created');
-  }, [awardXP, updateStat]);
-
-  const handleReaction = useCallback((postId, reactionType) => {
-    setPosts(prevPosts => prevPosts.map(post => {
-      if (post.id === postId) {
-        const currentUserReaction = post.currentUserReaction;
-        let newReactions = [...post.reactions];
-
-        // Remove current user's existing reaction
-        newReactions = newReactions.filter(r => r.user.id !== 'current-user');
-
-        // If different reaction or no previous reaction, add new one
-        if (reactionType !== null && reactionType !== currentUserReaction) {
-          newReactions.push({
-            type: reactionType,
-            user: {
-              id: 'current-user',
-              name: 'You',
-              username: 'your_username',
-              avatar_url: ''
-            }
-          });
-
-          // Award XP for adding reaction
-          awardXP('ADD_REACTION'); // +3 XP for reacting to post
-          updateStat('reactions_given');
-        }
-
-        return {
-          ...post,
-          reactions: newReactions,
-          currentUserReaction: (reactionType === currentUserReaction) ? null : reactionType
-        };
+      if (newPost.images && newPost.images.length > 0) {
+        awardXP('POST_WITH_IMAGE');
+      } else {
+        awardXP('CREATE_POST');
       }
-      return post;
-    }));
-  }, [awardXP, updateStat]);
 
-  const handleBookmark = useCallback((postId) => {
-    setPosts(prevPosts => prevPosts.map(post =>
-      post.id === postId
-        ? { ...post, isBookmarked: !post.isBookmarked }
-        : post
-    ));
-  }, []);
+      if (newPost.tags && newPost.tags.length > 0) {
+        awardXP('POST_WITH_TAGS');
+      }
 
-  const handleComment = useCallback((postId, comment) => {
-    // TODO: Add comment to post
+      updateStat('posts_created');
+    },
+    [awardXP, createPostMutation, updateStat]
+  );
 
-    // Award XP for commenting
-    awardXP('COMMENT'); // +5 XP for commenting
-    updateStat('comments_made');
-  }, [awardXP, updateStat]);
+  const handleReaction = useCallback(
+    (postId, reactionType) => {
+      reactMutation.mutate({ postId, type: reactionType });
+      awardXP('ADD_REACTION');
+      updateStat('reactions_given');
+    },
+    [awardXP, reactMutation, updateStat]
+  );
 
-  const handleShare = useCallback((postId) => {
-    // TODO: Share functionality
+  const handleBookmark = useCallback(
+    (postId) => {
+      queryClient.setQueryData(['posts'], (prev) =>
+        prev?.map((post) =>
+          post.id === postId ? { ...post, isBookmarked: !post.isBookmarked } : post
+        )
+      );
+    },
+    [queryClient]
+  );
 
-    // Award XP for sharing
-    awardXP('SHARE_POST'); // +8 XP for sharing
-    updateStat('posts_shared');
-  }, [awardXP, updateStat]);
+  const handleComment = useCallback(
+    (postId, comment) => {
+      awardXP('COMMENT');
+      updateStat('comments_made');
+    },
+    [awardXP, updateStat]
+  );
 
-  const handleDelete = useCallback((postId) => {
-    setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
-  }, []);
+  const handleShare = useCallback(
+    (postId) => {
+      awardXP('SHARE_POST');
+      updateStat('posts_shared');
+    },
+    [awardXP, updateStat]
+  );
+
+  const handleDelete = useCallback(
+    (postId) => {
+      deletePostMutation.mutate(postId);
+    },
+    [deletePostMutation]
+  );
+
+  const normalizedPosts = useMemo(
+    () => posts.map((post) => ({ ...post, timestamp: new Date(post.timestamp) })),
+    [posts]
+  );
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', pb: 8 }}>
       <Container maxWidth="md" sx={{ pt: 3 }}>
-        {/* Header */}
         <Box sx={{ mb: 3 }}>
           <Typography
             variant="h4"
@@ -176,24 +153,15 @@ const Feed = () => {
           </Typography>
         </Box>
 
-        {/* Filter Tabs - Future enhancement */}
-        {/* <Tabs value={filter} onChange={(e, v) => setFilter(v)}>
-          <Tab label="All Posts" value="all" />
-          <Tab label="Following" value="following" />
-          <Tab label="Trending" value="trending" />
-        </Tabs> */}
-
-        {/* Loading State */}
-        {loading && (
+        {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
             <CircularProgress />
           </Box>
         )}
 
-        {/* Posts Feed */}
-        {!loading && posts.length > 0 && (
+        {!isLoading && normalizedPosts.length > 0 && (
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            {posts.map((post, index) => (
+            {normalizedPosts.map((post, index) => (
               <Box
                 key={post.id}
                 sx={{
@@ -207,61 +175,28 @@ const Feed = () => {
                   onShare={handleShare}
                   onBookmark={handleBookmark}
                   onDelete={handleDelete}
+                  currentUserId={currentUser?.id || 'current-user'}
                 />
               </Box>
             ))}
           </Box>
         )}
 
-        {/* Empty State */}
-        {!loading && posts.length === 0 && (
-          <Box
-            sx={{
-              textAlign: 'center',
-              py: 8,
-              animation: `${fadeInUp} 0.5s ease-out`
-            }}
-          >
-            <Typography variant="h6" color="text.secondary" gutterBottom>
-              No posts yet
-            </Typography>
-            <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-              Be the first to share something with the community!
-            </Typography>
-            <Fab
-              variant="extended"
-              color="primary"
-              onClick={() => setComposerOpen(true)}
-            >
-              <AddIcon sx={{ mr: 1 }} />
-              Create Post
-            </Fab>
-          </Box>
-        )}
+        <Fab
+          color="primary"
+          aria-label="add"
+          onClick={() => setComposerOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: 24,
+            right: isMobile ? 16 : 32,
+            boxShadow: 8,
+            animation: `${fadeInUp} 0.5s ease-out 0.2s backwards`
+          }}
+        >
+          <AddIcon />
+        </Fab>
 
-        {/* Floating Action Button */}
-        {!loading && posts.length > 0 && (
-          <Fab
-            color="primary"
-            aria-label="create post"
-            onClick={() => setComposerOpen(true)}
-            sx={{
-              position: 'fixed',
-              bottom: isMobile ? 80 : 24,
-              right: 24,
-              boxShadow: 6,
-              '&:hover': {
-                transform: 'scale(1.1)',
-                boxShadow: 8
-              },
-              transition: 'all 0.2s ease-in-out'
-            }}
-          >
-            <AddIcon />
-          </Fab>
-        )}
-
-        {/* Post Composer Modal */}
         <PostComposer
           open={composerOpen}
           onClose={() => setComposerOpen(false)}

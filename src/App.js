@@ -30,8 +30,7 @@ import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
-import PasswordReset from './pages/PasswordReset';
-import VerifyEmail from './pages/VerifyEmail';
+import Notifications from './pages/Notifications';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -136,6 +135,12 @@ function App() {
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
 
                 <Route path="/leaderboard" element={<Leaderboard />} />
+
+                <Route path="/notifications" element={
+                  <ProtectedRoute>
+                    <Notifications />
+                  </ProtectedRoute>
+                } />
 
                 <Route path="/settings" element={
                   <ProtectedRoute>

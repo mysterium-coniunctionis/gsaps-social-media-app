@@ -1,12 +1,14 @@
 import React, { useState, useCallback, useMemo } from 'react';
 import {
+  Alert,
   Box,
   Container,
   Typography,
   Fab,
   useTheme,
   useMediaQuery,
-  CircularProgress
+  CircularProgress,
+  Button
 } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
@@ -201,6 +203,13 @@ const Feed = () => {
           open={composerOpen}
           onClose={() => setComposerOpen(false)}
           onSubmit={handleCreatePost}
+        />
+
+        <GuidelinesGate
+          open={guidelinesOpen}
+          guidelines={communityGuidelines}
+          onAccept={handleAcceptGuidelines}
+          onClose={() => setGuidelinesOpen(false)}
         />
       </Container>
     </Box>

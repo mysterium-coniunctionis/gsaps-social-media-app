@@ -21,11 +21,14 @@ import {
   People as PeopleIcon,
   Message as MessageIcon,
   LibraryBooks as LibraryIcon,
+  Science,
   School as CoursesIcon,
   EmojiEvents as LeaderboardIcon,
+  Security as SecurityIcon,
   Brightness4,
   Brightness7
 } from '@mui/icons-material';
+import { CreditCard as CreditCardIcon, Analytics as AnalyticsIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';
@@ -78,13 +81,17 @@ const Navbar = () => {
     { label: 'Home', path: '/', icon: <HomeIcon /> },
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
     { label: 'Library', path: '/library', icon: <LibraryIcon /> },
+    { label: 'Workspaces', path: '/workspaces', icon: <Science />, protected: true },
     { label: 'Courses', path: '/courses', icon: <CoursesIcon /> },
     { label: 'Leaderboard', path: '/leaderboard', icon: <LeaderboardIcon /> },
     { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },
     { label: 'Groups', path: '/groups', icon: <GroupsIcon />, protected: true },
     { label: 'Events', path: '/events', icon: <EventIcon /> },
-    { label: 'Messages', path: '/messages', icon: <MessageIcon />, protected: true }
-  ];
+    { label: 'Messages', path: '/messages', icon: <MessageIcon />, protected: true },
+    currentUser && ['administrator', 'moderator'].includes(currentUser.role)
+      ? { label: 'Admin', path: '/admin/moderation', icon: <SecurityIcon />, protected: true }
+      : null
+  ].filter(Boolean);
 
   return (
     <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>

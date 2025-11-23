@@ -14,6 +14,7 @@ export const registerUser = async (userData) => {
 
 export const logoutUser = async () => {
   localStorage.removeItem('gsaps_token');
+  localStorage.removeItem('gsaps_refresh_token');
   return { success: true };
 };
 

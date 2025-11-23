@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: social-media-frontend-config
+  namespace: social-media
+data:
+  apiBaseUrl: https://api-staging.example.com
+  cdnBaseUrl: https://cdn-staging.example.com
+  mediaBucket: social-media-media-staging
+  featureFlags: '{"betaFeed": true}'

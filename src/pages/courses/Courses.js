@@ -14,7 +14,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Card,
-  CardContent
+  CardContent,
+  Chip as MuiChip
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -36,6 +37,8 @@ const Courses = () => {
   const [filterLevel, setFilterLevel] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
+  const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const courseVariant = useExperiment('course-feed', ['control', 'personalized']);
 
   const { data: courses = [], isLoading } = useQuery({ queryKey: ['courses'], queryFn: fetchCourses });
 

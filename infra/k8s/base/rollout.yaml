@@ -1,0 +1,80 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: social-media-frontend
+  namespace: social-media
+  labels:
+    app.kubernetes.io/name: social-media-frontend
+    app.kubernetes.io/part-of: social-media
+spec:
+  replicas: 3
+  revisionHistoryLimit: 3
+  strategy:
+    blueGreen:
+      activeService: social-media-frontend
+      previewService: social-media-frontend-preview
+      autoPromotionEnabled: true
+      scaleDownDelaySeconds: 30
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: social-media-frontend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: social-media-frontend
+        app.kubernetes.io/part-of: social-media
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/example/gsaps-social-media-app:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+              name: http
+          env:
+            - name: REACT_APP_API_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: social-media-frontend-config
+                  key: apiBaseUrl
+            - name: REACT_APP_CDN_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: social-media-frontend-config
+                  key: cdnBaseUrl
+            - name: REACT_APP_MEDIA_BUCKET
+              valueFrom:
+                configMapKeyRef:
+                  name: social-media-frontend-config
+                  key: mediaBucket
+            - name: REACT_APP_FEATURE_FLAGS
+              valueFrom:
+                configMapKeyRef:
+                  name: social-media-frontend-config
+                  key: featureFlags
+            - name: SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: social-media-frontend-secrets
+                  key: sentryDsn
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
+      imagePullSecrets:
+        - name: ghcr-creds

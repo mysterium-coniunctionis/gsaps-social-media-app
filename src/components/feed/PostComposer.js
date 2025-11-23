@@ -22,6 +22,7 @@ import {
   Public as PublicIcon
 } from '@mui/icons-material';
 import MentionInput from '../common/MentionInput';
+import { detectContentIssues, recordAuditEvent } from '../../utils/moderation';
 
 /**
  * PostComposer Component - Create new posts with rich features
@@ -35,6 +36,7 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
   const [mentionedUsers, setMentionedUsers] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [violations, setViolations] = useState([]);
   const fileInputRef = useRef(null);
 
   const MAX_CONTENT_LENGTH = 5000;
@@ -51,6 +53,22 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
       return;
     }
 
+    const { findings, recommendedAction } = detectContentIssues(content);
+    if (findings.length > 0) {
+      setViolations(findings);
+      setError(
+        recommendedAction === 'quarantine'
+          ? 'Content blocked: automated detection spotted PII or high-toxicity terms. Please edit before posting.'
+          : 'Content requires edits before posting due to safety flags.'
+      );
+      recordAuditEvent(
+        'Composer safety check',
+        currentUser?.username || 'anonymous',
+        `Action: ${recommendedAction}, findings: ${findings.length}`
+      );
+      return;
+    }
+
     onSubmit({
       content: content.trim(),
       images,
@@ -64,6 +82,7 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
     setTags([]);
     setMentionedUsers([]);
     setError('');
+    setViolations([]);
   };
 
   const handleMentionSelect = (user) => {
@@ -181,6 +200,19 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
         {error && (
           <Alert severity="error" onClose={() => setError('')} sx={{ mb: 2 }}>
             {error}
+          </Alert>
+        )}
+
+        {violations.length > 0 && (
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            <Typography variant="subtitle2" sx={{ mb: 0.5 }}>
+              Automated checks flagged the following:
+            </Typography>
+            {violations.map((violation) => (
+              <Typography key={`${violation.type}-${violation.term}-${violation.category}`} variant="body2">
+                • {violation.message} ({violation.term || violation.category})
+              </Typography>
+            ))}
           </Alert>
         )}
 

@@ -18,8 +18,9 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
-import { mockConversations } from '../utils/mockConversations';
 import { formatShortRelativeTime } from '../utils/dateUtils';
+import { useQuery } from '@tanstack/react-query';
+import { fetchMessages } from '../api/backend';
 
 /**
  * Messages page
@@ -27,34 +28,33 @@ import { formatShortRelativeTime } from '../utils/dateUtils';
  */
 const Messages = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [conversations, setConversations] = useState([]);
+  const { data: conversations = [], isLoading } = useQuery({
+    queryKey: ['messages'],
+    queryFn: fetchMessages
+  });
+  const [displayedConversations, setDisplayedConversations] = useState([]);
   const [filteredConversations, setFilteredConversations] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // TODO: Fetch conversations from API
-    setTimeout(() => {
-      setConversations(mockConversations);
-      setFilteredConversations(mockConversations);
-      setLoading(false);
-    }, 500);
-  }, []);
+    setDisplayedConversations(conversations);
+    setFilteredConversations(conversations);
+  }, [conversations]);
 
   useEffect(() => {
     if (searchQuery) {
-      const filtered = conversations.filter(conv =>
+      const filtered = displayedConversations.filter(conv =>
         conv.participant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         conv.participant.username.toLowerCase().includes(searchQuery.toLowerCase()) ||
         conv.lastMessage.text.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredConversations(filtered);
     } else {
-      setFilteredConversations(conversations);
+      setFilteredConversations(displayedConversations);
     }
-  }, [searchQuery, conversations]);
+  }, [searchQuery, displayedConversations]);
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingSpinner />;
   }
 

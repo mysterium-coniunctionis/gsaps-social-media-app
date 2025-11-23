@@ -30,7 +30,7 @@ import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
-import ResearchWorkspace from './pages/workspaces/ResearchWorkspace';
+import Notifications from './pages/Notifications';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -42,6 +42,24 @@ const ProtectedRoute = ({ children }) => {
   
   if (!currentUser) {
     return <Navigate to="/login" />;
+  }
+
+  return children;
+};
+
+const RoleProtectedRoute = ({ children, roles }) => {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
+
+  if (roles && !roles.includes(currentUser.role)) {
+    return <Navigate to="/" replace />;
   }
 
   return children;
@@ -95,6 +113,9 @@ function App() {
                   currentUser ? <Navigate to="/" /> : <Register />
                 } />
 
+                <Route path="/reset" element={<PasswordReset />} />
+                <Route path="/verify" element={<VerifyEmail />} />
+
                 <Route path="/profile/:username" element={
                   <ProtectedRoute>
                     <UserProfile />
@@ -140,12 +161,36 @@ function App() {
 
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
 
+                <Route path="/billing" element={
+                  <ProtectedRoute>
+                    <SubscriptionBilling />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/admin/reporting" element={
+                  <ProtectedRoute>
+                    <OrgReporting />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/leaderboard" element={<Leaderboard />} />
+
+                <Route path="/notifications" element={
+                  <ProtectedRoute>
+                    <Notifications />
+                  </ProtectedRoute>
+                } />
 
                 <Route path="/settings" element={
                   <ProtectedRoute>
                     <Settings />
                   </ProtectedRoute>
+                } />
+
+                <Route path="/admin/moderation" element={
+                  <RoleProtectedRoute roles={['administrator', 'moderator']}>
+                    <AdminDashboard />
+                  </RoleProtectedRoute>
                 } />
 
                 <Route path="*" element={<NotFound />} />

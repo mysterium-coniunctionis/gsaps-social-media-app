@@ -28,6 +28,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCourses } from '../../api/backend';
 import CourseCard from '../../components/courses/CourseCard';
 import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
+import { useExperiment } from '../../hooks/useExperiment';
 import { fadeInUp } from '../../theme/animations';
 
 const Courses = () => {

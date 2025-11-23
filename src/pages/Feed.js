@@ -205,12 +205,12 @@ const Feed = () => {
           onSubmit={handleCreatePost}
         />
 
-        <GuidelinesGate
+        {/* <GuidelinesGate
           open={guidelinesOpen}
           guidelines={communityGuidelines}
           onAccept={handleAcceptGuidelines}
           onClose={() => setGuidelinesOpen(false)}
-        />
+        /> */}
       </Container>
     </Box>
   );

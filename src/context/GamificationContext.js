@@ -20,6 +20,15 @@ export const XP_ACTIONS = {
   UPLOAD_PAPER: 50
 };
 
+export const RANKS = {
+  1: { name: 'Novice', color: '#8B7355', icon: '🌱' },
+  2: { name: 'Apprentice', color: '#CD7F32', icon: '📚' },
+  3: { name: 'Explorer', color: '#C0C0C0', icon: '🔍' },
+  4: { name: 'Scholar', color: '#FFD700', icon: '🎓' },
+  5: { name: 'Expert', color: '#4169E1', icon: '💎' },
+  6: { name: 'Master', color: '#9370DB', icon: '👑' }
+};
+
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 850, 1300];
 
 const calculateLevel = (xp) => {

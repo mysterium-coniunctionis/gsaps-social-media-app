@@ -23,6 +23,7 @@ import PaperUploadDialog from '../../components/library/PaperUploadDialog';
 import { useToast } from '../../components/common';
 import { useGamification } from '../../context/GamificationContext';
 import { createResearchAsset, fetchResearchAssets } from '../../api/backend';
+import { useExperiment } from '../../hooks/useExperiment';
 
 const ResearchLibrary = () => {
   const toast = useToast();

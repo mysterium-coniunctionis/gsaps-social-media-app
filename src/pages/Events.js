@@ -25,6 +25,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import COMPREHENSIVE_EVENTS from '../data/eventsData';
+import {
+  getRecommendations,
+  logInteraction,
+  recordExperimentConversion,
+  recordExperimentImpression,
+  useExperiment
+} from '../utils/recommendationService';
 
 /**
  * Events listing page
@@ -38,6 +45,8 @@ const Events = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTime, setFilterTime] = useState('upcoming');
   const [sortBy, setSortBy] = useState('date');
+  const [recommendedEvents, setRecommendedEvents] = useState([]);
+  const eventVariant = useExperiment('event-feed', ['control', 'personalized']);
 
   useEffect(() => {
     // Load comprehensive events data
@@ -94,6 +103,17 @@ const Events = () => {
     setFilteredEvents(filtered);
   }, [searchQuery, filterTime, sortBy, events]);
 
+  useEffect(() => {
+    if (events.length) {
+      const recommendations = getRecommendations('event', events, {
+        variant: eventVariant,
+        limit: 4
+      });
+      setRecommendedEvents(recommendations);
+      recordExperimentImpression('event-feed', eventVariant, recommendations.length);
+    }
+  }, [events, eventVariant]);
+
   const formatEventDate = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -111,6 +131,14 @@ const Events = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
+
+  const handleEventClick = (eventItem) => {
+    logInteraction('event', eventItem, 'click');
+    recordExperimentConversion('event-feed', eventVariant, 1);
+    navigate(`/events/${eventItem.slug}`);
+  };
+
+  const relatedEventCategories = Array.from(new Set(recommendedEvents.map(event => event.category))).slice(0, 4);
 
   return (
     <Box sx={{ py: 3 }}>
@@ -131,6 +159,50 @@ const Events = () => {
           Create Event
         </Button>
       </Box>
+
+      {recommendedEvents.length > 0 && (
+        <Card sx={{ mb: 3 }}>
+          <CardContent>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+              <Typography variant="h6" fontWeight="bold">
+                For You
+                <Chip
+                  size="small"
+                  sx={{ ml: 1 }}
+                  color={eventVariant === 'control' ? 'default' : 'primary'}
+                  label={eventVariant === 'control' ? 'Baseline' : 'Personalized'}
+                />
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                RSVP and clicks teach the recommender what to surface next.
+              </Typography>
+            </Box>
+            <Grid container spacing={2}>
+              {recommendedEvents.map(event => (
+                <Grid item xs={12} md={6} key={`rec-event-${event.id}`}>
+                  <Card
+                    sx={{ cursor: 'pointer' }}
+                    onClick={() => handleEventClick(event)}
+                  >
+                    <CardContent>
+                      <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                        {event.title}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                        {event.description.slice(0, 120)}...
+                      </Typography>
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                        <Chip label={event.category} size="small" />
+                        <Chip label={`${event.attendeeCount} attending`} size="small" />
+                      </Box>
+                    </CardContent>
+                  </Card>
+                </Grid>
+              ))}
+            </Grid>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Search and Filters */}
       <Card sx={{ mb: 3 }}>
@@ -184,6 +256,27 @@ const Events = () => {
         </CardContent>
       </Card>
 
+      {relatedEventCategories.length > 0 && (
+        <Box sx={{ mb: 3, display: 'flex', gap: 1, flexWrap: 'wrap', alignItems: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            Related categories from your activity:
+          </Typography>
+          {relatedEventCategories.map(category => (
+            <Chip
+              key={category}
+              label={category}
+              size="small"
+              color="primary"
+              variant="outlined"
+              onClick={() => {
+                setFilterTime('all');
+                setSearchQuery(category);
+              }}
+            />
+          ))}
+        </Box>
+      )}
+
       {/* Events List */}
       {filteredEvents.length === 0 ? (
         <Card>
@@ -201,16 +294,16 @@ const Events = () => {
         <Grid container spacing={3}>
           {filteredEvents.map((event) => (
             <Grid item xs={12} key={event.id}>
-              <Card
-                sx={{
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s, box-shadow 0.2s',
-                  '&:hover': {
-                    transform: 'translateY(-2px)',
-                    boxShadow: 4
-                  }
-                }}
-                onClick={() => navigate(`/events/${event.slug}`)}
+                <Card
+                  sx={{
+                    cursor: 'pointer',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: 4
+                    }
+                  }}
+                onClick={() => handleEventClick(event)}
               >
                 <CardContent>
                   <Grid container spacing={3}>
@@ -284,6 +377,8 @@ const Events = () => {
                         variant={event.isAttending ? 'outlined' : 'contained'}
                         onClick={(e) => {
                           e.stopPropagation();
+                          logInteraction('event', event, 'rsvp');
+                          recordExperimentConversion('event-feed', eventVariant, 0.5);
                           alert(event.isAttending ? 'Cancel RSVP' : 'RSVP to event');
                         }}
                       >

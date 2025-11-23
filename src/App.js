@@ -95,6 +95,9 @@ function App() {
                   currentUser ? <Navigate to="/" /> : <Register />
                 } />
 
+                <Route path="/reset" element={<PasswordReset />} />
+                <Route path="/verify" element={<VerifyEmail />} />
+
                 <Route path="/profile/:username" element={
                   <ProtectedRoute>
                     <UserProfile />

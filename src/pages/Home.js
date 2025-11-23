@@ -21,7 +21,8 @@ import {
   Event as EventIcon,
   TrendingUp as TrendingIcon,
   Star as StarIcon,
-  Verified as VerifiedIcon
+  Verified as VerifiedIcon,
+  CoPresent as CoPresentIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { fadeInUp } from '../theme/animations';
@@ -113,6 +114,13 @@ const Home = () => {
       description: 'Share updates, react, comment, mention colleagues, and stay current with community discussions.',
       link: '/feed',
       color: theme.palette.warning.main
+    },
+    {
+      icon: <CoPresentIcon sx={{ fontSize: 40 }} />,
+      title: 'Live Symposia',
+      description: 'Join moderated rooms with live agenda, stage chat, and AI notetaking.',
+      link: '/symposia/symp-001',
+      color: theme.palette.secondary.light
     }
   ];
 

@@ -75,6 +75,13 @@ GSAPS Social Media App is an academic collaboration platform designed specifical
 - Daily streak tracking
 - User profiles with stats and achievements
 
+**Live Symposia:**
+
+- Live agenda with speaker queue, attendee roster, and presence pills
+- Stage + chat layout with emoji reactions and poll voting
+- Shared markdown protocol canvas reused from Research Workspace with live preview
+- AI Notetaker card that summarizes notes, action items, and citation suggestions (works in mock/offline mode)
+
 ### Architecture
 
 - **Front-end Only:** All features run with mock data in localStorage
@@ -117,6 +124,12 @@ Use these credentials to explore the demo:
 Username: demo_user
 Password: demo123
 ```
+
+### Join a live symposium
+
+- Navigate to **Home → Live Symposia** or open `/symposia/symp-001` after signing in.
+- The experience runs in mock-data mode when no realtime backend is configured; updates (chat, agenda, polls, presence) render immediately for demos.
+- AI Notetaker uses local helpers in `src/api/aiService.js` so summaries and action items work offline.
 
 Or register a new account directly in the UI. All data is stored in localStorage and can be reset by clearing browser storage.
 

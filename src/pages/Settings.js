@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Container,
@@ -15,17 +15,24 @@ import {
   Tabs,
   Alert,
   IconButton,
-  InputAdornment
+  InputAdornment,
+  List,
+  ListItem,
+  ListItemText,
+  Chip
 } from '@mui/material';
 import {
   PhotoCamera as PhotoIcon,
   Visibility as VisibilityIcon,
   VisibilityOff as VisibilityOffIcon,
-  Save as SaveIcon
+  Save as SaveIcon,
+  Lock as LockIcon,
+  Devices as DevicesIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { fadeInUp } from '../theme/animations';
+import { enableMfa, disableMfa, getSessions, revokeSession, requestEmailVerification } from '../api/auth';
 
 /**
  * Settings/Edit Profile Page
@@ -34,6 +41,7 @@ import { fadeInUp } from '../theme/animations';
 const Settings = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
+  const { preferences, togglePreference } = useAccessibility();
   const [activeTab, setActiveTab] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -66,6 +74,11 @@ const Settings = () => {
     showActivity: true,
   });
 
+  const [securityMessage, setSecurityMessage] = useState('');
+  const [sessions, setSessions] = useState([]);
+  const [loadingSessions, setLoadingSessions] = useState(false);
+  const [emailStatus, setEmailStatus] = useState('');
+
   const handleProfileChange = (field) => (event) => {
     setProfile({ ...profile, [field]: event.target.value });
   };
@@ -94,6 +107,66 @@ const Settings = () => {
     // TODO: Implement API call to save privacy settings
     setSuccessMessage('Privacy settings updated successfully!');
     setTimeout(() => setSuccessMessage(''), 3000);
+  };
+
+  const fetchSessions = async () => {
+    if (!currentUser) return;
+    setLoadingSessions(true);
+    try {
+      const sessionData = await getSessions(currentUser.id);
+      setSessions(sessionData);
+    } catch (err) {
+      setSecurityMessage(err.message || 'Unable to fetch sessions');
+    } finally {
+      setLoadingSessions(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 3) {
+      fetchSessions();
+    }
+  }, [activeTab, currentUser]);
+
+  const handleEnableMfa = async () => {
+    setSecurityMessage('');
+    try {
+      const result = await enableMfa(currentUser.id);
+      setSecurityMessage(`MFA enabled. Recovery codes: ${result.recoveryCodes.join(', ')}`);
+    } catch (err) {
+      setSecurityMessage(err.message || 'Failed to enable MFA');
+    }
+  };
+
+  const handleDisableMfa = async () => {
+    setSecurityMessage('');
+    try {
+      await disableMfa(currentUser.id);
+      setSecurityMessage('MFA disabled for your account.');
+    } catch (err) {
+      setSecurityMessage(err.message || 'Failed to disable MFA');
+    }
+  };
+
+  const handleRevokeSession = async (sessionId) => {
+    setSecurityMessage('');
+    try {
+      await revokeSession(sessionId, currentUser.id);
+      setSecurityMessage('Session revoked');
+      fetchSessions();
+    } catch (err) {
+      setSecurityMessage(err.message || 'Could not revoke session');
+    }
+  };
+
+  const handleSendVerification = async () => {
+    setEmailStatus('');
+    try {
+      const { token } = await requestEmailVerification(currentUser.id);
+      setEmailStatus(`Verification email sent (mock). Token: ${token}`);
+    } catch (err) {
+      setEmailStatus(err.message || 'Unable to send verification');
+    }
   };
 
   return (
@@ -125,6 +198,7 @@ const Settings = () => {
             <Tab label="Profile" />
             <Tab label="Account" />
             <Tab label="Privacy" />
+            <Tab label="Security" />
           </Tabs>
         </Paper>
 
@@ -436,6 +510,98 @@ const Settings = () => {
                 Save Privacy Settings
               </Button>
             </Box>
+          </Paper>
+        )}
+
+        {/* Security Tab */}
+        {activeTab === 3 && (
+          <Paper sx={{ p: 3, animation: `${fadeInUp} 0.5s ease-out` }}>
+            <Typography variant="h6" gutterBottom fontWeight="bold">
+              Security
+            </Typography>
+
+            {securityMessage && (
+              <Alert severity="info" sx={{ mb: 2 }}>
+                {securityMessage}
+              </Alert>
+            )}
+
+            {emailStatus && (
+              <Alert severity="success" sx={{ mb: 2 }}>
+                {emailStatus}
+              </Alert>
+            )}
+
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+              <Chip
+                color={currentUser?.verified ? 'success' : 'warning'}
+                label={currentUser?.verified ? 'Email verified' : 'Email not verified'}
+                icon={<LockIcon />}
+                sx={{ mr: 2 }}
+              />
+              {!currentUser?.verified && (
+                <Button variant="outlined" onClick={handleSendVerification}>
+                  Send verification email
+                </Button>
+              )}
+            </Box>
+
+            <Divider sx={{ my: 3 }} />
+            <Typography variant="subtitle1" gutterBottom>
+              Multi-factor Authentication
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Add a second factor to protect your account. Mock codes use 123456 or recovery codes.
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
+              <Button variant="contained" onClick={handleEnableMfa} startIcon={<LockIcon />}>
+                Enable MFA
+              </Button>
+              <Button variant="outlined" color="secondary" onClick={handleDisableMfa}>
+                Disable MFA
+              </Button>
+            </Box>
+
+            <Divider sx={{ my: 3 }} />
+            <Typography variant="subtitle1" gutterBottom>
+              Active Sessions & Devices
+            </Typography>
+            <Typography variant="body2" color="text.secondary" gutterBottom>
+              Track where you are logged in. Revoking a session also revokes its refresh token.
+            </Typography>
+            <List>
+              {loadingSessions && (
+                <ListItem>
+                  <ListItemText primary="Loading sessions..." />
+                </ListItem>
+              )}
+              {!loadingSessions && sessions.length === 0 && (
+                <ListItem>
+                  <ListItemText primary="No active sessions" />
+                </ListItem>
+              )}
+              {sessions.map((session) => (
+                <ListItem
+                  key={session.id}
+                  secondaryAction={
+                    <Button color="error" onClick={() => handleRevokeSession(session.id)}>
+                      Revoke
+                    </Button>
+                  }
+                >
+                  <DevicesIcon sx={{ mr: 2 }} />
+                  <ListItemText
+                    primary={`${session.deviceInfo || 'Browser'} — ${new Date(
+                      session.lastUsed || session.createdAt
+                    ).toLocaleString()}`}
+                    secondary={`${session.location || 'Local'} • ${session.ip || '127.0.0.1'}`}
+                  />
+                </ListItem>
+              ))}
+            </List>
+            <Button variant="text" onClick={fetchSessions} sx={{ mt: 1 }}>
+              Refresh sessions
+            </Button>
           </Paper>
         )}
       </Box>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
 import { useAuth } from './context/AuthContext';
+import { useAccessibility } from './context/AccessibilityContext';
 
 // Components
 import Navbar from './components/layout/Navbar';
@@ -30,6 +31,7 @@ import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import Notifications from './pages/Notifications';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -46,15 +48,44 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
+const RoleProtectedRoute = ({ children, roles }) => {
+  const { currentUser, loading } = useAuth();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (!currentUser) {
+    return <Navigate to="/login" />;
+  }
+
+  if (roles && !roles.includes(currentUser.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   const { currentUser } = useAuth();
-  
+  const { preferences } = useAccessibility();
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <a className="skip-link" href="#main-content">
+        Skip to main content
+      </a>
       <Navbar />
       <XPNotification />
 
-      <Box component="main" sx={{ flexGrow: 1, mt: 8, mb: { xs: 7, sm: 0 } }}>
+      <Box
+        component="main"
+        id="main-content"
+        role="main"
+        aria-live="polite"
+        data-reduced-motion={preferences.reduceMotion}
+        sx={{ flexGrow: 1, mt: 8, mb: { xs: 7, sm: 0 } }}
+      >
         <Routes>
           {/* Full-width routes (Messages, Conversation, CoursePlayer) */}
           <Route path="/messages" element={
@@ -94,6 +125,9 @@ function App() {
                   currentUser ? <Navigate to="/" /> : <Register />
                 } />
 
+                <Route path="/reset" element={<PasswordReset />} />
+                <Route path="/verify" element={<VerifyEmail />} />
+
                 <Route path="/profile/:username" element={
                   <ProtectedRoute>
                     <UserProfile />
@@ -126,16 +160,49 @@ function App() {
 
                 <Route path="/library/:paperId" element={<PaperDetail />} />
 
+                <Route
+                  path="/workspaces"
+                  element={
+                    <ProtectedRoute>
+                      <ResearchWorkspace />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route path="/courses" element={<Courses />} />
 
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
 
+                <Route path="/billing" element={
+                  <ProtectedRoute>
+                    <SubscriptionBilling />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/admin/reporting" element={
+                  <ProtectedRoute>
+                    <OrgReporting />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/leaderboard" element={<Leaderboard />} />
+
+                <Route path="/notifications" element={
+                  <ProtectedRoute>
+                    <Notifications />
+                  </ProtectedRoute>
+                } />
 
                 <Route path="/settings" element={
                   <ProtectedRoute>
                     <Settings />
                   </ProtectedRoute>
+                } />
+
+                <Route path="/admin/moderation" element={
+                  <RoleProtectedRoute roles={['administrator', 'moderator']}>
+                    <AdminDashboard />
+                  </RoleProtectedRoute>
                 } />
 
                 <Route path="*" element={<NotFound />} />

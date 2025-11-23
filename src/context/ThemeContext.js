@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useMemo, useCallback } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 
 const ThemeContext = createContext();
@@ -18,6 +24,13 @@ export const ThemeProvider = ({ children }) => {
       return newMode;
     });
   }, []);
+
+  const colorMode = useMemo(
+    () => ({
+      toggleColorMode: toggleTheme,
+    }),
+    [toggleTheme],
+  );
 
   const theme = useMemo(
     () =>
@@ -101,7 +114,7 @@ export const ThemeProvider = ({ children }) => {
   }), [mode, toggleTheme]);
 
   return (
-    <ThemeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={{ mode, toggleTheme, colorMode }}>
       <MuiThemeProvider theme={theme}>
         {children}
       </MuiThemeProvider>

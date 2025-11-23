@@ -148,6 +148,15 @@ function App() {
 
                 <Route path="/library/:paperId" element={<PaperDetail />} />
 
+                <Route
+                  path="/workspaces"
+                  element={
+                    <ProtectedRoute>
+                      <ResearchWorkspace />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route path="/courses" element={<Courses />} />
 
                 <Route path="/courses/:courseId" element={<CourseDetail />} />

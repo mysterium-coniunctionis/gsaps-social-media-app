@@ -51,6 +51,9 @@ Use this quick map to understand how the repository’s Markdown documentation i
 ### Research Library
 - **[docs/features/research-library/RESEARCH_LIBRARY_SUMMARY.md](docs/features/research-library/RESEARCH_LIBRARY_SUMMARY.md)** - Research library features and capabilities
 
+### Live Symposia
+- **[docs/features/live-symposia.md](docs/features/live-symposia.md)** - Live agenda, stage chat, shared protocol canvas, and AI notetaker
+
 ### Planning & Strategy
 - **[docs/planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md](docs/planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)** - Integration Circles implementation plan (PLANNED - NOT YET IMPLEMENTED)
 - **[docs/planning-strategy/GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md)** - Phase 8 AI features roadmap (18 planned features)

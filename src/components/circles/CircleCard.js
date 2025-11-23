@@ -298,4 +298,4 @@ const CircleCard = ({
   );
 };
 
-export default CircleCard;
+export default React.memo(CircleCard);

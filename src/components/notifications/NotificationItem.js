@@ -142,4 +142,4 @@ const NotificationItem = ({ notification, onRead, onDelete }) => {
   );
 };
 
-export default NotificationItem;
+export default React.memo(NotificationItem);

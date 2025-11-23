@@ -34,8 +34,13 @@ export const resetPassword = async (token, newPassword) => {
   return response.data;
 };
 
+export const refreshAccessToken = async () => {
+  const response = await api.post('/auth/refresh');
+  return response.data;
+};
+
 export const getSessions = async (userId) => {
-  const response = await api.get(`/auth/sessions/${userId}`);
+  const response = await api.get(`/auth/sessions${userId ? `/${userId}` : ''}`);
   return response.data;
 };
 

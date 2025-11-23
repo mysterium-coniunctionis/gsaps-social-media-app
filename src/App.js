@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Box, Container } from '@mui/material';
 import { useAuth } from './context/AuthContext';
@@ -9,45 +9,47 @@ import Navbar from './components/layout/Navbar';
 import BottomNavigation from './components/layout/BottomNavigation';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import XPNotification from './components/gamification/XPNotification';
+import ErrorBoundary from './components/common/ErrorBoundary';
 
-// Pages
+// Eagerly loaded pages (critical for initial load)
 import Home from './pages/Home';
-import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import PasswordReset from './pages/PasswordReset';
-import VerifyEmail from './pages/VerifyEmail';
-import UserProfile from './pages/UserProfile';
-import Members from './pages/Members';
-import Groups from './pages/Groups';
-import GroupDetail from './pages/GroupDetail';
-import Events from './pages/Events';
-import EventDetail from './pages/EventDetail';
-import Messages from './pages/Messages';
-import Conversation from './pages/Conversation';
-import PasswordReset from './pages/PasswordReset';
-import VerifyEmail from './pages/VerifyEmail';
-import ResearchLibrary from './pages/library/ResearchLibrary';
-import PaperDetail from './pages/library/PaperDetail';
-import ResearchWorkspace from './pages/workspaces/ResearchWorkspace';
-import Courses from './pages/courses/Courses';
-import CourseDetail from './pages/courses/CourseDetail';
-import CoursePlayer from './pages/courses/CoursePlayer';
-import SubscriptionBilling from './pages/billing/SubscriptionBilling';
-import OrgReporting from './pages/admin/OrgReporting';
-import Leaderboard from './pages/Leaderboard';
-import Settings from './pages/Settings';
-import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
+
+// Lazily loaded pages (code splitting for performance)
+const Feed = lazy(() => import('./pages/Feed'));
+const PasswordReset = lazy(() => import('./pages/PasswordReset'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
+const Members = lazy(() => import('./pages/Members'));
+const Groups = lazy(() => import('./pages/Groups'));
+const GroupDetail = lazy(() => import('./pages/GroupDetail'));
+const Events = lazy(() => import('./pages/Events'));
+const EventDetail = lazy(() => import('./pages/EventDetail'));
+const Messages = lazy(() => import('./pages/Messages'));
+const Conversation = lazy(() => import('./pages/Conversation'));
+const ResearchLibrary = lazy(() => import('./pages/library/ResearchLibrary'));
+const PaperDetail = lazy(() => import('./pages/library/PaperDetail'));
+const ResearchWorkspace = lazy(() => import('./pages/workspaces/ResearchWorkspace'));
+const SymposiumRoom = lazy(() => import('./pages/workspaces/SymposiumRoom'));
+const Courses = lazy(() => import('./pages/courses/Courses'));
+const CourseDetail = lazy(() => import('./pages/courses/CourseDetail'));
+const CoursePlayer = lazy(() => import('./pages/courses/CoursePlayer'));
+const SubscriptionBilling = lazy(() => import('./pages/billing/SubscriptionBilling'));
+const OrgReporting = lazy(() => import('./pages/admin/OrgReporting'));
+const Leaderboard = lazy(() => import('./pages/Leaderboard'));
+const Settings = lazy(() => import('./pages/Settings'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
-  
+
   if (loading) {
     return <LoadingSpinner />;
   }
-  
+
   if (!currentUser) {
     return <Navigate to="/login" />;
   }
@@ -78,12 +80,13 @@ function App() {
   const { preferences } = useAccessibility();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-      <a className="skip-link" href="#main-content">
-        Skip to main content
-      </a>
-      <Navbar />
-      <XPNotification />
+    <ErrorBoundary>
+      <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
+        <Navbar />
+        <XPNotification />
 
       <Box
         component="main"
@@ -93,7 +96,8 @@ function App() {
         data-reduced-motion={preferences.reduceMotion}
         sx={{ flexGrow: 1, mt: 8, mb: { xs: 7, sm: 0 } }}
       >
-        <Routes>
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
           {/* Full-width routes (Messages, Conversation, CoursePlayer) */}
           <Route path="/messages" element={
             <ProtectedRoute>
@@ -176,6 +180,15 @@ function App() {
                   }
                 />
 
+                <Route
+                  path="/symposia/:roomId"
+                  element={
+                    <ProtectedRoute>
+                      <SymposiumRoom />
+                    </ProtectedRoute>
+                  }
+                />
+
                 <Route path="/courses" element={<Courses />} />
 
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
@@ -210,11 +223,13 @@ function App() {
               </Routes>
             </Container>
           } />
-        </Routes>
+          </Routes>
+        </Suspense>
       </Box>
-      
+
       {currentUser && <BottomNavigation />}
-    </Box>
+      </Box>
+    </ErrorBoundary>
   );
 }
 

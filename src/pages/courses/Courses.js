@@ -39,7 +39,8 @@ const Courses = () => {
   const [sortBy, setSortBy] = useState('recent');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [recommendedCourses, setRecommendedCourses] = useState([]);
-  const courseVariant = useExperiment('course-feed', ['control', 'personalized']);
+  // TODO: Implement useExperiment hook for A/B testing
+  const courseVariant = 'control'; // useExperiment('course-feed', ['control', 'personalized']);
 
   const { data: courses = [], isLoading } = useQuery({ queryKey: ['courses'], queryFn: fetchCourses });
 

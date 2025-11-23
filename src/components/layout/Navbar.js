@@ -24,6 +24,7 @@ import {
   Science,
   School as CoursesIcon,
   EmojiEvents as LeaderboardIcon,
+  CoPresent,
   Security as SecurityIcon,
   Brightness4,
   Brightness7
@@ -85,6 +86,7 @@ const Navbar = () => {
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
     { label: 'Library', path: '/library', icon: <LibraryIcon /> },
     { label: 'Workspaces', path: '/workspaces', icon: <Science />, protected: true },
+    { label: 'Live Symposia', path: '/symposia/symp-001', icon: <CoPresent />, protected: true },
     { label: 'Courses', path: '/courses', icon: <CoursesIcon /> },
     { label: 'Leaderboard', path: '/leaderboard', icon: <LeaderboardIcon /> },
     { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },

@@ -354,3 +354,21 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 [⬆ Back to Top](#-gsaps-social-media-web-app)
 
 </div>
+
+## Backend API (Express + Postgres)
+
+The repository now includes a cloud-ready Express service in `server/` that exposes authenticated REST endpoints for users, posts, messages, courses, gamification, and research assets backed by PostgreSQL via Prisma.
+
+### Bootstrapping the API
+
+```
+cd server
+cp .env.example .env # Update DATABASE_URL and JWT_SECRET
+npm install
+npx prisma generate
+npx prisma migrate deploy # apply migrations to your database
+npm run seed # optional: load starter data
+npm run dev
+```
+
+The React app reads `REACT_APP_API_URL` (defaults to `http://localhost:4000`) to reach the backend. Authentication tokens are sent as Bearer tokens from the shared Axios client.

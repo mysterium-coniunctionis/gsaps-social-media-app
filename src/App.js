@@ -23,14 +23,20 @@ import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
 import Messages from './pages/Messages';
 import Conversation from './pages/Conversation';
+import PasswordReset from './pages/PasswordReset';
+import VerifyEmail from './pages/VerifyEmail';
 import ResearchLibrary from './pages/library/ResearchLibrary';
 import PaperDetail from './pages/library/PaperDetail';
 import Courses from './pages/courses/Courses';
 import CourseDetail from './pages/courses/CourseDetail';
 import CoursePlayer from './pages/courses/CoursePlayer';
+import ResearchWorkspace from './pages/workspaces/ResearchWorkspace';
+import SubscriptionBilling from './pages/billing/SubscriptionBilling';
+import OrgReporting from './pages/admin/OrgReporting';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
 import NotFound from './pages/NotFound';
+import AdminDashboard from './pages/AdminDashboard';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {

@@ -1,40 +1,56 @@
 import axios from 'axios';
 
+let unauthorizedHandler = null;
+let refreshPromise = null;
+
+export const setUnauthorizedHandler = (handler) => {
+  unauthorizedHandler = handler;
+};
+
 // Create an axios instance with base configuration
 const api = axios.create({
   baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true
 });
 
-// Request interceptor for adding the auth token
-api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem('gsaps_token');
-    if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-    return config;
+const refreshClient = axios.create({
+  baseURL: process.env.REACT_APP_API_URL || 'http://localhost:4000',
+  headers: {
+    'Content-Type': 'application/json'
   },
-  (error) => {
-    return Promise.reject(error);
-  }
-);
+  withCredentials: true
+});
 
-// Response interceptor for handling common errors
+const refreshAccessToken = async () => {
+  if (!refreshPromise) {
+    refreshPromise = refreshClient.post('/auth/refresh').finally(() => {
+      refreshPromise = null;
+    });
+  }
+
+  return refreshPromise;
+};
+
+// Response interceptor for handling common errors and silent refresh
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    const { response } = error;
-    
-    // Handle authentication errors
-    if (response && response.status === 401) {
-      localStorage.removeItem('gsaps_token');
+  (response) => response,
+  async (error) => {
+    const { response, config } = error || {};
+
+    if (response?.status === 401 && !config?.__isRetryRequest) {
+      try {
+        await refreshAccessToken();
+        const retryConfig = { ...config, __isRetryRequest: true };
+        return api(retryConfig);
+      } catch (refreshError) {
+        unauthorizedHandler?.();
+        return Promise.reject(refreshError);
+      }
     }
-    
+
     return Promise.reject(error);
   }
 );

@@ -15,6 +15,8 @@ import Home from './pages/Home';
 import Feed from './pages/Feed';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import PasswordReset from './pages/PasswordReset';
+import VerifyEmail from './pages/VerifyEmail';
 import UserProfile from './pages/UserProfile';
 import Members from './pages/Members';
 import Groups from './pages/Groups';
@@ -25,11 +27,15 @@ import Messages from './pages/Messages';
 import Conversation from './pages/Conversation';
 import ResearchLibrary from './pages/library/ResearchLibrary';
 import PaperDetail from './pages/library/PaperDetail';
+import ResearchWorkspace from './pages/workspaces/ResearchWorkspace';
 import Courses from './pages/courses/Courses';
 import CourseDetail from './pages/courses/CourseDetail';
 import CoursePlayer from './pages/courses/CoursePlayer';
 import Leaderboard from './pages/Leaderboard';
 import Settings from './pages/Settings';
+import SubscriptionBilling from './pages/billing/SubscriptionBilling';
+import OrgReporting from './pages/admin/OrgReporting';
+import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 
 // Protected Route Component

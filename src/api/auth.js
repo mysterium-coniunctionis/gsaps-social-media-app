@@ -1,20 +1,22 @@
+import api from './api';
 import { login, register, getCurrentUser as fetchCurrentUser } from './backend';
 
 export const loginUser = async (username, password) => {
-  const { token, user } = await login(username, password);
-  localStorage.setItem('gsaps_token', token);
+  const { user } = await login(username, password);
   return user;
 };
 
 export const registerUser = async (userData) => {
-  const { token, user } = await register(userData);
-  localStorage.setItem('gsaps_token', token);
+  const { user } = await register(userData);
   return user;
 };
 
 export const logoutUser = async () => {
-  localStorage.removeItem('gsaps_token');
-  localStorage.removeItem('gsaps_refresh_token');
+  try {
+    await api.post('/auth/logout');
+  } catch (error) {
+    // Best-effort logout; ignore errors to allow UI state to clear
+  }
   return { success: true };
 };
 

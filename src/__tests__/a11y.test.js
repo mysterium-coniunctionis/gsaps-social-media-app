@@ -8,6 +8,7 @@ import { ThemeProvider } from '../context/ThemeContext';
 import { GamificationProvider } from '../context/GamificationContext';
 import { ToastProvider } from '../components/common/Toast';
 import { AccessibilityProvider } from '../context/AccessibilityContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock('axios', () => ({
   create: () => ({
@@ -20,23 +21,27 @@ jest.mock('axios', () => ({
   }),
 }));
 
+jest.mock('../pages/workspaces/ResearchWorkspace', () => () => <div>ResearchWorkspace</div>);
+
 describe('Accessibility smoke test', () => {
   expect.extend(toHaveNoViolations);
 
   const renderApp = () =>
     render(
       <BrowserRouter>
-        <AuthProvider>
-          <GamificationProvider>
-            <ThemeProvider>
-              <AccessibilityProvider>
-                <ToastProvider>
-                  <App />
-                </ToastProvider>
-              </AccessibilityProvider>
-            </ThemeProvider>
-          </GamificationProvider>
-        </AuthProvider>
+        <QueryClientProvider client={new QueryClient()}>
+          <AuthProvider>
+            <GamificationProvider>
+              <ThemeProvider>
+                <AccessibilityProvider>
+                  <ToastProvider>
+                    <App />
+                  </ToastProvider>
+                </AccessibilityProvider>
+              </ThemeProvider>
+            </GamificationProvider>
+          </AuthProvider>
+        </QueryClientProvider>
       </BrowserRouter>
     );
 

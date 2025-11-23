@@ -165,8 +165,9 @@ Or create a new account using the Register page.
 4. **Events** - View and RSVP to events
 5. **Courses** - Browse and enroll in courses
 6. **Research Library** - Upload and read research papers
-7. **Messages** - Real-time chat with other members
-8. **Leaderboard** - See gamification rankings
+7. **Live Symposia** - Join real-time research discussions with AI notetaker (visit `/symposia/symp-001`)
+8. **Messages** - Real-time chat with other members
+9. **Leaderboard** - See gamification rankings with 10 rank levels
 
 ---
 

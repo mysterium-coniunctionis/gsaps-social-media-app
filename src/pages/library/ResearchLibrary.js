@@ -35,7 +35,8 @@ const ResearchLibrary = () => {
   const [viewMode, setViewMode] = useState('grid');
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [recommendedPapers, setRecommendedPapers] = useState([]);
-  const recommendationVariant = useExperiment('library-feed', ['control', 'personalized']);
+  // TODO: Implement useExperiment hook for A/B testing
+  const recommendationVariant = 'control'; // useExperiment('library-feed', ['control', 'personalized']);
 
   const { data: papers = [], isLoading } = useQuery({ queryKey: ['research-assets'], queryFn: fetchResearchAssets });
 

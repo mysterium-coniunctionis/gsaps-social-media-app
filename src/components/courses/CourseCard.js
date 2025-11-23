@@ -359,4 +359,4 @@ const CourseCard = ({ course, viewMode = 'grid', onSelect }) => {
   );
 };
 
-export default CourseCard;
+export default React.memo(CourseCard);

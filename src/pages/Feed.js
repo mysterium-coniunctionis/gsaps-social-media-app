@@ -205,12 +205,14 @@ const Feed = () => {
           onSubmit={handleCreatePost}
         />
 
+        {/* TODO: Implement GuidelinesGate component when backend support is ready
         <GuidelinesGate
           open={guidelinesOpen}
           guidelines={communityGuidelines}
           onAccept={handleAcceptGuidelines}
           onClose={() => setGuidelinesOpen(false)}
         />
+        */}
       </Container>
     </Box>
   );

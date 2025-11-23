@@ -42,9 +42,11 @@ import AccessibilityMenu from '../accessibility/AccessibilityMenu';
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { toggleTheme, mode } = useCustomTheme();
+  const { toggleTheme, mode, colorMode } = useCustomTheme();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const handleThemeToggle = toggleTheme || colorMode?.toggleColorMode || (() => {});
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);

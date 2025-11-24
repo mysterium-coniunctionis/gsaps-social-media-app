@@ -20,6 +20,16 @@ export const XP_ACTIONS = {
   UPLOAD_PAPER: 50
 };
 
+export const RANKS = {
+  1: { name: 'Novice', color: '#8bd3e6', icon: '🌱' },
+  5: { name: 'Explorer', color: '#9fa8da', icon: '🧭' },
+  10: { name: 'Scholar', color: '#f6c177', icon: '📚' },
+  15: { name: 'Contributor', color: '#81c784', icon: '🤝' },
+  20: { name: 'Mentor', color: '#ffb74d', icon: '🧠' },
+  30: { name: 'Luminary', color: '#ba68c8', icon: '✨' },
+  40: { name: 'Mythic', color: '#ef5350', icon: '🛡️' }
+};
+
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 850, 1300];
 
 const calculateLevel = (xp) => {
@@ -75,7 +85,7 @@ export const GamificationProvider = ({ children }) => {
       updateStat: () => {},
       recentXP: []
     }),
-    [userStats, isLoading]
+    [awardXP, userStats, isLoading]
   );
 
   return <GamificationContext.Provider value={value}>{children}</GamificationContext.Provider>;

@@ -29,6 +29,7 @@ import { fetchCourses } from '../../api/backend';
 import CourseCard from '../../components/courses/CourseCard';
 import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
 import { fadeInUp } from '../../theme/animations';
+import { useExperiment } from '../../utils/recommendationService';
 
 const Courses = () => {
   const [viewMode, setViewMode] = useState('grid');
@@ -37,8 +38,7 @@ const Courses = () => {
   const [filterLevel, setFilterLevel] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [recommendedCourses, setRecommendedCourses] = useState([]);
-  const courseVariant = useExperiment('course-feed', ['control', 'personalized']);
+  useExperiment('course-feed', ['control', 'personalized']);
 
   const { data: courses = [], isLoading } = useQuery({ queryKey: ['courses'], queryFn: fetchCourses });
 

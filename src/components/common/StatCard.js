@@ -8,11 +8,11 @@ import { fadeInUp } from '../../theme/animations';
  * 
  * @param {ReactNode} icon - Icon to display
  * @param {string} label - Label text
- * @param {number|string} value - Statistic value
+ * @param {number|string} value - Statistic value (required)
  * @param {string} iconColor - Color for the icon
  * @param {number} animationDelay - Animation delay in seconds
  */
-const StatCard = ({ icon, label, value, iconColor, animationDelay = 0 }) => {
+const StatCard = ({ icon, label, value = 0, iconColor, animationDelay = 0 }) => {
   return (
     <Card
       elevation={2}

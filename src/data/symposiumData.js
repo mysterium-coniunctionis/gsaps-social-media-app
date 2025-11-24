@@ -8,6 +8,8 @@ export const mockSymposia = [
       title: 'Live plenary + stage Q&A',
       streamUrl: 'https://example.com/live-stage'
     },
+    protocolDraft:
+      '# Shared protocol canvas\n\nCapture safety, dosing, and integration decisions together. Use headings for agenda items and bullet points for action items.',
     agenda: [
       { id: 'ag-01', title: 'Welcome + safety briefing', owner: 'Dr. Lee', time: '09:00' },
       { id: 'ag-02', title: 'Real-world dosing outcomes', owner: 'Dr. Patel', time: '09:20' },

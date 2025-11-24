@@ -3,6 +3,7 @@ import { useParams, Link as RouterLink } from 'react-router-dom';
 import {
   Alert,
   Avatar,
+  Badge,
   AvatarGroup,
   Box,
   Button,
@@ -45,13 +46,13 @@ import { actionItems, citationSuggestions, generateSummary } from '../../api/aiS
 const presenceColors = {
   online: 'success',
   idle: 'warning',
+  editing: 'info',
   offline: 'default'
 };
 
 const SymposiumRoom = () => {
   const { roomId = 'symp-001' } = useParams();
   const symposium = findSymposiumById(roomId);
-  const [canvas, setCanvas] = useState('# Shared protocol canvas\n\nCapture safety, dosing, and integration decisions in real time.');
   const [noteDraft, setNoteDraft] = useState('');
   const [chatDraft, setChatDraft] = useState('');
   const [agendaDraft, setAgendaDraft] = useState('');
@@ -67,6 +68,7 @@ const SymposiumRoom = () => {
     notes,
     polls,
     chat,
+    canvas,
     presence,
     stageReactions,
     addAgendaItem,
@@ -75,8 +77,8 @@ const SymposiumRoom = () => {
     castPollVote,
     sendChatMessage,
     sendStageReaction,
+    updateCanvasDraft,
     updatePresenceStatus,
-    setDraft,
     isConnected,
     lastEvent
   } = useSymposiumChannel(roomId);
@@ -87,13 +89,23 @@ const SymposiumRoom = () => {
   );
 
   useEffect(() => {
-    setDraft(canvas);
-  }, [canvas, setDraft]);
-
-  useEffect(() => {
     const hydratePresence = setTimeout(() => updatePresenceStatus('online'), 300);
     return () => clearTimeout(hydratePresence);
   }, [updatePresenceStatus]);
+
+  useEffect(() => () => updatePresenceStatus('offline'), [updatePresenceStatus]);
+
+  const [editing, setEditing] = useState(false);
+  useEffect(() => {
+    if (!editing) return undefined;
+
+    const idleTimer = setTimeout(() => {
+      setEditing(false);
+      updatePresenceStatus('online');
+    }, 4000);
+
+    return () => clearTimeout(idleTimer);
+  }, [editing, updatePresenceStatus]);
 
   const runAiNotetaker = useCallback(async () => {
     setAiState('loading');
@@ -279,9 +291,17 @@ const SymposiumRoom = () => {
                   </Typography>
                   <AvatarGroup max={6}>
                     {roster.map((attendee) => (
-                      <Avatar key={attendee.id} sx={{ borderColor: 'primary.main', border: 1 }}>
-                        {presenceColors[attendee.status] ? '●' : '○'}
-                      </Avatar>
+                      <Badge
+                        key={attendee.id}
+                        overlap="circular"
+                        color={presenceColors[attendee.status] || 'default'}
+                        variant="dot"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                      >
+                        <Avatar sx={{ borderColor: 'divider', border: 1 }}>
+                          {attendee.name.charAt(0)}
+                        </Avatar>
+                      </Badge>
                     ))}
                   </AvatarGroup>
                 </Stack>
@@ -294,7 +314,11 @@ const SymposiumRoom = () => {
                   <TextField
                     label="Live protocol"
                     value={canvas}
-                    onChange={(e) => setCanvas(e.target.value)}
+                    onChange={(e) => {
+                      setEditing(true);
+                      updatePresenceStatus('editing');
+                      updateCanvasDraft(e.target.value);
+                    }}
                     multiline
                     minRows={10}
                     fullWidth

@@ -79,7 +79,7 @@ GSAPS Social Media App is an academic collaboration platform designed specifical
 
 - Live agenda with speaker queue, attendee roster, and presence pills
 - Stage + chat layout with emoji reactions and poll voting
-- Shared markdown protocol canvas reused from Research Workspace with live preview
+- Shared markdown protocol canvas reused from Research Workspace with live preview and synced edits/presence badges
 - AI Notetaker card that summarizes notes, action items, and citation suggestions (works in mock/offline mode)
 
 ### Architecture

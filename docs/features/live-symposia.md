@@ -8,7 +8,7 @@ The Live Symposia experience layers agenda management, stage chat, and protocol 
 2. If authentication is enabled, sign in with the demo credentials from the README.
 3. Join the room to load agenda, speaker queue, roster, polls, and the shared protocol canvas.
 4. Post questions or reactions in the chat and cast votes on live polls.
-5. Draft protocol updates in Markdown; presence pills show who else is active.
+5. Draft protocol updates in Markdown; presence pills and badges show who else is editing.
 
 ## Mock-data mode
 
@@ -18,9 +18,9 @@ The Live Symposia experience layers agenda management, stage chat, and protocol 
 
 ## Backend / realtime wiring
 
-- `src/api/symposiumClient.js` provides `useSymposiumChannel(roomId)` to publish and subscribe to symposium events (agenda updates, notes, polls, chat, reactions, presence).
-- The hook leans on `RealtimeContext` for socket wiring; when offline it still updates local state for demos.
-- Stage, agenda, and chat components subscribe to the same channel so multiple tabs/users stay in sync when a backend is present.
+- `src/api/symposiumClient.js` provides `useSymposiumChannel(roomId)` to publish and subscribe to symposium events (agenda updates, notes, polls, chat, reactions, presence, **canvas updates**).
+- The hook leans on `RealtimeContext` for socket wiring; when offline it still updates local state for demos and records the last event to aid debugging.
+- Stage, agenda, and chat components subscribe to the same channel so multiple tabs/users stay in sync when a backend is present; the shared protocol canvas now syncs edits via `canvas:update` broadcasts.
 
 ## AI Notetaker
 

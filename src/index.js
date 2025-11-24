@@ -20,14 +20,16 @@ root.render(
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <GamificationProvider>
-            <ThemeProvider>
-              <ToastProvider>
-                <CssBaseline />
-                <App />
-              </ToastProvider>
-            </ThemeProvider>
-          </GamificationProvider>
+          <RealtimeProvider>
+            <GamificationProvider>
+              <ThemeProvider>
+                <ToastProvider>
+                  <CssBaseline />
+                  <App />
+                </ToastProvider>
+              </ThemeProvider>
+            </GamificationProvider>
+          </RealtimeProvider>
         </AuthProvider>
       </QueryClientProvider>
     </BrowserRouter>

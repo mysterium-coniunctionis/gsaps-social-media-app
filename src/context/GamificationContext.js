@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { awardGamification, fetchGamification } from '../api/backend';
 import { useAuth } from './AuthContext';
@@ -20,14 +20,18 @@ export const XP_ACTIONS = {
   UPLOAD_PAPER: 50
 };
 
+// Rank system based on level progression
 export const RANKS = {
-  1: { name: 'Novice', color: '#8bd3e6', icon: '🌱' },
-  5: { name: 'Explorer', color: '#9fa8da', icon: '🧭' },
-  10: { name: 'Scholar', color: '#f6c177', icon: '📚' },
-  15: { name: 'Contributor', color: '#81c784', icon: '🤝' },
-  20: { name: 'Mentor', color: '#ffb74d', icon: '🧠' },
-  30: { name: 'Luminary', color: '#ba68c8', icon: '✨' },
-  40: { name: 'Mythic', color: '#ef5350', icon: '🛡️' }
+  1: { name: 'Novice', color: '#9e9e9e', icon: '🌱' },
+  5: { name: 'Initiate', color: '#8bc34a', icon: '🌿' },
+  10: { name: 'Apprentice', color: '#4caf50', icon: '🌳' },
+  15: { name: 'Practitioner', color: '#00bcd4', icon: '💎' },
+  20: { name: 'Adept', color: '#2196f3', icon: '⭐' },
+  25: { name: 'Expert', color: '#3f51b5', icon: '🔮' },
+  30: { name: 'Master', color: '#9c27b0', icon: '👑' },
+  35: { name: 'Sage', color: '#e91e63', icon: '🧙' },
+  40: { name: 'Luminary', color: '#ff9800', icon: '☀️' },
+  45: { name: 'Transcendent', color: '#ffd700', icon: '✨' }
 };
 
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 850, 1300];
@@ -58,12 +62,12 @@ export const GamificationProvider = ({ children }) => {
     }
   });
 
-  const awardXP = (action, customAmount = null) => {
+  const awardXP = useCallback((action, customAmount = null) => {
     if (!currentUser) return;
     const points = customAmount ?? XP_ACTIONS[action] ?? 0;
     if (points <= 0) return;
     awardMutation.mutate({ type: action, points });
-  };
+  }, [currentUser, awardMutation]);
 
   const userStats = useMemo(() => {
     const points = data?.points ?? 0;
@@ -85,7 +89,7 @@ export const GamificationProvider = ({ children }) => {
       updateStat: () => {},
       recentXP: []
     }),
-    [awardXP, userStats, isLoading]
+    [userStats, isLoading, awardXP]
   );
 
   return <GamificationContext.Provider value={value}>{children}</GamificationContext.Provider>;

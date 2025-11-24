@@ -42,41 +42,47 @@ export const getCurrentUser = async () => {
 };
 
 export const requestPasswordReset = async (email) => {
-  return {
-    success: true,
-    email,
-    token: 'mock-reset-token'
-  };
+  // TODO: Implement password reset request
+  // This would typically send a password reset email
+  return api.post('/auth/request-reset', { email });
 };
 
-export const resetPassword = async () => {
-  return { success: true };
+export const resetPassword = async (token, newPassword) => {
+  // TODO: Implement password reset with token
+  return api.post('/auth/reset-password', { token, newPassword });
 };
 
-export const getSessions = async () => {
-  return MOCK_SESSIONS;
+export const refreshAccessToken = async () => {
+  const response = await api.post('/auth/refresh');
+  return response.data;
 };
 
 export const enableMfa = async () => {
-  return {
-    recoveryCodes: ['4YK7J', '9PA2L', 'C7M3B', 'D2Q9Z', 'J5X1T']
-  };
+  // TODO: Implement MFA enable
+  return api.post('/auth/mfa/enable');
 };
 
 export const disableMfa = async () => {
-  return { success: true };
+  // TODO: Implement MFA disable
+  return api.post('/auth/mfa/disable');
 };
 
-export const revokeSession = async () => {
-  return { success: true };
+export const getSessions = async () => {
+  // TODO: Implement get active sessions
+  return api.get('/auth/sessions');
+};
+
+export const revokeSession = async (sessionId) => {
+  // TODO: Implement revoke session
+  return api.delete(`/auth/sessions/${sessionId}`);
 };
 
 export const requestEmailVerification = async () => {
-  return {
-    token: 'mock-verification-token'
-  };
+  // TODO: Implement email verification request
+  return api.post('/auth/request-verification');
 };
 
-export const verifyEmailToken = async () => {
-  return { success: true };
+export const verifyEmailToken = async (token) => {
+  // TODO: Implement email verification with token
+  return api.post('/auth/verify-email', { token });
 };

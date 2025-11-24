@@ -6,8 +6,6 @@ import {
   Grid,
   Avatar,
   Typography,
-  TextField,
-  InputAdornment,
   Button,
   Chip,
   FormControl,
@@ -16,7 +14,6 @@ import {
   MenuItem
 } from '@mui/material';
 import {
-  Search as SearchIcon,
   Add as AddIcon,
   Groups as GroupsIcon,
   Lock as LockIcon,
@@ -24,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { SearchTextField } from '../components/common';
 import {
   getRecommendations,
   logInteraction,
@@ -372,18 +370,10 @@ const Groups = () => {
         <CardContent>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
+              <SearchTextField
                 placeholder="Search groups..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  )
-                }}
               />
             </Grid>
             <Grid item xs={6} md={3}>

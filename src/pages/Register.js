@@ -21,6 +21,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { CenteredAuthLayout } from '../components/common';
 
 /**
  * Registration page component
@@ -134,15 +135,7 @@ const Register = () => {
   }
 
   return (
-    <Box
-      sx={{
-        minHeight: 'calc(100vh - 128px)',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        py: 4
-      }}
-    >
+    <CenteredAuthLayout>
       <Card sx={{ maxWidth: 500, width: '100%', mx: 2 }}>
         <CardContent sx={{ p: 4 }}>
           <Box sx={{ textAlign: 'center', mb: 3 }}>
@@ -300,7 +293,7 @@ const Register = () => {
           </form>
         </CardContent>
       </Card>
-    </Box>
+    </CenteredAuthLayout>
   );
 };
 

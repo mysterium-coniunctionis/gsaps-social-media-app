@@ -1,0 +1,45 @@
+/**
+ * Utility functions for mention handling
+ */
+
+/**
+ * Find the @ symbol before the cursor position
+ * @param {string} text - The text content
+ * @param {number} cursor - Cursor position
+ * @returns {number} Index of @ symbol or -1 if not found
+ */
+export const findMentionStart = (text, cursor) => {
+  for (let i = cursor - 1; i >= 0; i--) {
+    if (text[i] === '@') {
+      return i;
+    }
+    if (text[i] === ' ' || text[i] === '\n') {
+      break;
+    }
+  }
+  return -1;
+};
+
+/**
+ * Extract the mention query after @ symbol
+ * @param {string} text - The text content
+ * @param {number} atIndex - Index of @ symbol
+ * @param {number} cursor - Cursor position
+ * @returns {string} Query string after @
+ */
+export const extractMentionQuery = (text, atIndex, cursor) => {
+  return text.substring(atIndex + 1, cursor).toLowerCase();
+};
+
+/**
+ * Filter users based on mention query
+ * @param {Array} users - Array of user objects with name and username
+ * @param {string} query - Search query
+ * @returns {Array} Filtered users
+ */
+export const filterUsersForMention = (users, query) => {
+  return users.filter(user =>
+    user.name.toLowerCase().includes(query) ||
+    user.username.toLowerCase().includes(query)
+  );
+};

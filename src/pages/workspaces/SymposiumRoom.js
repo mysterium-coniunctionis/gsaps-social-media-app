@@ -40,7 +40,7 @@ import {
 import { marked } from 'marked';
 import { useSymposiumChannel } from '../../api/symposiumClient';
 import { findSymposiumById } from '../../data/symposiumData';
-import { actionItems, citationSuggestions, generateSummary } from '../../api/aiService';
+import { runAINotetaker } from '../../api/aiService';
 
 const presenceColors = {
   online: 'success',
@@ -100,11 +100,7 @@ const SymposiumRoom = () => {
       setAiState('loading');
       setAiError('');
       try {
-        const [summary, actions, citations] = await Promise.all([
-          generateSummary(notes),
-          actionItems(notes),
-          citationSuggestions(notes)
-        ]);
+        const { summary, actions, citations } = await runAINotetaker(notes);
         setAiSummary(summary);
         setAiActions(actions);
         setAiCitations(citations);
@@ -432,11 +428,7 @@ const SymposiumRoom = () => {
                 <Button size="small" variant="outlined" onClick={async () => {
                   setAiState('loading');
                   try {
-                    const [summary, actions, citations] = await Promise.all([
-                      generateSummary(notes),
-                      actionItems(notes),
-                      citationSuggestions(notes)
-                    ]);
+                    const { summary, actions, citations } = await runAINotetaker(notes);
                     setAiSummary(summary);
                     setAiActions(actions);
                     setAiCitations(citations);

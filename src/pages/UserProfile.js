@@ -9,7 +9,6 @@ import {
   Tab,
   Grid,
   Card,
-  CardContent,
   Chip,
   Button,
   LinearProgress,
@@ -32,6 +31,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useGamification, RANKS } from '../context/GamificationContext';
 import UserStatsCard from '../components/gamification/UserStatsCard';
+import { StatCard } from '../components/common';
 import { fadeInUp } from '../theme/animations';
 
 /**
@@ -305,87 +305,43 @@ const UserProfile = () => {
         {/* Stats Overview */}
         <Grid container spacing={3} sx={{ mb: 3 }}>
           <Grid item xs={12} sm={6} md={3}>
-            <Card
-              elevation={2}
-              sx={{
-                animation: `${fadeInUp} 0.6s ease-out 0.1s backwards`
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <ArticleIcon sx={{ color: theme.palette.primary.main, mr: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Posts
-                  </Typography>
-                </Box>
-                <Typography variant="h4" fontWeight="bold">
-                  {profileData.stats.posts_created}
-                </Typography>
-              </CardContent>
-            </Card>
+            <StatCard
+              icon={<ArticleIcon />}
+              label="Posts"
+              value={profileData.stats.posts_created}
+              iconColor={theme.palette.primary.main}
+              animationDelay={0.1}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <Card
-              elevation={2}
-              sx={{
-                animation: `${fadeInUp} 0.6s ease-out 0.2s backwards`
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <ArticleIcon sx={{ color: theme.palette.secondary.main, mr: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Papers
-                  </Typography>
-                </Box>
-                <Typography variant="h4" fontWeight="bold">
-                  {profileData.stats.papers_uploaded}
-                </Typography>
-              </CardContent>
-            </Card>
+            <StatCard
+              icon={<ArticleIcon />}
+              label="Papers"
+              value={profileData.stats.papers_uploaded}
+              iconColor={theme.palette.secondary.main}
+              animationDelay={0.2}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <Card
-              elevation={2}
-              sx={{
-                animation: `${fadeInUp} 0.6s ease-out 0.3s backwards`
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <SchoolIcon sx={{ color: theme.palette.success.main, mr: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Courses
-                  </Typography>
-                </Box>
-                <Typography variant="h4" fontWeight="bold">
-                  {profileData.stats.courses_created}
-                </Typography>
-              </CardContent>
-            </Card>
+            <StatCard
+              icon={<SchoolIcon />}
+              label="Courses"
+              value={profileData.stats.courses_created}
+              iconColor={theme.palette.success.main}
+              animationDelay={0.3}
+            />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <Card
-              elevation={2}
-              sx={{
-                animation: `${fadeInUp} 0.6s ease-out 0.4s backwards`
-              }}
-            >
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                  <TrendingIcon sx={{ color: theme.palette.warning.main, mr: 1 }} />
-                  <Typography variant="body2" color="text.secondary">
-                    Total XP
-                  </Typography>
-                </Box>
-                <Typography variant="h4" fontWeight="bold">
-                  {profileData.xp.toLocaleString()}
-                </Typography>
-              </CardContent>
-            </Card>
+            <StatCard
+              icon={<TrendingIcon />}
+              label="Total XP"
+              value={profileData.xp.toLocaleString()}
+              iconColor={theme.palette.warning.main}
+              animationDelay={0.4}
+            />
           </Grid>
         </Grid>
 

@@ -1,6 +1,23 @@
 import api from './api';
 import { login, register, getCurrentUser as fetchCurrentUser } from './backend';
 
+const MOCK_SESSIONS = [
+  {
+    id: 'sess-current',
+    device: 'Chrome on macOS',
+    location: 'San Francisco, US',
+    lastActive: new Date().toISOString(),
+    current: true
+  },
+  {
+    id: 'sess-remote',
+    device: 'Firefox on Linux',
+    location: 'Toronto, CA',
+    lastActive: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
+    current: false
+  }
+];
+
 export const loginUser = async (username, password) => {
   const { user } = await login(username, password);
   return user;

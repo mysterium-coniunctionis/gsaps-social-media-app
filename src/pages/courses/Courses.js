@@ -29,6 +29,7 @@ import { fetchCourses } from '../../api/backend';
 import CourseCard from '../../components/courses/CourseCard';
 import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
 import { fadeInUp } from '../../theme/animations';
+import { useExperiment } from '../../utils/recommendationService';
 
 const Courses = () => {
   const [viewMode, setViewMode] = useState('grid');

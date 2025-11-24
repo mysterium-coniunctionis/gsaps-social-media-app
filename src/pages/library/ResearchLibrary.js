@@ -23,6 +23,7 @@ import PaperUploadDialog from '../../components/library/PaperUploadDialog';
 import { useToast } from '../../components/common';
 import { useGamification } from '../../context/GamificationContext';
 import { createResearchAsset, fetchResearchAssets } from '../../api/backend';
+import { useExperiment } from '../../utils/recommendationService';
 
 const ResearchLibrary = () => {
   const toast = useToast();
@@ -85,12 +86,6 @@ const ResearchLibrary = () => {
       type: payload.topic || 'paper'
     });
   };
-
-  const relatedTopics = useMemo(() => {
-    const topics = new Set();
-    recommendedPapers.forEach(paper => paper.topics?.forEach(topic => topics.add(topic)));
-    return Array.from(topics).slice(0, 6);
-  }, [recommendedPapers]);
 
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh', py: 4 }}>

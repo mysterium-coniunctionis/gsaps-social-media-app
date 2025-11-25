@@ -2,7 +2,7 @@
 
 > **Vision**: Transform GSAPS from an excellent academic social platform into the **essential, indispensable infrastructure** for the psychedelic research and therapy community.
 
-**Created**: November 2025
+**Created**: November 25, 2025
 **Status**: Strategic Plan - Ready for Implementation
 
 ---
@@ -252,9 +252,9 @@ Building on Integration Circles, add essential safety infrastructure:
 
 ## 📊 Success Metrics
 
-### Engagement Metrics (6-month targets)
-| Metric | Current | Target | Method |
-|--------|---------|--------|--------|
+### Engagement Metrics (6-month targets from implementation start)
+| Metric | Current | Target (Month 6) | Method |
+|--------|---------|------------------|--------|
 | Monthly Active Users | ~500 | 5,000 | Feature launches + marketing |
 | Daily Active Users | ~50 | 1,000 | Engagement features |
 | Average Session Time | 5 min | 15+ min | Content depth |
@@ -304,7 +304,7 @@ Building on Integration Circles, add essential safety infrastructure:
 - Professional: 500 users × $29 × 12 = **$174,000**
 - Institutional: 20 orgs × $299 × 12 = **$71,760**
 - One-time (courses, certifications): **$50,000**
-- **Total Year 1: ~$295,000**
+- **Total Year 1: $295,760**
 
 ---
 
@@ -380,7 +380,7 @@ When this plan is fully implemented, GSAPS will be:
 ---
 
 **Document Version**: 1.0
-**Last Updated**: November 2025
+**Last Updated**: November 25, 2025
 **Status**: Ready for Implementation
 
 🚀 **Let's build something incredible together!**

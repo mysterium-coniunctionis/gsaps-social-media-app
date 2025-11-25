@@ -22,7 +22,7 @@ const StatCard = ({ icon, label, value = 0, iconColor, animationDelay = 0 }) => 
     >
       <CardContent>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-          {React.cloneElement(icon, { sx: { color: iconColor, mr: 1 } })}
+          {React.cloneElement(icon, { sx: { color: iconColor, mr: 1, ...(icon.props.sx || {}) } })}
           <Typography variant="body2" color="text.secondary">
             {label}
           </Typography>

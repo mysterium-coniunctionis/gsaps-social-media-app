@@ -22,7 +22,8 @@ import {
   TrendingUp as TrendingIcon,
   Star as StarIcon,
   Verified as VerifiedIcon,
-  CoPresent as CoPresentIcon
+  CoPresent as CoPresentIcon,
+  Favorite as CirclesIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { fadeInUp } from '../theme/animations';
@@ -73,6 +74,13 @@ const Home = () => {
 
   // Key features
   const features = [
+    {
+      icon: <CirclesIcon sx={{ fontSize: 40 }} />,
+      title: 'Integration Circles',
+      description: 'Find peer-led circles for psychedelic integration, preparation, and support. Connect with your community.',
+      link: '/circles',
+      color: theme.palette.error.main
+    },
     {
       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
       title: 'Graduate-Level Courses',

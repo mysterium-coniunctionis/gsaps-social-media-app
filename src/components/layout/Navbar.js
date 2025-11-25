@@ -27,7 +27,8 @@ import {
   CoPresent,
   Security as SecurityIcon,
   Brightness4,
-  Brightness7
+  Brightness7,
+  Favorite as CirclesIcon
 } from '@mui/icons-material';
 import { CreditCard as CreditCardIcon, Analytics as AnalyticsIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -84,6 +85,7 @@ const Navbar = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: <HomeIcon /> },
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
+    { label: 'Circles', path: '/circles', icon: <CirclesIcon /> },
     { label: 'Library', path: '/library', icon: <LibraryIcon /> },
     { label: 'Workspaces', path: '/workspaces', icon: <Science />, protected: true },
     { label: 'Live Symposia', path: '/symposia/symp-001', icon: <CoPresent />, protected: true },

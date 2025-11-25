@@ -41,6 +41,8 @@ const OrgReporting = lazy(() => import('./pages/admin/OrgReporting'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Settings = lazy(() => import('./pages/Settings'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const IntegrationCircles = lazy(() => import('./pages/IntegrationCircles'));
+const CircleDetail = lazy(() => import('./pages/CircleDetail'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -206,6 +208,14 @@ function App() {
                 } />
 
                 <Route path="/leaderboard" element={<Leaderboard />} />
+
+                <Route path="/circles" element={<IntegrationCircles />} />
+
+                <Route path="/circles/:circleId" element={
+                  <ProtectedRoute>
+                    <CircleDetail />
+                  </ProtectedRoute>
+                } />
 
                 <Route path="/settings" element={
                   <ProtectedRoute>

@@ -3,10 +3,11 @@
  */
 
 /**
- * Find the @ symbol before the cursor position
+ * Find the @ symbol before the cursor position.
+ * Searches backwards from the cursor until an @ is found, but stops if a space or newline is encountered first.
  * @param {string} text - The text content
  * @param {number} cursor - Cursor position
- * @returns {number} Index of @ symbol or -1 if not found
+ * @returns {number} Index of @ symbol, or -1 if not found or if a space/newline is encountered first
  */
 export const findMentionStart = (text, cursor) => {
   for (let i = cursor - 1; i >= 0; i--) {

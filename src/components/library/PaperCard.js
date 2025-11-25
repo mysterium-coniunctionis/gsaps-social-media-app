@@ -289,4 +289,4 @@ const PaperCard = ({ paper, viewMode = 'grid', onToggleLibrary, onClick }) => {
   );
 };
 
-export default PaperCard;
+export default React.memo(PaperCard);

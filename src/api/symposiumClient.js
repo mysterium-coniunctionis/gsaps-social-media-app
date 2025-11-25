@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useRealtime } from '../context/RealtimeContext';
 import { findSymposiumById } from '../data/symposiumData';
 
@@ -14,10 +14,7 @@ export const useSymposiumChannel = (roomId) => {
   const [speakerQueue, setSpeakerQueue] = useState(fallback.speakerQueue || []);
   const [notes, setNotes] = useState(fallback.notes || []);
   const [polls, setPolls] = useState(fallback.polls || []);
-  const [chat, setChat] = useState(fallback.chat || []);
-  const [canvas, setCanvas] = useState(
-    fallback.protocolDraft || '# Shared protocol canvas\n\nCapture safety, dosing, and integration decisions in real time.'
-  );
+  const [chat, setChat] = useState([]);
   const [stageReactions, setStageReactions] = useState([]);
   const [presence, setPresence] = useState(
     (fallback.attendees || []).reduce((acc, attendee) => {
@@ -26,6 +23,7 @@ export const useSymposiumChannel = (roomId) => {
     }, {})
   );
   const [lastEvent, setLastEvent] = useState(null);
+  const draftRef = useRef('');
 
   useEffect(() => {
     if (presenceByRoom?.[roomId]) {
@@ -70,10 +68,6 @@ export const useSymposiumChannel = (roomId) => {
       },
       'presence:update': (incoming) => {
         setPresence((prev) => ({ ...prev, ...incoming }));
-      },
-      'canvas:update': (incomingCanvas) => {
-        setCanvas(incomingCanvas.content);
-        setLastEvent({ type: 'canvas', payload: incomingCanvas });
       }
     };
 
@@ -84,7 +78,6 @@ export const useSymposiumChannel = (roomId) => {
   const publish = useCallback(
     (event, payload) => {
       const eventName = buildEventName(roomId, event);
-      setLastEvent({ type: event, payload });
       emitWithAck(eventName, payload, {
         onSuccess: () => setLastEvent({ type: event, payload }),
         onError: () => setLastEvent({ type: `${event}:error`, payload })
@@ -96,11 +89,8 @@ export const useSymposiumChannel = (roomId) => {
   const addAgendaItem = useCallback(
     (item) => {
       const enriched = { ...item, id: item.id || `ag-${Date.now()}` };
-      setAgenda((prev) => {
-        const next = [...prev, enriched];
-        publish('agenda:update', enriched);
-        return next;
-      });
+      setAgenda((prev) => [...prev, enriched]);
+      publish('agenda:update', enriched);
     },
     [publish]
   );
@@ -108,13 +98,10 @@ export const useSymposiumChannel = (roomId) => {
   const enqueueSpeaker = useCallback(
     (speaker) => {
       const enriched = { ...speaker, id: speaker.id || `sq-${Date.now()}` };
-      setSpeakerQueue((prev) => {
-        const next = [...prev, enriched];
-        publish('queue:update', next);
-        return next;
-      });
+      setSpeakerQueue((prev) => [...prev, enriched]);
+      publish('queue:update', [...speakerQueue, enriched]);
     },
-    [publish]
+    [publish, speakerQueue]
   );
 
   const addNote = useCallback(
@@ -132,8 +119,8 @@ export const useSymposiumChannel = (roomId) => {
 
   const castPollVote = useCallback(
     (pollId, optionId) => {
-      setPolls((prev) => {
-        const next = prev.map((poll) =>
+      setPolls((prev) =>
+        prev.map((poll) =>
           poll.id === pollId
             ? {
                 ...poll,
@@ -142,15 +129,14 @@ export const useSymposiumChannel = (roomId) => {
                 )
               }
             : poll
-        );
-        const changed = next.find((poll) => poll.id === pollId);
-        if (changed) {
-          publish('polls:update', changed);
-        }
-        return next;
-      });
+        )
+      );
+      const updated = polls.find((poll) => poll.id === pollId);
+      if (updated) {
+        publish('polls:update', updated);
+      }
     },
-    [publish]
+    [polls, publish]
   );
 
   const sendChatMessage = useCallback(
@@ -160,7 +146,7 @@ export const useSymposiumChannel = (roomId) => {
         ...message,
         optimistic: true
       };
-      setChat((prev) => [...prev, enriched].slice(-50));
+      setChat((prev) => [...prev, enriched]);
       publish('chat:new', enriched);
     },
     [publish]
@@ -175,15 +161,6 @@ export const useSymposiumChannel = (roomId) => {
     [publish]
   );
 
-  const updateCanvasDraft = useCallback(
-    (content) => {
-      const payload = { content, updatedBy: 'you', ts: Date.now() };
-      setCanvas(content);
-      publish('canvas:update', payload);
-    },
-    [publish]
-  );
-
   const updatePresenceStatus = useCallback(
     (status = 'online') => {
       const selfId = 'you';
@@ -194,13 +171,16 @@ export const useSymposiumChannel = (roomId) => {
     [publish, roomId, updatePresence]
   );
 
+  const setDraft = useCallback((value) => {
+    draftRef.current = value;
+  }, []);
+
   return {
     agenda,
     speakerQueue,
     notes,
     polls,
     chat,
-    canvas,
     presence,
     stageReactions,
     isConnected,
@@ -211,8 +191,9 @@ export const useSymposiumChannel = (roomId) => {
     castPollVote,
     sendChatMessage,
     sendStageReaction,
-    updateCanvasDraft,
-    updatePresenceStatus
+    updatePresenceStatus,
+    setDraft,
+    draftRef
   };
 };
 

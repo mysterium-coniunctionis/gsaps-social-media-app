@@ -8,47 +8,96 @@ import { PrismaClient } from '@prisma/client';
 
 dotenv.config();
 
+// Environment variable validation
+const requiredEnvVars = ['JWT_SECRET'];
+const missingEnvVars = requiredEnvVars.filter((varName) => !process.env[varName]);
+
+if (missingEnvVars.length > 0) {
+  throw new Error(
+    `Missing required environment variables: ${missingEnvVars.join(', ')}. ` +
+    'Please check your .env file.'
+  );
+}
+
+const config = {
+  port: parseInt(process.env.PORT || '4000', 10),
+  jwtSecret: process.env.JWT_SECRET,
+  corsOrigins: (process.env.CORS_ORIGINS || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+  nodeEnv: process.env.NODE_ENV || 'development',
+  isDevelopment: process.env.NODE_ENV !== 'production',
+  isProduction: process.env.NODE_ENV === 'production'
+};
+
 const prisma = new PrismaClient();
 const app = express();
 
-const { PORT = 4000, JWT_SECRET, CORS_ORIGINS } = process.env;
-
-if (!JWT_SECRET) {
-  throw new Error('JWT_SECRET environment variable is required');
-}
-
-const allowedOrigins = (CORS_ORIGINS || '')
-  .split(',')
-  .map((origin) => origin.trim())
-  .filter(Boolean);
-
+// Security headers
 app.use(helmet());
+
+// CORS configuration
 app.use(
   cors({
     origin(origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
+
+      // Allow configured origins
+      if (config.corsOrigins.length === 0 || config.corsOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
       return callback(new Error('Not allowed by CORS'));
     },
     credentials: true
   })
 );
-app.use(express.json());
 
+// Body parser
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Helper functions
 const createToken = (user) =>
-  jwt.sign({ id: user.id, email: user.email, role: user.role }, JWT_SECRET, { expiresIn: '2d' });
+  jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    config.jwtSecret,
+    { expiresIn: '2d' }
+  );
 
 const authMiddleware = async (req, res, next) => {
   const auth = req.headers.authorization;
-  if (!auth) return res.status(401).json({ message: 'Missing authorization header' });
+  if (!auth) {
+    return res.status(401).json({
+      message: 'Missing authorization header',
+      error: 'UNAUTHORIZED'
+    });
+  }
 
-  const [, token] = auth.split(' ');
+  const [scheme, token] = auth.split(' ');
+
+  if (scheme !== 'Bearer' || !token) {
+    return res.status(401).json({
+      message: 'Invalid authorization header format. Expected: Bearer <token>',
+      error: 'INVALID_AUTH_HEADER'
+    });
+  }
+
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
+    const decoded = jwt.verify(token, config.jwtSecret);
     req.user = decoded;
     next();
   } catch (error) {
-    res.status(401).json({ message: 'Invalid token' });
+    const message = error.name === 'TokenExpiredError'
+      ? 'Token has expired'
+      : 'Invalid token';
+
+    res.status(401).json({
+      message,
+      error: error.name
+    });
   }
 };
 
@@ -370,6 +419,96 @@ app.post('/assets', authMiddleware, async (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`API listening on port ${PORT}`);
+// 404 handler - must be after all routes
+app.use((req, res) => {
+  res.status(404).json({
+    message: 'Resource not found',
+    error: 'NOT_FOUND',
+    path: req.path
+  });
+});
+
+// Global error handler - must be last
+app.use((err, req, res, next) => {
+  // Log error in development
+  if (config.isDevelopment) {
+    // eslint-disable-next-line no-console
+    console.error('Error:', err);
+  }
+
+  // Handle specific error types
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({
+      message: 'Validation error',
+      error: 'VALIDATION_ERROR',
+      details: err.details || err.message
+    });
+  }
+
+  if (err.name === 'UnauthorizedError' || err.message === 'Not allowed by CORS') {
+    return res.status(401).json({
+      message: err.message || 'Unauthorized',
+      error: 'UNAUTHORIZED'
+    });
+  }
+
+  if (err.code === 'P2002') { // Prisma unique constraint violation
+    return res.status(409).json({
+      message: 'Resource already exists',
+      error: 'CONFLICT',
+      field: err.meta?.target
+    });
+  }
+
+  if (err.code === 'P2025') { // Prisma record not found
+    return res.status(404).json({
+      message: 'Resource not found',
+      error: 'NOT_FOUND'
+    });
+  }
+
+  // Default to 500 server error
+  const statusCode = err.statusCode || err.status || 500;
+  res.status(statusCode).json({
+    message: config.isProduction ? 'Internal server error' : err.message,
+    error: err.name || 'INTERNAL_SERVER_ERROR',
+    ...(config.isDevelopment && { stack: err.stack })
+  });
+});
+
+// Graceful shutdown handlers
+const gracefulShutdown = async (signal) => {
+  // eslint-disable-next-line no-console
+  console.log(`\n${signal} received, closing server gracefully...`);
+
+  try {
+    await prisma.$disconnect();
+    // eslint-disable-next-line no-console
+    console.log('Database connections closed');
+    process.exit(0);
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Error during shutdown:', error);
+    process.exit(1);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
+// Handle uncaught errors
+process.on('uncaughtException', (error) => {
+  // eslint-disable-next-line no-console
+  console.error('Uncaught Exception:', error);
+  gracefulShutdown('UNCAUGHT_EXCEPTION');
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  // eslint-disable-next-line no-console
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+app.listen(config.port, () => {
+  // eslint-disable-next-line no-console
+  console.log(`🚀 API listening on port ${config.port} in ${config.nodeEnv} mode`);
 });

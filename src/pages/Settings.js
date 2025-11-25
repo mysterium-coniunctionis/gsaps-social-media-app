@@ -30,6 +30,7 @@ import {
   Devices as DevicesIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
+import { useAccessibility } from '../context/AccessibilityContext';
 import { useNavigate } from 'react-router-dom';
 import { fadeInUp } from '../theme/animations';
 import { enableMfa, disableMfa, getSessions, revokeSession, requestEmailVerification } from '../api/auth';
@@ -41,7 +42,6 @@ import { enableMfa, disableMfa, getSessions, revokeSession, requestEmailVerifica
 const Settings = () => {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
-  const { preferences, togglePreference } = useAccessibility();
   const [activeTab, setActiveTab] = useState(0);
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');

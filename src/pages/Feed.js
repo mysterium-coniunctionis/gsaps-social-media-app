@@ -1,15 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import {
-  Alert,
-  Box,
-  Container,
-  Typography,
-  Fab,
-  useTheme,
-  useMediaQuery,
-  CircularProgress,
-  Button
-} from '@mui/material';
+import { Box, Container, Typography, Fab, useTheme, useMediaQuery, CircularProgress } from '@mui/material';
 import { Add as AddIcon } from '@mui/icons-material';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import PostCard from '../components/feed/PostCard';
@@ -18,6 +8,7 @@ import { fadeInUp } from '../theme/animations';
 import { useGamification } from '../context/GamificationContext';
 import { useAuth } from '../context/AuthContext';
 import { createPost, deletePost, fetchPosts, reactToPost } from '../api/backend';
+import GuidelinesGate from '../components/moderation/GuidelinesGate';
 
 const Feed = () => {
   const theme = useTheme();
@@ -30,6 +21,22 @@ const Feed = () => {
     queryFn: fetchPosts
   });
   const [composerOpen, setComposerOpen] = useState(false);
+  const [guidelinesOpen, setGuidelinesOpen] = useState(true);
+  const communityGuidelines = useMemo(
+    () => ({
+      version: '1.3',
+      lastUpdated: 'Mar 14, 2024',
+      summary: 'Safety-first moderation with human review for sensitive research topics.',
+      items: [
+        'No unverified medical advice or sourcing requests.',
+        'Use content warnings for challenging experiences and images.',
+        'Respect anonymity and never dox participants.',
+        'Cite sources when discussing published research.',
+        'Report safety issues immediately to moderators.'
+      ]
+    }),
+    []
+  );
 
   const createPostMutation = useMutation({
     mutationFn: createPost,
@@ -118,6 +125,10 @@ const Feed = () => {
     [awardXP, updateStat]
   );
 
+  const handleAcceptGuidelines = () => {
+    setGuidelinesOpen(false);
+  };
+
   const handleDelete = useCallback(
     (postId) => {
       deletePostMutation.mutate(postId);
@@ -205,12 +216,14 @@ const Feed = () => {
           onSubmit={handleCreatePost}
         />
 
+        {/* TODO: Implement GuidelinesGate component when backend support is ready
         <GuidelinesGate
           open={guidelinesOpen}
           guidelines={communityGuidelines}
           onAccept={handleAcceptGuidelines}
           onClose={() => setGuidelinesOpen(false)}
         />
+        */}
       </Container>
     </Box>
   );

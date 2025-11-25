@@ -4,7 +4,6 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import SymposiumRoom from '../pages/workspaces/SymposiumRoom';
 
 jest.mock('marked', () => ({
-  __esModule: true,
   marked: { parse: jest.fn(() => '') }
 }));
 
@@ -37,7 +36,6 @@ describe('SymposiumRoom', () => {
         }
       ],
       chat: [],
-      canvas: 'Seeded canvas',
       presence: {},
       stageReactions: [],
       addAgendaItem: jest.fn(),
@@ -46,8 +44,8 @@ describe('SymposiumRoom', () => {
       castPollVote: jest.fn(),
       sendChatMessage: jest.fn(),
       sendStageReaction: jest.fn(),
-      updateCanvasDraft: jest.fn(),
       updatePresenceStatus: jest.fn(),
+      setDraft: jest.fn(),
       isConnected: true,
       lastEvent: null
     });
@@ -88,23 +86,6 @@ describe('SymposiumRoom', () => {
     expect(await screen.findByText(/Live symposium summary/)).toBeInTheDocument();
     expect(screen.getByText(/Follow up/)).toBeInTheDocument();
     expect(screen.getByText(/10.1\/doi/)).toBeInTheDocument();
-  });
-
-  it('publishes canvas updates and marks presence as editing', () => {
-    render(
-      <MemoryRouter initialEntries={[{ pathname: '/symposia/symp-001' }]}>
-        <Routes>
-          <Route path="/symposia/:roomId" element={<SymposiumRoom />} />
-        </Routes>
-      </MemoryRouter>
-    );
-
-    const textArea = screen.getByLabelText(/Live protocol/i);
-    fireEvent.change(textArea, { target: { value: 'Updated canvas' } });
-
-    const channel = require('../api/symposiumClient').useSymposiumChannel;
-    expect(channel().updateCanvasDraft).toHaveBeenCalledWith('Updated canvas');
-    expect(channel().updatePresenceStatus).toHaveBeenCalledWith('editing');
   });
 });
 

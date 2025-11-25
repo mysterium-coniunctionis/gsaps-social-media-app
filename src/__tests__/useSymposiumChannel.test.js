@@ -1,4 +1,4 @@
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useSymposiumChannel } from '../api/symposiumClient';
 
 const realtimeMocks = {};
@@ -46,7 +46,6 @@ describe('useSymposiumChannel', () => {
       speakerQueue: [],
       notes: [],
       polls: [],
-      protocolDraft: 'protocol stub',
       attendees: []
     });
   });
@@ -75,7 +74,6 @@ describe('useSymposiumChannel', () => {
       polls: [
         { id: 'poll-1', options: [{ id: 'opt-1', label: 'Yes', votes: 0 }] }
       ],
-      protocolDraft: 'protocol stub',
       attendees: []
     });
 
@@ -86,23 +84,5 @@ describe('useSymposiumChannel', () => {
     });
 
     expect(result.current.polls[0].options[0].votes).toBe(1);
-  });
-
-  it('publishes canvas updates and records last event', async () => {
-    const { result } = renderHook(() => useSymposiumChannel('symp-001'));
-
-    act(() => {
-      result.current.updateCanvasDraft('new content');
-    });
-
-    expect(result.current.canvas).toBe('new content');
-    expect(realtimeMocks.emitWithAck).toHaveBeenCalledWith(
-      expect.stringContaining('canvas:update'),
-      expect.objectContaining({ content: 'new content' }),
-      expect.any(Object)
-    );
-    await waitFor(() =>
-      expect(result.current.lastEvent).toEqual({ type: 'canvas:update', payload: expect.any(Object) })
-    );
   });
 });

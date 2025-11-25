@@ -1,9 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link as RouterLink } from 'react-router-dom';
 import {
   Alert,
   Avatar,
-  Badge,
   AvatarGroup,
   Box,
   Button,
@@ -46,13 +45,13 @@ import { actionItems, citationSuggestions, generateSummary } from '../../api/aiS
 const presenceColors = {
   online: 'success',
   idle: 'warning',
-  editing: 'info',
   offline: 'default'
 };
 
 const SymposiumRoom = () => {
   const { roomId = 'symp-001' } = useParams();
   const symposium = findSymposiumById(roomId);
+  const [canvas, setCanvas] = useState('# Shared protocol canvas\n\nCapture safety, dosing, and integration decisions in real time.');
   const [noteDraft, setNoteDraft] = useState('');
   const [chatDraft, setChatDraft] = useState('');
   const [agendaDraft, setAgendaDraft] = useState('');
@@ -68,7 +67,6 @@ const SymposiumRoom = () => {
     notes,
     polls,
     chat,
-    canvas,
     presence,
     stageReactions,
     addAgendaItem,
@@ -77,8 +75,8 @@ const SymposiumRoom = () => {
     castPollVote,
     sendChatMessage,
     sendStageReaction,
-    updateCanvasDraft,
     updatePresenceStatus,
+    setDraft,
     isConnected,
     lastEvent
   } = useSymposiumChannel(roomId);
@@ -89,72 +87,54 @@ const SymposiumRoom = () => {
   );
 
   useEffect(() => {
+    setDraft(canvas);
+  }, [canvas, setDraft]);
+
+  useEffect(() => {
     const hydratePresence = setTimeout(() => updatePresenceStatus('online'), 300);
     return () => clearTimeout(hydratePresence);
   }, [updatePresenceStatus]);
 
-  useEffect(() => () => updatePresenceStatus('offline'), [updatePresenceStatus]);
-
-  const [editing, setEditing] = useState(false);
   useEffect(() => {
-    if (!editing) return undefined;
+    const runAi = async () => {
+      setAiState('loading');
+      setAiError('');
+      try {
+        const [summary, actions, citations] = await Promise.all([
+          generateSummary(notes),
+          actionItems(notes),
+          citationSuggestions(notes)
+        ]);
+        setAiSummary(summary);
+        setAiActions(actions);
+        setAiCitations(citations);
+        setAiState('success');
+      } catch (err) {
+        setAiError(err.message || 'Failed to run AI notetaker');
+        setAiState('error');
+      }
+    };
 
-    const idleTimer = setTimeout(() => {
-      setEditing(false);
-      updatePresenceStatus('online');
-    }, 4000);
-
-    return () => clearTimeout(idleTimer);
-  }, [editing, updatePresenceStatus]);
-
-  const runAiNotetaker = useCallback(async () => {
-    setAiState('loading');
-    setAiError('');
-    try {
-      const [summary, actions, citations] = await Promise.all([
-        generateSummary(notes),
-        actionItems(notes),
-        citationSuggestions(notes)
-      ]);
-      setAiSummary(summary);
-      setAiActions(actions);
-      setAiCitations(citations);
-      setAiState('success');
-    } catch (err) {
-      setAiError(err.message || 'Failed to run AI notetaker');
-      setAiState('error');
+    if (notes.length) {
+      runAi();
     }
   }, [notes]);
 
-  useEffect(() => {
-    if (notes.length) {
-      runAiNotetaker();
-    } else {
-      setAiSummary('');
-      setAiActions([]);
-      setAiCitations([]);
-      setAiState('idle');
-    }
-  }, [notes, runAiNotetaker]);
-
   const handleSendNote = () => {
-    const trimmed = noteDraft.trim();
-    if (!trimmed) return;
-    addNote({ author: 'You', body: trimmed });
+    if (!noteDraft.trim()) return;
+    addNote({ author: 'You', body: noteDraft.trim() });
     setNoteDraft('');
   };
 
   const handleSendChat = () => {
-    const trimmed = chatDraft.trim();
-    if (!trimmed) return;
-    sendChatMessage({ author: 'You', body: trimmed, ts: new Date().toISOString() });
+    if (!chatDraft.trim()) return;
+    sendChatMessage({ author: 'You', body: chatDraft.trim(), ts: new Date().toISOString() });
     setChatDraft('');
   };
 
   const handleAddAgenda = () => {
-    const trimmed = agendaDraft.trim();
-    if (!trimmed) return;
-    addAgendaItem({ title: trimmed, owner: 'You', time: 'TBD' });
+    if (!agendaDraft.trim()) return;
+    addAgendaItem({ title: agendaDraft.trim(), owner: 'You', time: 'TBD' });
     setAgendaDraft('');
   };
 
@@ -162,21 +142,6 @@ const SymposiumRoom = () => {
   const safeCitations = aiCitations || [];
 
   const attendeeAvatars = (symposium.attendees || []).slice(0, 4);
-  const roster = useMemo(() => {
-    const attendeeMap = (symposium.attendees || []).reduce((acc, attendee) => {
-      acc[attendee.id] = attendee;
-      return acc;
-    }, {});
-
-    return Object.entries(presence).map(([id, status]) => ({
-      id,
-      name: attendeeMap[id]?.name || 'Guest',
-      role: attendeeMap[id]?.role || 'Participant',
-      status
-    }));
-  }, [presence, symposium.attendees]);
-
-  const reactionOptions = useMemo(() => ['👏', '🔥', '💡', '❤️'], []);
 
   return (
     <Box sx={{ py: 3 }}>
@@ -226,7 +191,7 @@ const SymposiumRoom = () => {
               }}>
                 <Typography color="text.secondary">Embed livestream or stage controls here</Typography>
                 <Stack direction="row" spacing={1} sx={{ position: 'absolute', bottom: 12, right: 12 }}>
-                  {reactionOptions.map((emoji) => (
+                  {['👏', '🔥', '💡', '❤️'].map((emoji) => (
                     <Button key={emoji} size="small" variant="outlined" onClick={() => sendStageReaction(emoji)}>
                       {emoji}
                     </Button>
@@ -290,18 +255,10 @@ const SymposiumRoom = () => {
                     Presence
                   </Typography>
                   <AvatarGroup max={6}>
-                    {roster.map((attendee) => (
-                      <Badge
-                        key={attendee.id}
-                        overlap="circular"
-                        color={presenceColors[attendee.status] || 'default'}
-                        variant="dot"
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      >
-                        <Avatar sx={{ borderColor: 'divider', border: 1 }}>
-                          {attendee.name.charAt(0)}
-                        </Avatar>
-                      </Badge>
+                    {Object.entries(presence).map(([id, status]) => (
+                      <Avatar key={id} sx={{ borderColor: 'primary.main', border: 1 }}>
+                        {status === 'online' ? '●' : '○'}
+                      </Avatar>
                     ))}
                   </AvatarGroup>
                 </Stack>
@@ -314,11 +271,7 @@ const SymposiumRoom = () => {
                   <TextField
                     label="Live protocol"
                     value={canvas}
-                    onChange={(e) => {
-                      setEditing(true);
-                      updatePresenceStatus('editing');
-                      updateCanvasDraft(e.target.value);
-                    }}
+                    onChange={(e) => setCanvas(e.target.value)}
                     multiline
                     minRows={10}
                     fullWidth
@@ -398,7 +351,9 @@ const SymposiumRoom = () => {
             <Divider />
             <CardContent>
               <Stack spacing={1}>
-                {roster.map((attendee) => (
+                {(symposium.attendees || []).map((attendee) => {
+                  const status = presence[attendee.id] || attendee.status;
+                  return (
                   <Stack key={attendee.id} direction="row" spacing={1} alignItems="center">
                     <Avatar>{attendee.name.charAt(0)}</Avatar>
                     <Box>
@@ -406,13 +361,14 @@ const SymposiumRoom = () => {
                       <Typography variant="body2" color="text.secondary">{attendee.role}</Typography>
                     </Box>
                     <Chip
-                      label={attendee.status}
-                      color={presenceColors[attendee.status] || 'default'}
+                      label={status}
+                      color={presenceColors[status] || 'default'}
                       size="small"
                       sx={{ ml: 'auto' }}
                     />
                   </Stack>
-                ))}
+                  );
+                })}
               </Stack>
             </CardContent>
           </Card>
@@ -473,7 +429,23 @@ const SymposiumRoom = () => {
               subheader="Summaries, action items, and citations"
               avatar={<TipsAndUpdates color="primary" />}
               action={
-                <Button size="small" variant="outlined" onClick={runAiNotetaker} disabled={aiState === 'loading'}>
+                <Button size="small" variant="outlined" onClick={async () => {
+                  setAiState('loading');
+                  try {
+                    const [summary, actions, citations] = await Promise.all([
+                      generateSummary(notes),
+                      actionItems(notes),
+                      citationSuggestions(notes)
+                    ]);
+                    setAiSummary(summary);
+                    setAiActions(actions);
+                    setAiCitations(citations);
+                    setAiState('success');
+                  } catch (err) {
+                    setAiError(err.message || 'AI failed');
+                    setAiState('error');
+                  }
+                }}>
                   Refresh
                 </Button>
               }

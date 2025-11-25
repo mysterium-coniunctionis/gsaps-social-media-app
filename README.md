@@ -87,6 +87,7 @@ GSAPS Social Media App is an academic collaboration platform designed specifical
 - **Front-end Only:** All features run with mock data in localStorage
 - **Authentication:** Secure local auth service with bcrypt password hashing
 - **State Management:** React Context API (Auth, Theme, Gamification)
+- **Realtime:** Socket.IO-powered `RealtimeProvider` drives chat, presence, and symposium channels with offline-first fallbacks
 - **Styling:** Material-UI with custom theme and 25+ animations
 - **Build Tool:** Create React App with standard configuration
 

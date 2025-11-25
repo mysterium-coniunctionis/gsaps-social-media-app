@@ -1,6 +1,6 @@
 # 📚 GSAPS Documentation Index
 
-**Last Updated**: November 9, 2025
+**Last Updated**: November 25, 2025
 
 This document provides a comprehensive index of all documentation in the GSAPS Social Media App repository, organized by purpose and relevance.
 
@@ -55,10 +55,11 @@ Use this quick map to understand how the repository’s Markdown documentation i
 - **[docs/features/live-symposia.md](docs/features/live-symposia.md)** - Live agenda, stage chat, shared protocol canvas, and AI notetaker
 
 ### Planning & Strategy
+- **[docs/planning-strategy/MASTER_PLAN.md](docs/planning-strategy/MASTER_PLAN.md)** ⭐ **NEW** - Comprehensive master plan synthesizing all strategies into actionable phases
 - **[docs/planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md](docs/planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)** - Integration Circles implementation plan (PLANNED - NOT YET IMPLEMENTED)
 - **[docs/planning-strategy/GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md)** - Phase 8 AI features roadmap (18 planned features)
 - **[docs/planning-strategy/INNOVATION_ROADMAP.md](docs/planning-strategy/INNOVATION_ROADMAP.md)** - Long-term innovation and feature roadmap
-- **[docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md](docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md)** - Strategic evaluation of the agent program
+- **[docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md](docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md)** - Strategic evaluation with killer features analysis
 - **[docs/planning-strategy/TRANSFORMATION_STRATEGY.md](docs/planning-strategy/TRANSFORMATION_STRATEGY.md)** - Transformation strategy for aligning teams
 - **[docs/planning-strategy/IMMEDIATE_ACTIONS.md](docs/planning-strategy/IMMEDIATE_ACTIONS.md)** - Urgent priorities and follow-up actions
 
@@ -130,10 +131,12 @@ Use this quick map to understand how the repository’s Markdown documentation i
 5. Check [PROJECT_STATUS.md](docs/core/project-status/PROJECT_STATUS.md) for current state
 
 ### For Product Managers
-1. [EXECUTIVE_SUMMARY.md](docs/core/project-status/EXECUTIVE_SUMMARY.md) - High-level overview
-2. [PROJECT_STATUS.md](docs/core/project-status/PROJECT_STATUS.md) - Current status and roadmap
-3. [GOLD_STANDARD_STATUS.md](docs/core/project-status/GOLD_STANDARD_STATUS.md) - Feature completeness
-4. [GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md) - Future AI features
+1. [MASTER_PLAN.md](docs/planning-strategy/MASTER_PLAN.md) - **Comprehensive strategic plan with phases** ⭐
+2. [EXECUTIVE_SUMMARY.md](docs/core/project-status/EXECUTIVE_SUMMARY.md) - High-level overview
+3. [PROJECT_STATUS.md](docs/core/project-status/PROJECT_STATUS.md) - Current status and roadmap
+4. [GOLD_STANDARD_STATUS.md](docs/core/project-status/GOLD_STANDARD_STATUS.md) - Feature completeness
+5. [AGENTIC_STRATEGIC_EVALUATION.md](docs/planning-strategy/AGENTIC_STRATEGIC_EVALUATION.md) - Killer features analysis
+6. [GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md) - Future AI features
 
 ### For QA/Testing
 1. [QA_COMPREHENSIVE_REPORT.md](docs/reports/qa/QA_COMPREHENSIVE_REPORT.md) - Test coverage

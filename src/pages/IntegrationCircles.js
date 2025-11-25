@@ -117,8 +117,8 @@ const IntegrationCircles = () => {
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    // Award XP for joining
-    awardXP(10, 'Joined an integration circle');
+    // Award XP for joining (using custom amount since JOIN_CIRCLE isn't in XP_ACTIONS)
+    awardXP('JOIN_CIRCLE', 10);
     
     setToast({
       open: true,
@@ -197,7 +197,7 @@ const IntegrationCircles = () => {
                   color: 'white',
                   '&:hover': { borderColor: 'white', bgcolor: alpha('#fff', 0.1) }
                 }}
-                onClick={() => window.open('tel:62-FIRESIDE', '_self')}
+                href="tel:623-473-7433"
               >
                 Crisis Support: 62-FIRESIDE
               </Button>
@@ -334,7 +334,11 @@ const IntegrationCircles = () => {
           <Typography variant="body2">
             <strong>Circle Guidelines:</strong> {CIRCLE_GUIDELINES.general.principles.slice(0, 3).map(p => p.name).join(' • ')}
           </Typography>
-          <Button size="small" onClick={() => {}}>
+          <Button 
+            size="small" 
+            onClick={() => navigate('/circles/1')}
+            aria-label="View all circle guidelines"
+          >
             View All Guidelines
           </Button>
         </Box>

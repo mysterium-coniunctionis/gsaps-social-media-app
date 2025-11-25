@@ -90,7 +90,7 @@ const CircleDetail = () => {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 300));
       
-      const foundCircle = circles.find(c => c.id === parseInt(circleId));
+      const foundCircle = circles.find(c => c.id === parseInt(circleId, 10));
       setCircle(foundCircle);
       setLoading(false);
     };
@@ -123,7 +123,8 @@ const CircleDetail = () => {
     setLoading(true);
     await new Promise(resolve => setTimeout(resolve, 500));
     
-    awardXP(10, 'Joined an integration circle');
+    // Award XP for joining (using custom amount since JOIN_CIRCLE isn't in XP_ACTIONS)
+    awardXP('JOIN_CIRCLE', 10);
     
     setToast({
       open: true,
@@ -166,8 +167,8 @@ const CircleDetail = () => {
     setMessages([...messages, message]);
     setNewMessage('');
     
-    // Award XP for participation
-    awardXP(5, 'Participated in circle discussion');
+    // Award XP for participation (using custom amount since CIRCLE_POST isn't in XP_ACTIONS)
+    awardXP('CIRCLE_POST', 5);
     
     setToast({
       open: true,

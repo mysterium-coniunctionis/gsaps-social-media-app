@@ -4,8 +4,6 @@ import {
   Container,
   Typography,
   Grid,
-  TextField,
-  InputAdornment,
   FormControl,
   InputLabel,
   Select,
@@ -15,12 +13,12 @@ import {
   ToggleButtonGroup,
   ToggleButton
 } from '@mui/material';
-import { Search as SearchIcon, Add as AddIcon, ViewList as ListIcon, ViewModule as GridIcon } from '@mui/icons-material';
+import { Add as AddIcon, ViewList as ListIcon, ViewModule as GridIcon } from '@mui/icons-material';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fadeInUp } from '../../theme/animations';
 import PaperCard from '../../components/library/PaperCard';
 import PaperUploadDialog from '../../components/library/PaperUploadDialog';
-import { useToast } from '../../components/common';
+import { useToast, SearchTextField } from '../../components/common';
 import { useGamification } from '../../context/GamificationContext';
 import { createResearchAsset, fetchResearchAssets } from '../../api/backend';
 import { useExperiment } from '../../utils/recommendationService';
@@ -105,17 +103,10 @@ const ResearchLibrary = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mb: 3 }}>
-          <TextField
+          <SearchTextField
             placeholder="Search research"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              )
-            }}
             size="small"
             sx={{ minWidth: 240 }}
           />

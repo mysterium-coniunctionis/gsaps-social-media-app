@@ -7,7 +7,6 @@ import {
   Box,
   Typography,
   Chip,
-  Avatar,
   Rating,
   alpha
 } from '@mui/material';
@@ -19,6 +18,7 @@ import {
   School as CEIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
+import InstructorDisplay from './InstructorDisplay';
 
 /**
  * CourseCard Component
@@ -82,15 +82,8 @@ const CourseCard = ({ course, viewMode = 'grid', onSelect }) => {
               </Typography>
 
               {/* Instructor */}
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Avatar
-                  src={course.instructor.avatar_url}
-                  alt={course.instructor.name}
-                  sx={{ width: 24, height: 24, mr: 1 }}
-                />
-                <Typography variant="body2" color="text.secondary">
-                  {course.instructor.name}
-                </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <InstructorDisplay instructor={course.instructor} />
                 {course.instructor.verified && (
                   <VerifiedIcon sx={{ ml: 0.5, fontSize: 16, color: 'primary.main' }} />
                 )}
@@ -269,15 +262,8 @@ const CourseCard = ({ course, viewMode = 'grid', onSelect }) => {
           </Typography>
 
           {/* Instructor */}
-          <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Avatar
-              src={course.instructor.avatar_url}
-              alt={course.instructor.name}
-              sx={{ width: 24, height: 24, mr: 1 }}
-            />
-            <Typography variant="caption" color="text.secondary" noWrap>
-              {course.instructor.name}
-            </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <InstructorDisplay instructor={course.instructor} variant="caption" noWrap />
             {course.instructor.verified && (
               <VerifiedIcon sx={{ ml: 0.5, fontSize: 14, color: 'primary.main' }} />
             )}

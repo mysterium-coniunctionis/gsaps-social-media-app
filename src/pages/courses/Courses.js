@@ -5,8 +5,6 @@ import {
   Typography,
   Grid,
   Button,
-  TextField,
-  InputAdornment,
   Select,
   MenuItem,
   FormControl,
@@ -18,7 +16,6 @@ import {
   Chip as MuiChip
 } from '@mui/material';
 import {
-  Search as SearchIcon,
   Add as AddIcon,
   ViewModule as GridIcon,
   ViewList as ListIcon,
@@ -28,6 +25,7 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchCourses } from '../../api/backend';
 import CourseCard from '../../components/courses/CourseCard';
 import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
+import { SearchTextField } from '../../components/common';
 import { fadeInUp } from '../../theme/animations';
 import { useExperiment } from '../../utils/recommendationService';
 
@@ -102,17 +100,10 @@ const Courses = () => {
         <Card sx={{ mb: 3 }}>
           <CardContent>
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
-              <TextField
+              <SearchTextField
                 placeholder="Search courses"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  )
-                }}
                 size="small"
                 sx={{ minWidth: 260 }}
               />

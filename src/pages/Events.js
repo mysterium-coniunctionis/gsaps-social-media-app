@@ -5,8 +5,6 @@ import {
   CardContent,
   Grid,
   Typography,
-  TextField,
-  InputAdornment,
   Button,
   Chip,
   FormControl,
@@ -15,7 +13,6 @@ import {
   MenuItem
 } from '@mui/material';
 import {
-  Search as SearchIcon,
   Add as AddIcon,
   Event as EventIcon,
   CalendarToday as CalendarIcon,
@@ -24,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import { SearchTextField } from '../components/common';
 import COMPREHENSIVE_EVENTS from '../data/eventsData';
 import {
   getRecommendations,
@@ -209,18 +207,10 @@ const Events = () => {
         <CardContent>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} md={6}>
-              <TextField
-                fullWidth
+              <SearchTextField
                 placeholder="Search events..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  )
-                }}
               />
             </Grid>
             <Grid item xs={6} md={3}>

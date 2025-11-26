@@ -192,6 +192,127 @@ export const TableRowSkeleton = ({ columns = 4 }) => (
 );
 
 /**
+ * Circle Card Skeleton
+ * For integration circles listing
+ */
+export const CircleCardSkeleton = () => (
+  <Box sx={{ mb: 2, p: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+      <Skeleton variant="circular" width={48} height={48} sx={{ mr: 2 }} />
+      <Box sx={{ flex: 1 }}>
+        <Skeleton variant="text" width="60%" height={24} />
+        <Skeleton variant="text" width="40%" height={18} />
+      </Box>
+      <Skeleton variant="rounded" width={80} height={32} />
+    </Box>
+    <Skeleton variant="text" width="100%" />
+    <Skeleton variant="text" width="85%" />
+    <Box sx={{ display: 'flex', gap: 1, mt: 2 }}>
+      <Skeleton variant="rounded" width={70} height={24} />
+      <Skeleton variant="rounded" width={90} height={24} />
+      <Skeleton variant="rounded" width={60} height={24} />
+    </Box>
+  </Box>
+);
+
+/**
+ * Module Card Skeleton
+ * For prep academy and courses
+ */
+export const ModuleCardSkeleton = () => (
+  <Box sx={{ p: 2, mb: 2 }}>
+    <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, mb: 2 }}>
+      <Skeleton variant="rounded" width={60} height={60} />
+      <Box sx={{ flex: 1 }}>
+        <Skeleton variant="text" width="70%" height={24} />
+        <Skeleton variant="text" width="90%" height={16} />
+        <Skeleton variant="text" width="60%" height={16} />
+      </Box>
+    </Box>
+    <Box sx={{ display: 'flex', gap: 2 }}>
+      <Skeleton variant="rounded" width={80} height={28} />
+      <Skeleton variant="rounded" width={100} height={28} />
+    </Box>
+  </Box>
+);
+
+/**
+ * Career Pathway Skeleton
+ * For career navigator
+ */
+export const CareerPathwaySkeleton = () => (
+  <Box sx={{ p: 3, mb: 2 }}>
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+      <Skeleton variant="rounded" width={60} height={60} />
+      <Skeleton variant="rounded" width={80} height={24} />
+    </Box>
+    <Skeleton variant="text" width="80%" height={28} sx={{ mb: 1 }} />
+    <Skeleton variant="text" width="100%" />
+    <Skeleton variant="text" width="90%" />
+    <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+      <Skeleton variant="text" width="35%" height={20} />
+      <Skeleton variant="text" width="25%" height={20} />
+    </Box>
+    <Box sx={{ mt: 2 }}>
+      <Skeleton variant="text" width="20%" height={16} />
+      <Skeleton variant="rectangular" width="100%" height={8} sx={{ mt: 0.5, borderRadius: 4 }} />
+    </Box>
+  </Box>
+);
+
+/**
+ * Hero Section Skeleton
+ * For page headers with hero sections
+ */
+export const HeroSkeleton = () => (
+  <Box sx={{ mb: 4 }}>
+    <Skeleton 
+      variant="rectangular" 
+      width="100%" 
+      height={280} 
+      sx={{ borderRadius: 3 }}
+    />
+  </Box>
+);
+
+/**
+ * Stats Grid Skeleton
+ * For dashboard stats
+ */
+export const StatsGridSkeleton = ({ count = 4 }) => (
+  <Box sx={{ display: 'flex', gap: 2, mb: 4 }}>
+    {Array.from({ length: count }).map((_, index) => (
+      <Box key={index} sx={{ flex: 1, p: 2 }}>
+        <Skeleton variant="text" width="30%" height={48} />
+        <Skeleton variant="text" width="60%" height={20} />
+      </Box>
+    ))}
+  </Box>
+);
+
+/**
+ * Course Card Skeleton
+ * For course listings
+ */
+export const CourseCardSkeleton = () => (
+  <Box sx={{ mb: 2 }}>
+    <Skeleton variant="rectangular" width="100%" height={160} sx={{ borderRadius: 2 }} />
+    <Box sx={{ p: 2 }}>
+      <Skeleton variant="text" width="40%" height={20} sx={{ mb: 1 }} />
+      <Skeleton variant="text" width="80%" height={24} />
+      <Skeleton variant="text" width="50%" height={18} sx={{ mt: 1 }} />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Skeleton variant="circular" width={16} height={16} />
+          <Skeleton variant="text" width={40} height={16} />
+        </Box>
+        <Skeleton variant="text" width={60} height={20} />
+      </Box>
+    </Box>
+  </Box>
+);
+
+/**
  * Generic List Skeleton
  * Renders multiple items of a specified skeleton type
  */

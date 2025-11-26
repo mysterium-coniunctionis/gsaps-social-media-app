@@ -10,6 +10,7 @@ import BottomNavigation from './components/layout/BottomNavigation';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import XPNotification from './components/gamification/XPNotification';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import CrisisButton from './components/crisis/CrisisButton';
 
 // Eagerly loaded pages (critical for initial load)
 import Home from './pages/Home';
@@ -238,6 +239,7 @@ function App() {
       </Box>
 
       {currentUser && <BottomNavigation />}
+      <CrisisButton />
       </Box>
     </ErrorBoundary>
   );

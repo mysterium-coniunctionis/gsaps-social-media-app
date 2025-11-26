@@ -44,6 +44,8 @@ const Settings = lazy(() => import('./pages/Settings'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const IntegrationCircles = lazy(() => import('./pages/IntegrationCircles'));
 const CircleDetail = lazy(() => import('./pages/CircleDetail'));
+const PrepAcademy = lazy(() => import('./pages/prep-academy/PrepAcademy'));
+const CareerNavigator = lazy(() => import('./pages/career/CareerNavigator'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -217,6 +219,10 @@ function App() {
                     <CircleDetail />
                   </ProtectedRoute>
                 } />
+
+                <Route path="/prep-academy" element={<PrepAcademy />} />
+
+                <Route path="/career" element={<CareerNavigator />} />
 
                 <Route path="/settings" element={
                   <ProtectedRoute>

@@ -46,11 +46,6 @@ const CareerNavigator = () => {
   const [assessedSkills, setAssessedSkills] = useState({});
 
   // Mock user profile
-  const userProfile = {
-    currentRole: 'Graduate Student',
-    experience: '2 years',
-    interests: ['Research', 'Clinical Practice']
-  };
 
   const handleSkillToggle = (category, skill) => {
     setAssessedSkills(prev => ({

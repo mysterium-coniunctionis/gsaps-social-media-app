@@ -22,7 +22,10 @@ import {
   TrendingUp as TrendingIcon,
   Star as StarIcon,
   Verified as VerifiedIcon,
-  CoPresent as CoPresentIcon
+  CoPresent as CoPresentIcon,
+  Favorite as CirclesIcon,
+  MenuBook as PrepIcon,
+  Explore as CareerIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { fadeInUp } from '../theme/animations';
@@ -73,6 +76,27 @@ const Home = () => {
 
   // Key features
   const features = [
+    {
+      icon: <CirclesIcon sx={{ fontSize: 40 }} />,
+      title: 'Integration Circles',
+      description: 'Find peer-led circles for psychedelic integration, preparation, and support. Connect with your community.',
+      link: '/circles',
+      color: theme.palette.error.main
+    },
+    {
+      icon: <PrepIcon sx={{ fontSize: 40 }} />,
+      title: 'Preparation Academy',
+      description: '8-module curriculum for psychedelic preparation with intention setting tools and safety screening.',
+      link: '/prep-academy',
+      color: theme.palette.info.main
+    },
+    {
+      icon: <CareerIcon sx={{ fontSize: 40 }} />,
+      title: 'Career Navigator',
+      description: 'Explore career pathways in psychedelic science with skill assessments and job resources.',
+      link: '/career',
+      color: theme.palette.success.main
+    },
     {
       icon: <SchoolIcon sx={{ fontSize: 40 }} />,
       title: 'Graduate-Level Courses',

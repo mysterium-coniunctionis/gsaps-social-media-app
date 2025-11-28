@@ -27,7 +27,10 @@ import {
   CoPresent,
   Security as SecurityIcon,
   Brightness4,
-  Brightness7
+  Brightness7,
+  Favorite as CirclesIcon,
+  MenuBook as PrepIcon,
+  Explore as CareerIcon
 } from '@mui/icons-material';
 import { CreditCard as CreditCardIcon, Analytics as AnalyticsIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -84,15 +87,13 @@ const Navbar = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: <HomeIcon /> },
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
+    { label: 'Circles', path: '/circles', icon: <CirclesIcon /> },
+    { label: 'Prep Academy', path: '/prep-academy', icon: <PrepIcon /> },
+    { label: 'Career', path: '/career', icon: <CareerIcon /> },
     { label: 'Library', path: '/library', icon: <LibraryIcon /> },
-    { label: 'Workspaces', path: '/workspaces', icon: <Science />, protected: true },
-    { label: 'Live Symposia', path: '/symposia/symp-001', icon: <CoPresent />, protected: true },
     { label: 'Courses', path: '/courses', icon: <CoursesIcon /> },
     { label: 'Leaderboard', path: '/leaderboard', icon: <LeaderboardIcon /> },
-    { label: 'Members', path: '/members', icon: <PeopleIcon />, protected: true },
-    { label: 'Groups', path: '/groups', icon: <GroupsIcon />, protected: true },
     { label: 'Events', path: '/events', icon: <EventIcon /> },
-    { label: 'Messages', path: '/messages', icon: <MessageIcon />, protected: true },
     currentUser && ['administrator', 'moderator'].includes(currentUser.role)
       ? { label: 'Admin', path: '/admin/moderation', icon: <SecurityIcon />, protected: true }
       : null

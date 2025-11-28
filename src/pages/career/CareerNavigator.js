@@ -29,12 +29,8 @@ import {
   School as SchoolIcon,
   Work as WorkIcon,
   CheckCircle as CheckIcon,
-  Star as StarIcon,
-  ExpandMore as ExpandIcon,
   Timeline as TimelineIcon,
-  AttachMoney as MoneyIcon,
-  Speed as DemandIcon,
-  ArrowForward as ArrowIcon
+  AttachMoney as MoneyIcon
 } from '@mui/icons-material';
 import { useAuth } from '../../context/AuthContext';
 import GlassCard from '../../components/common/GlassCard';

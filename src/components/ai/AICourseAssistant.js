@@ -112,7 +112,8 @@ const AICourseAssistant = ({ course, isOpen, onClose }) => {
         timestamp: new Date()
       };
       setMessages(prev => [...prev, aiMessage]);
-    } catch {
+    } catch (error) {
+      console.error('AI response error:', error);
       setMessages(prev => [...prev, {
         id: Date.now() + 1,
         type: 'ai',

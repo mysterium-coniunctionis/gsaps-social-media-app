@@ -86,11 +86,7 @@ const SafetyScreeningTool = ({ onComplete }) => {
       if (answers[q.id] === 'yes') {
         flaggedItems.push({
           ...q,
-          section: q.id.includes('cardiac') || q.id.includes('liver') || q.id.includes('pregnancy') || q.id.includes('seizure')
-            ? 'physical'
-            : q.id.includes('ssri') || q.id.includes('maoi') || q.id.includes('lithium') || q.id.includes('other-meds')
-            ? 'medications'
-            : 'mental'
+          section: q.section
         });
       }
     });

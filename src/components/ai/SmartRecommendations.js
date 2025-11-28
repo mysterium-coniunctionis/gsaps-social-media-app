@@ -271,9 +271,14 @@ const SmartRecommendations = ({ type = 'all', maxItems = 6 }) => {
     }
   };
 
+  // Stub for actual save functionality
+  const saveRecommendation = (item) => {
+    // TODO: Implement actual save logic (e.g., API call, update state)
+  };
+
   const handleSave = (item) => {
     // Save to user's bookmarks
-    console.log('Saving recommendation:', item);
+    saveRecommendation(item);
   };
 
   const getItemsForType = (itemType) => {

@@ -20,9 +20,6 @@ import {
   FormControlLabel,
   alpha,
   useTheme,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
   Divider,
   Avatar
 } from '@mui/material';

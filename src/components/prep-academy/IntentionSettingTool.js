@@ -14,9 +14,7 @@ import {
   StepLabel,
   StepContent,
   alpha,
-  useTheme,
-  Divider,
-  IconButton
+  useTheme
 } from '@mui/material';
 import {
   LightbulbOutlined as IdeaIcon,

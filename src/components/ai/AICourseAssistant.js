@@ -18,8 +18,7 @@ import {
   SmartToy as AIIcon,
   Close as CloseIcon,
   QuestionAnswer as ChatIcon,
-  Lightbulb as SuggestionIcon,
-  School as CourseIcon
+  Lightbulb as SuggestionIcon
 } from '@mui/icons-material';
 import { fadeInUp } from '../../theme/animations';
 

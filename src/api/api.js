@@ -3,8 +3,26 @@ import axios from 'axios';
 let unauthorizedHandler = null;
 let refreshPromise = null;
 
+const TOKEN_KEY = 'gsaps_auth_token';
+
 export const setUnauthorizedHandler = (handler) => {
   unauthorizedHandler = handler;
+};
+
+export const setAuthToken = (token) => {
+  if (token) {
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(TOKEN_KEY);
+  }
+};
+
+export const getAuthToken = () => {
+  return localStorage.getItem(TOKEN_KEY);
+};
+
+export const clearAuthToken = () => {
+  localStorage.removeItem(TOKEN_KEY);
 };
 
 // Create an axios instance with base configuration
@@ -23,6 +41,18 @@ const refreshClient = axios.create({
   },
   withCredentials: true
 });
+
+// Request interceptor to add Authorization header
+api.interceptors.request.use(
+  (config) => {
+    const token = getAuthToken();
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 const refreshAccessToken = async () => {
   if (!refreshPromise) {
@@ -46,6 +76,7 @@ api.interceptors.response.use(
         const retryConfig = { ...config, __isRetryRequest: true };
         return api(retryConfig);
       } catch (refreshError) {
+        clearAuthToken();
         unauthorizedHandler?.();
         return Promise.reject(refreshError);
       }

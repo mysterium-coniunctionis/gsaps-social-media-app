@@ -196,24 +196,28 @@ export const SAFETY_SCREENING_QUESTIONS = {
       id: 'cardiac',
       question: 'Do you have a history of heart conditions, including arrhythmias, high blood pressure, or heart disease?',
       severity: 'high',
+      section: 'physical',
       info: 'Certain psychedelics can increase heart rate and blood pressure.'
     },
     {
       id: 'liver',
       question: 'Do you have any liver conditions or take medications that affect liver function?',
       severity: 'medium',
+      section: 'physical',
       info: 'The liver metabolizes many psychedelic compounds.'
     },
     {
       id: 'pregnancy',
       question: 'Are you pregnant, breastfeeding, or planning to become pregnant?',
       severity: 'high',
+      section: 'physical',
       info: 'Psychedelics are not recommended during pregnancy or breastfeeding.'
     },
     {
       id: 'seizure',
       question: 'Do you have a history of seizures or epilepsy?',
       severity: 'high',
+      section: 'physical',
       info: 'Some psychedelics may lower seizure threshold.'
     }
   ],
@@ -222,24 +226,28 @@ export const SAFETY_SCREENING_QUESTIONS = {
       id: 'psychosis',
       question: 'Do you have a personal or family history of psychosis, schizophrenia, or bipolar disorder with psychotic features?',
       severity: 'high',
+      section: 'mental',
       info: 'These conditions are typically contraindicated for psychedelic use.'
     },
     {
       id: 'current-crisis',
       question: 'Are you currently experiencing a mental health crisis, suicidal thoughts, or severe depression?',
       severity: 'high',
+      section: 'mental',
       info: 'A stable mental state is important before psychedelic experiences.'
     },
     {
       id: 'ptsd',
       question: 'Do you have PTSD or trauma that you are currently addressing in therapy?',
       severity: 'medium',
+      section: 'mental',
       info: 'While psychedelics can help with PTSD, proper clinical support is essential.'
     },
     {
       id: 'anxiety',
       question: 'Do you experience severe anxiety or panic attacks?',
       severity: 'medium',
+      section: 'mental',
       info: 'Proper preparation and support can help manage anxiety during experiences.'
     }
   ],
@@ -248,24 +256,28 @@ export const SAFETY_SCREENING_QUESTIONS = {
       id: 'ssri',
       question: 'Are you currently taking SSRIs, SNRIs, or other antidepressants?',
       severity: 'high',
+      section: 'medications',
       info: 'These medications can interact with psychedelics and may need to be tapered.'
     },
     {
       id: 'maoi',
       question: 'Are you taking MAO inhibitors or medications that affect MAO?',
       severity: 'high',
+      section: 'medications',
       info: 'MAOIs have dangerous interactions with many substances.'
     },
     {
       id: 'lithium',
       question: 'Are you taking lithium or other mood stabilizers?',
       severity: 'high',
+      section: 'medications',
       info: 'Lithium has potentially dangerous interactions with psychedelics.'
     },
     {
       id: 'other-meds',
       question: 'Are you taking any other psychiatric medications not listed above?',
       severity: 'medium',
+      section: 'medications',
       info: 'Please discuss all medications with your healthcare provider.'
     }
   ]

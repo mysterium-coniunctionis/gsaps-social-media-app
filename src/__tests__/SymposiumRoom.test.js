@@ -1,6 +1,6 @@
 import React from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import SymposiumRoom from '../pages/workspaces/SymposiumRoom';
 
 jest.mock('marked', () => ({
@@ -64,7 +64,7 @@ describe('SymposiumRoom', () => {
     expect(screen.getByText(/Opening/)).toBeInTheDocument();
     expect(screen.getByText(/Speaker queue/)).toBeInTheDocument();
     expect(screen.getByText(/Attendee roster/)).toBeInTheDocument();
-    await waitFor(() => expect(screen.getByText(/AI Notetaker/)).toBeInTheDocument());
+    expect(await screen.findByText(/AI Notetaker/)).toBeInTheDocument();
   });
 
   it('shows AI notetaker summary after notes are present', async () => {

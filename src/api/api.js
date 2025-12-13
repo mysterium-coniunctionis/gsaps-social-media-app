@@ -9,6 +9,10 @@ export const setUnauthorizedHandler = (handler) => {
   unauthorizedHandler = handler;
 };
 
+/**
+ * @deprecated Authentication now uses httpOnly cookies for security.
+ * This function is kept for backward compatibility but will be removed in a future version.
+ */
 export const setAuthToken = (token) => {
   if (token) {
     localStorage.setItem(TOKEN_KEY, token);
@@ -17,10 +21,18 @@ export const setAuthToken = (token) => {
   }
 };
 
+/**
+ * @deprecated Authentication now uses httpOnly cookies for security.
+ * This function is kept for backward compatibility but will be removed in a future version.
+ */
 export const getAuthToken = () => {
   return localStorage.getItem(TOKEN_KEY);
 };
 
+/**
+ * @deprecated Authentication now uses httpOnly cookies for security.
+ * This function is kept for backward compatibility but will be removed in a future version.
+ */
 export const clearAuthToken = () => {
   localStorage.removeItem(TOKEN_KEY);
 };
@@ -42,11 +54,14 @@ const refreshClient = axios.create({
   withCredentials: true
 });
 
-// Request interceptor to add Authorization header
+// Request interceptor to add Authorization header (deprecated, kept for backward compatibility)
+// NOTE: Authentication now primarily uses httpOnly cookies which are sent automatically
 api.interceptors.request.use(
   (config) => {
     const token = getAuthToken();
     if (token) {
+      // Only set Authorization header if there's a token in localStorage
+      // This is deprecated and will be removed in a future version
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;

@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import helmet from 'helmet';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
+import cookieParser from 'cookie-parser';
 import { PrismaClient } from '@prisma/client';
 
 dotenv.config();
@@ -59,29 +60,64 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
+// Cookie parser
+app.use(cookieParser());
+
 // Helper functions
-const createToken = (user) =>
+const createAccessToken = (user) =>
   jwt.sign(
     { id: user.id, email: user.email, role: user.role },
     config.jwtSecret,
-    { expiresIn: '2d' }
+    { expiresIn: '15m' } // Short-lived access token
   );
 
+const createRefreshToken = (user) =>
+  jwt.sign(
+    { id: user.id, email: user.email, role: user.role },
+    config.jwtSecret,
+    { expiresIn: '7d' } // Long-lived refresh token
+  );
+
+const setAuthCookies = (res, user) => {
+  const accessToken = createAccessToken(user);
+  const refreshToken = createRefreshToken(user);
+
+  // Set httpOnly cookies for security
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: config.isProduction,
+    sameSite: config.isProduction ? 'strict' : 'lax',
+    maxAge: 15 * 60 * 1000 // 15 minutes
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: config.isProduction,
+    sameSite: config.isProduction ? 'strict' : 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+  });
+
+  return accessToken;
+};
+
 const authMiddleware = async (req, res, next) => {
-  const auth = req.headers.authorization;
-  if (!auth) {
-    return res.status(401).json({
-      message: 'Missing authorization header',
-      error: 'UNAUTHORIZED'
-    });
+  // Try to get token from cookie first (more secure), then fall back to Authorization header
+  let token = req.cookies.accessToken;
+
+  if (!token) {
+    const auth = req.headers.authorization;
+    if (auth) {
+      const [scheme, bearerToken] = auth.split(' ');
+      if (scheme === 'Bearer' && bearerToken) {
+        token = bearerToken;
+      }
+    }
   }
 
-  const [scheme, token] = auth.split(' ');
-
-  if (scheme !== 'Bearer' || !token) {
+  if (!token) {
     return res.status(401).json({
-      message: 'Invalid authorization header format. Expected: Bearer <token>',
-      error: 'INVALID_AUTH_HEADER'
+      message: 'Missing authentication credentials',
+      error: 'UNAUTHORIZED'
     });
   }
 
@@ -140,8 +176,11 @@ app.post('/auth/register', async (req, res) => {
     }
   });
 
-  const token = createToken(user);
-  res.json({ token, user: toPublicUser(user) });
+  const token = setAuthCookies(res, user);
+  res.json({
+    user: toPublicUser(user),
+    token // Deprecated: included for backward compatibility, will be removed in future versions
+  });
 });
 
 app.post('/auth/login', async (req, res) => {
@@ -152,13 +191,61 @@ app.post('/auth/login', async (req, res) => {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return res.status(401).json({ message: 'Invalid credentials' });
 
-  const token = createToken(user);
-  res.json({ token, user: toPublicUser(user) });
+  const token = setAuthCookies(res, user);
+  res.json({
+    user: toPublicUser(user),
+    token // Deprecated: included for backward compatibility, will be removed in future versions
+  });
 });
 
 app.get('/auth/me', authMiddleware, async (req, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.user.id } });
   res.json(toPublicUser(user));
+});
+
+app.post('/auth/refresh', async (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+
+  if (!refreshToken) {
+    return res.status(401).json({
+      message: 'No refresh token provided',
+      error: 'UNAUTHORIZED'
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, config.jwtSecret);
+    const user = await prisma.user.findUnique({ where: { id: decoded.id } });
+
+    if (!user) {
+      return res.status(401).json({
+        message: 'User not found',
+        error: 'UNAUTHORIZED'
+      });
+    }
+
+    // Issue new access token
+    const accessToken = createAccessToken(user);
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: config.isProduction,
+      sameSite: config.isProduction ? 'strict' : 'lax',
+      maxAge: 15 * 60 * 1000 // 15 minutes
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    res.status(401).json({
+      message: 'Invalid or expired refresh token',
+      error: error.name
+    });
+  }
+});
+
+app.post('/auth/logout', (req, res) => {
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+  res.json({ success: true });
 });
 
 app.get('/posts', authMiddleware, async (req, res) => {

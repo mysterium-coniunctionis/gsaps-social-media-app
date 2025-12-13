@@ -26,6 +26,17 @@ const DEFAULT_SIGNALS = {
 let signalsCache = null;
 let experimentsCache = null;
 
+// Invalidate cache when localStorage changes in another tab
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === SIGNAL_STORAGE_KEY) {
+      signalsCache = null;
+    } else if (e.key === EXPERIMENT_STORAGE_KEY) {
+      experimentsCache = null;
+    }
+  });
+}
+
 const loadSignals = () => {
   if (typeof window === 'undefined') return { ...DEFAULT_SIGNALS };
   

@@ -282,6 +282,12 @@ const Groups = () => {
     return recommendations;
   }, [groups, groupVariant]);
 
+  // Memoize related categories to avoid recalculating on every render
+  const relatedGroupCategories = useMemo(
+    () => Array.from(new Set(recommendedGroups.map(group => group.category))).slice(0, 4),
+    [recommendedGroups]
+  );
+
   if (loading) {
     return <LoadingSpinner />;
   }
@@ -291,12 +297,6 @@ const Groups = () => {
     recordExperimentConversion('group-feed', groupVariant, 1);
     navigate(`/groups/${group.slug}`);
   };
-
-  // Memoize related categories to avoid recalculating on every render
-  const relatedGroupCategories = useMemo(
-    () => Array.from(new Set(recommendedGroups.map(group => group.category))).slice(0, 4),
-    [recommendedGroups]
-  );
 
   return (
     <Box sx={{ py: 3 }}>

@@ -24,6 +24,23 @@ export const RealtimeProvider = ({ children }) => {
   const [feedUpdates, setFeedUpdates] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
+  // Helper to update room state only if value changed
+  const updateRoomState = useCallback((setState, roomId, userId, value) => {
+    setState(prev => {
+      const roomData = prev[roomId] || {};
+      // Only update if value actually changed
+      if (roomData[userId] === value) return prev;
+      
+      return {
+        ...prev,
+        [roomId]: {
+          ...roomData,
+          [userId]: value
+        }
+      };
+    });
+  }, []);
+
   const disconnect = useCallback(() => {
     if (socketRef.current) {
       socketRef.current.removeAllListeners();
@@ -71,37 +88,12 @@ export const RealtimeProvider = ({ children }) => {
 
     socket.on('typing', ({ roomId, userId, isTyping }) => {
       if (!roomId || !userId) return;
-      setTypingByRoom(prev => {
-        const roomTyping = prev[roomId] || {};
-        // Only update if value actually changed
-        if (roomTyping[userId] === isTyping) return prev;
-        
-        return {
-          ...prev,
-          [roomId]: {
-            ...roomTyping,
-            [userId]: isTyping
-          }
-        };
-      });
+      updateRoomState(setTypingByRoom, roomId, userId, isTyping);
     });
 
     socket.on('presence:update', ({ roomId, userId, status }) => {
       if (!roomId || !userId) return;
-      setPresenceByRoom(prev => {
-        const roomPresence = prev[roomId] || {};
-        const newStatus = status || 'online';
-        // Only update if value actually changed
-        if (roomPresence[userId] === newStatus) return prev;
-        
-        return {
-          ...prev,
-          [roomId]: {
-            ...roomPresence,
-            [userId]: newStatus
-          }
-        };
-      });
+      updateRoomState(setPresenceByRoom, roomId, userId, status || 'online');
     });
 
     socket.on('feed:update', (update) => {
@@ -125,7 +117,7 @@ export const RealtimeProvider = ({ children }) => {
       pending?.onError?.(new Error(reason || 'Update rejected'));
       optimisticRef.current.delete(tempId);
     });
-  }, [currentUser, disconnect, reconcileOptimisticUpdate]);
+  }, [currentUser, disconnect, reconcileOptimisticUpdate, updateRoomState]);
 
   useEffect(() => {
     connect();
@@ -191,20 +183,8 @@ export const RealtimeProvider = ({ children }) => {
       socket.emit('typing', { roomId, isTyping });
     }
 
-    setTypingByRoom(prev => {
-      const roomTyping = prev[roomId] || {};
-      // Only update if value actually changed
-      if (roomTyping[userId] === isTyping) return prev;
-      
-      return {
-        ...prev,
-        [roomId]: {
-          ...roomTyping,
-          [userId]: isTyping
-        }
-      };
-    });
-  }, [currentUser]);
+    updateRoomState(setTypingByRoom, roomId, userId, isTyping);
+  }, [currentUser, updateRoomState]);
 
   const updatePresence = useCallback((roomId, status = 'online') => {
     const socket = socketRef.current;
@@ -214,20 +194,8 @@ export const RealtimeProvider = ({ children }) => {
       socket.emit('presence:update', { roomId, status });
     }
 
-    setPresenceByRoom(prev => {
-      const roomPresence = prev[roomId] || {};
-      // Only update if value actually changed
-      if (roomPresence[userId] === status) return prev;
-      
-      return {
-        ...prev,
-        [roomId]: {
-          ...roomPresence,
-          [userId]: status
-        }
-      };
-    });
-  }, [currentUser]);
+    updateRoomState(setPresenceByRoom, roomId, userId, status);
+  }, [currentUser, updateRoomState]);
 
   const value = useMemo(() => ({
     socket: socketRef.current,

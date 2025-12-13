@@ -87,4 +87,4 @@ const GlassCard = ({
   );
 };
 
-export default GlassCard;
+export default React.memo(GlassCard);

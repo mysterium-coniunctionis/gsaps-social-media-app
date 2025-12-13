@@ -250,34 +250,41 @@ app.post('/auth/logout', (req, res) => {
 
 app.get('/posts', authMiddleware, async (req, res) => {
   const posts = await prisma.post.findMany({
-    include: { author: true, reactions: true },
+    include: { 
+      author: true, 
+      reactions: true 
+    },
     orderBy: { createdAt: 'desc' }
   });
 
-  const formatted = posts.map((post) => ({
-    id: post.id,
-    content: post.content,
-    title: post.title,
-    tags: post.tags,
-    timestamp: post.createdAt,
-    author: {
-      id: post.author.id,
-      name: post.author.name,
-      username: post.author.username,
-      avatar: post.author.avatarUrl,
-      verified: post.author.verified,
-      credentials: post.author.credentials
-    },
-    reactions: post.reactions.map((reaction) => ({
-      id: reaction.id,
-      type: reaction.type,
-      userId: reaction.userId
-    })),
-    currentUserReaction: post.reactions.find((r) => r.userId === req.user.id)?.type || null,
-    comments: 0,
-    shares: 0,
-    isBookmarked: false
-  }));
+  const formatted = posts.map((post) => {
+    const currentUserReaction = post.reactions.find((r) => r.userId === req.user.id)?.type || null;
+    
+    return {
+      id: post.id,
+      content: post.content,
+      title: post.title,
+      tags: post.tags,
+      timestamp: post.createdAt,
+      author: {
+        id: post.author.id,
+        name: post.author.name,
+        username: post.author.username,
+        avatar: post.author.avatarUrl,
+        verified: post.author.verified,
+        credentials: post.author.credentials
+      },
+      reactions: post.reactions.map((reaction) => ({
+        id: reaction.id,
+        type: reaction.type,
+        userId: reaction.userId
+      })),
+      currentUserReaction,
+      comments: 0,
+      shares: 0,
+      isBookmarked: false
+    };
+  });
 
   res.json(formatted);
 });
@@ -355,11 +362,14 @@ app.get('/messages', authMiddleware, async (req, res) => {
     orderBy: { createdAt: 'desc' }
   });
 
-  const conversations = messages.reduce((acc, message) => {
+  const conversationsMap = new Map();
+  
+  for (const message of messages) {
     const participant = message.senderId === req.user.id ? message.recipient : message.sender;
     const key = participant.id;
-    if (!acc[key]) {
-      acc[key] = {
+    
+    if (!conversationsMap.has(key)) {
+      conversationsMap.set(key, {
         id: key,
         participant: {
           id: participant.id,
@@ -372,15 +382,15 @@ app.get('/messages', authMiddleware, async (req, res) => {
           timestamp: message.createdAt
         },
         unreadCount: 0
-      };
+      });
     }
+    
     if (!message.read && message.recipientId === req.user.id) {
-      acc[key].unreadCount += 1;
+      conversationsMap.get(key).unreadCount += 1;
     }
-    return acc;
-  }, {});
+  }
 
-  res.json(Object.values(conversations));
+  res.json(Array.from(conversationsMap.values()));
 });
 
 app.post('/messages', authMiddleware, async (req, res) => {

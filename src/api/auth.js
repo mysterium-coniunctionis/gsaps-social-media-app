@@ -1,4 +1,4 @@
-import api from './api';
+import api, { clearAuthToken } from './api';
 import { login, register, getCurrentUser as fetchCurrentUser } from './backend';
 
 const MOCK_SESSIONS = [
@@ -34,6 +34,7 @@ export const logoutUser = async () => {
   } catch (error) {
     // Best-effort logout; ignore errors to allow UI state to clear
   }
+  clearAuthToken();
   return { success: true };
 };
 

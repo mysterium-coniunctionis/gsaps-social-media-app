@@ -44,7 +44,7 @@ const CrisisButton = () => {
       >
         <Zoom in={true}>
           <Fab
-            aria-label="Open crisis support resources"
+            aria-label="Crisis Support - Get Help Now"
             onClick={handleOpen}
             sx={{
               position: 'fixed',

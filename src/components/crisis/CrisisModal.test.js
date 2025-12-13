@@ -119,7 +119,7 @@ describe('CrisisButton', () => {
   it('should render the floating action button', () => {
     renderWithTheme(<CrisisButton />);
 
-    // The aria-label comes from the Tooltip title prop
+    // MUI Tooltip sets aria-label from title prop on the wrapped element
     const fab = screen.getByLabelText('Crisis Support - Get Help Now');
     expect(fab).toBeInTheDocument();
   });

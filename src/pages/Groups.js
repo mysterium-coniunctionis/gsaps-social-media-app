@@ -271,16 +271,18 @@ const Groups = () => {
   // Memoize recommended groups
   const recommendedGroups = useMemo(() => {
     if (!groups.length) return [];
-    const recommendations = getRecommendations('group', groups, {
+    return getRecommendations('group', groups, {
       variant: groupVariant,
       limit: 6
     });
-    // Record impression when recommendations change
-    if (recommendations.length > 0) {
-      recordExperimentImpression('group-feed', groupVariant, recommendations.length);
-    }
-    return recommendations;
   }, [groups, groupVariant]);
+
+  // Record experiment impression when recommendations change
+  useEffect(() => {
+    if (recommendedGroups.length > 0) {
+      recordExperimentImpression('group-feed', groupVariant, recommendedGroups.length);
+    }
+  }, [recommendedGroups.length, groupVariant]);
 
   // Memoize related categories to avoid recalculating on every render
   const relatedGroupCategories = useMemo(

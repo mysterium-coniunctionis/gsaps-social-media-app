@@ -24,7 +24,9 @@ export const RealtimeProvider = ({ children }) => {
   const [feedUpdates, setFeedUpdates] = useState([]);
   const [notifications, setNotifications] = useState([]);
 
-  // Helper to update room state only if value changed
+  // Helper to update room-based state (typing/presence) only if value changed
+  // This prevents unnecessary re-renders by returning the same object reference
+  // when the value hasn't actually changed
   const updateRoomState = useCallback((setState, roomId, userId, value) => {
     setState(prev => {
       const roomData = prev[roomId] || {};

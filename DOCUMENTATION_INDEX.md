@@ -72,6 +72,8 @@ Use this quick map to understand how the repository’s Markdown documentation i
 - **[.env.example](.env.example)** - Environment variables template
 
 ### Quality & Performance
+- **[docs/PERFORMANCE_OPTIMIZATION.md](docs/PERFORMANCE_OPTIMIZATION.md)** ⭐ **NEW** - Comprehensive performance optimization guide with best practices
+- **[docs/PERFORMANCE_QUICK_REFERENCE.md](docs/PERFORMANCE_QUICK_REFERENCE.md)** ⭐ **NEW** - Quick reference for writing performant React code
 - **[docs/reports/performance/PERFORMANCE_IMPROVEMENTS.md](docs/reports/performance/PERFORMANCE_IMPROVEMENTS.md)** - Performance optimization strategies
 - **[docs/reports/performance/PERFORMANCE_OPTIMIZATION_SUMMARY.md](docs/reports/performance/PERFORMANCE_OPTIMIZATION_SUMMARY.md)** - Summary of performance improvements
 - **[docs/reports/performance/REFACTORING_SUMMARY.md](docs/reports/performance/REFACTORING_SUMMARY.md)** - Refactoring highlights and rationale
@@ -127,8 +129,9 @@ Use this quick map to understand how the repository’s Markdown documentation i
 1. Start with [README.md](README.md)
 2. Read [CLAUDE.md](docs/core/development-guides/CLAUDE.md) for architecture overview
 3. Follow [QUICKSTART_MACBOOK.md](docs/core/getting-started/QUICKSTART_MACBOOK.md) for setup
-4. Review [UI_COMPONENTS_GUIDE.md](docs/core/development-guides/UI_COMPONENTS_GUIDE.md) for component patterns
-5. Check [PROJECT_STATUS.md](docs/core/project-status/PROJECT_STATUS.md) for current state
+4. Review [PERFORMANCE_QUICK_REFERENCE.md](docs/PERFORMANCE_QUICK_REFERENCE.md) for performance best practices ⭐
+5. Review [UI_COMPONENTS_GUIDE.md](docs/core/development-guides/UI_COMPONENTS_GUIDE.md) for component patterns
+6. Check [PROJECT_STATUS.md](docs/core/project-status/PROJECT_STATUS.md) for current state
 
 ### For Product Managers
 1. [MASTER_PLAN.md](docs/planning-strategy/MASTER_PLAN.md) - **Comprehensive strategic plan with phases** ⭐

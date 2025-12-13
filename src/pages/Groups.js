@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Box,
   Card,
@@ -38,11 +38,9 @@ const Groups = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [groups, setGroups] = useState([]);
-  const [filteredGroups, setFilteredGroups] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('all');
   const [sortBy, setSortBy] = useState('active');
-  const [recommendedGroups, setRecommendedGroups] = useState([]);
   const groupVariant = useExperiment('group-feed', ['control', 'personalized']);
 
   useEffect(() => {
@@ -232,19 +230,20 @@ const Groups = () => {
         }
       ];
       setGroups(mockGroups);
-      setFilteredGroups(mockGroups);
       setLoading(false);
     }, 500);
   }, []);
 
-  useEffect(() => {
+  // Memoize filtered groups to prevent recalculation on every render
+  const filteredGroups = useMemo(() => {
     let filtered = [...groups];
 
     // Apply search
     if (searchQuery) {
+      const query = searchQuery.toLowerCase();
       filtered = filtered.filter(group =>
-        group.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        group.description.toLowerCase().includes(searchQuery.toLowerCase())
+        group.name.toLowerCase().includes(query) ||
+        group.description.toLowerCase().includes(query)
       );
     }
 
@@ -266,19 +265,30 @@ const Groups = () => {
       filtered.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    setFilteredGroups(filtered);
+    return filtered;
   }, [searchQuery, filterType, sortBy, groups]);
 
-  useEffect(() => {
-    if (groups.length) {
-      const recommendations = getRecommendations('group', groups, {
-        variant: groupVariant,
-        limit: 6
-      });
-      setRecommendedGroups(recommendations);
-      recordExperimentImpression('group-feed', groupVariant, recommendations.length);
-    }
+  // Memoize recommended groups
+  const recommendedGroups = useMemo(() => {
+    if (!groups.length) return [];
+    return getRecommendations('group', groups, {
+      variant: groupVariant,
+      limit: 6
+    });
   }, [groups, groupVariant]);
+
+  // Record experiment impression when recommendations change
+  useEffect(() => {
+    if (recommendedGroups.length > 0) {
+      recordExperimentImpression('group-feed', groupVariant, recommendedGroups.length);
+    }
+  }, [recommendedGroups.length, groupVariant]);
+
+  // Memoize related categories to avoid recalculating on every render
+  const relatedGroupCategories = useMemo(
+    () => Array.from(new Set(recommendedGroups.map(group => group.category))).slice(0, 4),
+    [recommendedGroups]
+  );
 
   if (loading) {
     return <LoadingSpinner />;
@@ -289,8 +299,6 @@ const Groups = () => {
     recordExperimentConversion('group-feed', groupVariant, 1);
     navigate(`/groups/${group.slug}`);
   };
-
-  const relatedGroupCategories = Array.from(new Set(recommendedGroups.map(group => group.category))).slice(0, 4);
 
   return (
     <Box sx={{ py: 3 }}>

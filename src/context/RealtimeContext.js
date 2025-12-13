@@ -71,24 +71,37 @@ export const RealtimeProvider = ({ children }) => {
 
     socket.on('typing', ({ roomId, userId, isTyping }) => {
       if (!roomId || !userId) return;
-      setTypingByRoom(prev => ({
-        ...prev,
-        [roomId]: {
-          ...(prev[roomId] || {}),
-          [userId]: isTyping
-        }
-      }));
+      setTypingByRoom(prev => {
+        const roomTyping = prev[roomId] || {};
+        // Only update if value actually changed
+        if (roomTyping[userId] === isTyping) return prev;
+        
+        return {
+          ...prev,
+          [roomId]: {
+            ...roomTyping,
+            [userId]: isTyping
+          }
+        };
+      });
     });
 
     socket.on('presence:update', ({ roomId, userId, status }) => {
       if (!roomId || !userId) return;
-      setPresenceByRoom(prev => ({
-        ...prev,
-        [roomId]: {
-          ...(prev[roomId] || {}),
-          [userId]: status || 'online'
-        }
-      }));
+      setPresenceByRoom(prev => {
+        const roomPresence = prev[roomId] || {};
+        const newStatus = status || 'online';
+        // Only update if value actually changed
+        if (roomPresence[userId] === newStatus) return prev;
+        
+        return {
+          ...prev,
+          [roomId]: {
+            ...roomPresence,
+            [userId]: newStatus
+          }
+        };
+      });
     });
 
     socket.on('feed:update', (update) => {
@@ -178,13 +191,19 @@ export const RealtimeProvider = ({ children }) => {
       socket.emit('typing', { roomId, isTyping });
     }
 
-    setTypingByRoom(prev => ({
-      ...prev,
-      [roomId]: {
-        ...(prev[roomId] || {}),
-        [userId]: isTyping
-      }
-    }));
+    setTypingByRoom(prev => {
+      const roomTyping = prev[roomId] || {};
+      // Only update if value actually changed
+      if (roomTyping[userId] === isTyping) return prev;
+      
+      return {
+        ...prev,
+        [roomId]: {
+          ...roomTyping,
+          [userId]: isTyping
+        }
+      };
+    });
   }, [currentUser]);
 
   const updatePresence = useCallback((roomId, status = 'online') => {
@@ -195,13 +214,19 @@ export const RealtimeProvider = ({ children }) => {
       socket.emit('presence:update', { roomId, status });
     }
 
-    setPresenceByRoom(prev => ({
-      ...prev,
-      [roomId]: {
-        ...(prev[roomId] || {}),
-        [userId]: status
-      }
-    }));
+    setPresenceByRoom(prev => {
+      const roomPresence = prev[roomId] || {};
+      // Only update if value actually changed
+      if (roomPresence[userId] === status) return prev;
+      
+      return {
+        ...prev,
+        [roomId]: {
+          ...roomPresence,
+          [userId]: status
+        }
+      };
+    });
   }, [currentUser]);
 
   const value = useMemo(() => ({

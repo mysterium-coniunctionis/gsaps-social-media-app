@@ -22,34 +22,53 @@ const DEFAULT_SIGNALS = {
   recency: []
 };
 
+// Cache to avoid repeated localStorage parsing
+let signalsCache = null;
+let experimentsCache = null;
+
 const loadSignals = () => {
   if (typeof window === 'undefined') return { ...DEFAULT_SIGNALS };
+  
+  // Return cached value if available
+  if (signalsCache !== null) return signalsCache;
+  
   try {
     const raw = localStorage.getItem(SIGNAL_STORAGE_KEY);
-    return raw ? { ...DEFAULT_SIGNALS, ...JSON.parse(raw) } : { ...DEFAULT_SIGNALS };
+    signalsCache = raw ? { ...DEFAULT_SIGNALS, ...JSON.parse(raw) } : { ...DEFAULT_SIGNALS };
+    return signalsCache;
   } catch (error) {
     console.warn('Failed to load recommendation signals', error);
-    return { ...DEFAULT_SIGNALS };
+    signalsCache = { ...DEFAULT_SIGNALS };
+    return signalsCache;
   }
 };
 
 const saveSignals = (signals) => {
   if (typeof window === 'undefined') return;
+  signalsCache = signals; // Update cache
   localStorage.setItem(SIGNAL_STORAGE_KEY, JSON.stringify(signals));
 };
 
 const loadExperiments = () => {
   if (typeof window === 'undefined') return {};
+  
+  // Return cached value if available
+  if (experimentsCache !== null) return experimentsCache;
+  
   try {
-    return JSON.parse(localStorage.getItem(EXPERIMENT_STORAGE_KEY) || '{}');
+    const raw = localStorage.getItem(EXPERIMENT_STORAGE_KEY) || '{}';
+    experimentsCache = JSON.parse(raw);
+    return experimentsCache;
   } catch (error) {
     console.warn('Failed to load experiment data', error);
-    return {};
+    experimentsCache = {};
+    return experimentsCache;
   }
 };
 
 const saveExperiments = (experiments) => {
   if (typeof window === 'undefined') return;
+  experimentsCache = experiments; // Update cache
   localStorage.setItem(EXPERIMENT_STORAGE_KEY, JSON.stringify(experiments));
 };
 

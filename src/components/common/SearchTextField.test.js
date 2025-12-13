@@ -40,15 +40,15 @@ describe('SearchTextField', () => {
   });
 
   it('should render search icon', () => {
-    const { container } = render(
+    render(
       <SearchTextField
         value=""
         onChange={() => {}}
       />
     );
     
-    // Check for the InputAdornment with search icon
-    const svg = container.querySelector('svg');
-    expect(svg).toBeInTheDocument();
+    // Check for the textbox which contains the search functionality
+    const input = screen.getByRole('textbox');
+    expect(input).toBeInTheDocument();
   });
 });

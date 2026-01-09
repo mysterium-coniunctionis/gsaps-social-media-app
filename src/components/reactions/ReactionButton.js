@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Button,
   Box,
@@ -8,6 +8,7 @@ import {
   ThumbUpOutlined as LikeIcon,
 } from '@mui/icons-material';
 import ReactionPicker, { REACTIONS } from './ReactionPicker';
+import EmojiReactionBurst from './EmojiReactionBurst';
 import { heartbeat } from '../../theme/animations';
 
 /**
@@ -22,6 +23,8 @@ const ReactionButton = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [burstEmoji, setBurstEmoji] = useState(null);
+  const [showBurst, setShowBurst] = useState(false);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -37,11 +40,23 @@ const ReactionButton = ({
       onReactionChange(null);
     } else {
       onReactionChange(reactionType);
-      // Trigger animation
+      // Trigger animations
       setIsAnimating(true);
       setTimeout(() => setIsAnimating(false), 600);
+
+      // Trigger emoji burst
+      const reaction = REACTIONS[reactionType];
+      if (reaction) {
+        setBurstEmoji(reaction.emoji);
+        setShowBurst(true);
+      }
     }
   };
+
+  const handleBurstComplete = useCallback(() => {
+    setShowBurst(false);
+    setBurstEmoji(null);
+  }, []);
 
   const open = Boolean(anchorEl);
 
@@ -49,7 +64,7 @@ const ReactionButton = ({
   const reaction = currentReaction ? REACTIONS[currentReaction] : null;
 
   return (
-    <>
+    <Box sx={{ position: 'relative', display: 'inline-flex' }}>
       <Button
         size={size}
         startIcon={
@@ -84,6 +99,13 @@ const ReactionButton = ({
         {count > 0 && ` (${count})`}
       </Button>
 
+      {/* Emoji burst animation */}
+      <EmojiReactionBurst
+        emoji={burstEmoji}
+        trigger={showBurst}
+        onComplete={handleBurstComplete}
+      />
+
       <ReactionPicker
         anchorEl={anchorEl}
         open={open}
@@ -91,7 +113,7 @@ const ReactionButton = ({
         onReactionSelect={handleReactionSelect}
         currentReaction={currentReaction}
       />
-    </>
+    </Box>
   );
 };
 

@@ -398,5 +398,4 @@ const PostCard = React.memo(({
 
 PostCard.displayName = 'PostCard';
 
-// Memoize PostCard to prevent unnecessary re-renders
-export default React.memo(PostCard);
+export default PostCard;

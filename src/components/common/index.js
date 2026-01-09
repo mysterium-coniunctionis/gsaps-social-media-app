@@ -41,3 +41,6 @@ export { default as CenteredAuthLayout } from './CenteredAuthLayout';
 
 // Stat Card
 export { default as StatCard } from './StatCard';
+
+// Keyboard Shortcuts Help
+export { default as KeyboardShortcutsHelp } from './KeyboardShortcutsHelp';

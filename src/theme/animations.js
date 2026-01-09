@@ -330,6 +330,71 @@ export const toastSlideOut = keyframes`
   }
 `;
 
+// Emoji burst animation for reactions
+export const emojiBurst = keyframes`
+  0% {
+    transform: scale(0) translateY(0);
+    opacity: 1;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.5) translateY(-50px);
+    opacity: 0;
+  }
+`;
+
+// Emoji pop animation
+export const emojiPop = keyframes`
+  0% {
+    transform: scale(0);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+`;
+
+// Floating particles for burst effect
+export const floatUp = keyframes`
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-60px) scale(0.5);
+    opacity: 0;
+  }
+`;
+
+export const floatUpLeft = keyframes`
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-30px, -50px) scale(0.5);
+    opacity: 0;
+  }
+`;
+
+export const floatUpRight = keyframes`
+  0% {
+    transform: translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(30px, -50px) scale(0.5);
+    opacity: 0;
+  }
+`;
+
 // Animation duration and easing constants
 export const ANIMATION_DURATION = {
   fast: '150ms',

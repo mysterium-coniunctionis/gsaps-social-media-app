@@ -11,6 +11,7 @@ import LoadingSpinner from './components/common/LoadingSpinner';
 import XPNotification from './components/gamification/XPNotification';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CrisisButton from './components/crisis/CrisisButton';
+import { AriaCoPilot, AriaFloatingButton } from './components/ai';
 
 // Eagerly loaded pages (critical for initial load)
 import Home from './pages/Home';
@@ -46,6 +47,13 @@ const IntegrationCircles = lazy(() => import('./pages/IntegrationCircles'));
 const CircleDetail = lazy(() => import('./pages/CircleDetail'));
 const PrepAcademy = lazy(() => import('./pages/prep-academy/PrepAcademy'));
 const CareerNavigator = lazy(() => import('./pages/career/CareerNavigator'));
+const MentorNetwork = lazy(() => import('./pages/MentorNetwork'));
+
+// 2026 Killer Features
+const VoiceRooms = lazy(() => import('./pages/VoiceRooms'));
+const VoiceRoom = lazy(() => import('./pages/VoiceRoom'));
+const VirtualSpaces = lazy(() => import('./pages/VirtualSpaces'));
+const VirtualSpace = lazy(() => import('./pages/VirtualSpace'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -119,6 +127,19 @@ function App() {
           <Route path="/courses/:courseId/learn" element={
             <ProtectedRoute>
               <CoursePlayer />
+            </ProtectedRoute>
+          } />
+
+          {/* 2026 Killer Features - Full-width immersive experiences */}
+          <Route path="/voice-rooms/:roomId" element={
+            <ProtectedRoute>
+              <VoiceRoom />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/virtual-space/:spaceId" element={
+            <ProtectedRoute>
+              <VirtualSpace />
             </ProtectedRoute>
           } />
 
@@ -224,6 +245,25 @@ function App() {
 
                 <Route path="/career" element={<CareerNavigator />} />
 
+                <Route path="/network" element={
+                  <ProtectedRoute>
+                    <MentorNetwork />
+                  </ProtectedRoute>
+                } />
+
+                {/* 2026 Killer Features */}
+                <Route path="/voice-rooms" element={
+                  <ProtectedRoute>
+                    <VoiceRooms />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/virtual-spaces" element={
+                  <ProtectedRoute>
+                    <VirtualSpaces />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/settings" element={
                   <ProtectedRoute>
                     <Settings />
@@ -246,6 +286,14 @@ function App() {
 
       {currentUser && <BottomNavigation />}
       <CrisisButton />
+
+      {/* Aria AI Research Co-Pilot */}
+      {currentUser && (
+        <>
+          <AriaCoPilot />
+          <AriaFloatingButton />
+        </>
+      )}
       </Box>
     </ErrorBoundary>
   );

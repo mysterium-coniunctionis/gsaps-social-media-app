@@ -10,7 +10,9 @@ import {
   MenuItem,
   Avatar,
   useTheme,
-  useMediaQuery
+  useMediaQuery,
+  Chip,
+  Badge
 } from '@mui/material';
 import {
   Menu as MenuIcon,
@@ -30,7 +32,11 @@ import {
   Brightness7,
   Favorite as CirclesIcon,
   MenuBook as PrepIcon,
-  Explore as CareerIcon
+  Explore as CareerIcon,
+  Mic as VoiceIcon,
+  ViewInAr as VRIcon,
+  Hub as NetworkIcon,
+  AutoAwesome as NewIcon
 } from '@mui/icons-material';
 import { CreditCard as CreditCardIcon, Analytics as AnalyticsIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
@@ -87,13 +93,16 @@ const Navbar = () => {
   const navItems = [
     { label: 'Home', path: '/', icon: <HomeIcon /> },
     { label: 'Feed', path: '/feed', icon: <FeedIcon />, protected: true },
+    // 2026 Killer Features - Prominent placement
+    { label: 'Voice Rooms', path: '/voice-rooms', icon: <VoiceIcon />, protected: true, isNew: true },
+    { label: '3D Spaces', path: '/virtual-spaces', icon: <VRIcon />, protected: true, isNew: true },
+    { label: 'Network', path: '/network', icon: <NetworkIcon />, protected: true, isNew: true },
+    // Community & Learning
     { label: 'Circles', path: '/circles', icon: <CirclesIcon /> },
-    { label: 'Prep Academy', path: '/prep-academy', icon: <PrepIcon /> },
-    { label: 'Career', path: '/career', icon: <CareerIcon /> },
     { label: 'Library', path: '/library', icon: <LibraryIcon /> },
     { label: 'Courses', path: '/courses', icon: <CoursesIcon /> },
-    { label: 'Leaderboard', path: '/leaderboard', icon: <LeaderboardIcon /> },
     { label: 'Events', path: '/events', icon: <EventIcon /> },
+    { label: 'Leaderboard', path: '/leaderboard', icon: <LeaderboardIcon /> },
     currentUser && ['administrator', 'moderator'].includes(currentUser.role)
       ? { label: 'Admin', path: '/admin/moderation', icon: <SecurityIcon />, protected: true }
       : null
@@ -131,15 +140,35 @@ const Navbar = () => {
             {navItems
               .filter(item => !item.protected || currentUser)
               .map((item) => (
-                <Button
+                <Badge
                   key={item.path}
-                  color="inherit"
-                  startIcon={item.icon}
-                  onClick={() => navigate(item.path)}
-                  aria-label={`Go to ${item.label}`}
+                  badgeContent={item.isNew ? "NEW" : null}
+                  color="secondary"
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      fontSize: '0.6rem',
+                      height: '14px',
+                      minWidth: '28px',
+                      right: -8,
+                      top: 4
+                    }
+                  }}
                 >
-                  {item.label}
-                </Button>
+                  <Button
+                    color="inherit"
+                    startIcon={item.icon}
+                    onClick={() => navigate(item.path)}
+                    aria-label={`Go to ${item.label}`}
+                    sx={item.isNew ? {
+                      background: 'linear-gradient(45deg, rgba(156,39,176,0.15), rgba(33,150,243,0.15))',
+                      '&:hover': {
+                        background: 'linear-gradient(45deg, rgba(156,39,176,0.25), rgba(33,150,243,0.25))'
+                      }
+                    } : {}}
+                  >
+                    {item.label}
+                  </Button>
+                </Badge>
               ))}
           </Box>
         )}
@@ -216,10 +245,21 @@ const Navbar = () => {
                   navigate(item.path);
                   handleMobileMenuClose();
                 }}
+                sx={item.isNew ? {
+                  background: 'linear-gradient(45deg, rgba(156,39,176,0.1), rgba(33,150,243,0.1))'
+                } : {}}
               >
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
                   {item.icon}
                   {item.label}
+                  {item.isNew && (
+                    <Chip
+                      label="NEW"
+                      size="small"
+                      color="secondary"
+                      sx={{ ml: 'auto', height: 18, fontSize: '0.65rem' }}
+                    />
+                  )}
                 </Box>
               </MenuItem>
             ))}

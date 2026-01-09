@@ -12,6 +12,8 @@ import XPNotification from './components/gamification/XPNotification';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import CrisisButton from './components/crisis/CrisisButton';
 import { AriaCoPilot, AriaFloatingButton } from './components/ai';
+import CommandPalette from './components/common/CommandPalette';
+import WhatsNew from './components/common/WhatsNew';
 
 // Eagerly loaded pages (critical for initial load)
 import Home from './pages/Home';
@@ -294,6 +296,12 @@ function App() {
           <AriaFloatingButton />
         </>
       )}
+
+      {/* Command Palette - Global quick navigation (Ctrl+K) */}
+      {currentUser && <CommandPalette />}
+
+      {/* What's New - Feature discovery for new features */}
+      {currentUser && <WhatsNew />}
       </Box>
     </ErrorBoundary>
   );

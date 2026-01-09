@@ -8,6 +8,7 @@ import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { GamificationProvider } from './context/GamificationContext';
 import { RealtimeProvider } from './context/RealtimeContext';
+import { AriaProvider } from './context/AriaContext';
 import { ToastProvider } from './components/common/Toast';
 import { CssBaseline } from '@mui/material';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -23,10 +24,12 @@ root.render(
           <RealtimeProvider>
             <GamificationProvider>
               <ThemeProvider>
-                <ToastProvider>
-                  <CssBaseline />
-                  <App />
-                </ToastProvider>
+                <AriaProvider>
+                  <ToastProvider>
+                    <CssBaseline />
+                    <App />
+                  </ToastProvider>
+                </AriaProvider>
               </ThemeProvider>
             </GamificationProvider>
           </RealtimeProvider>

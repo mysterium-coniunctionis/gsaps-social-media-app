@@ -16,6 +16,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.4.0",
     "bcryptjs": "^3.0.3",
+    "concurrently": "^8.2.2",
     "date-fns": "^2.30.0",
     "marked": "^17.0.1",
     "react": "^18.2.0",
@@ -28,13 +29,22 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "start:frontend": "react-scripts start",
+    "start:backend": "cd server && npm start",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:frontend": "REACT_APP_API_URL=http://localhost:4000 react-scripts start",
+    "dev:backend": "cd server && npm run dev",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint 'src/**/*.{js,jsx}' --max-warnings=0",
     "format": "prettier --check \"src/**/*.{js,jsx,json}\" README.md",
     "test:a11y": "CI=true react-scripts test --watch=false --runInBand __tests__/a11y.test.js",
-    "ci:a11y": "npm run build && lhci autorun --config=lighthouserc.json"
+    "ci:a11y": "npm run build && lhci autorun --config=lighthouserc.json",
+    "db:setup": "cd server && npm run prisma:generate && npm run prisma:push && npm run seed",
+    "db:seed": "cd server && npm run seed",
+    "db:reset": "cd server && rm -f prisma/data/gsaps.db && npm run prisma:push && npm run seed",
+    "postinstall": "cd server && npm install"
   },
   "eslintConfig": {
     "extends": [

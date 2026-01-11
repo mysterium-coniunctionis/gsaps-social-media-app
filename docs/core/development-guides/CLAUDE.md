@@ -6,20 +6,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-GSAPS Social Media App is a React-based academic social platform for the Graduate Student Association for Psychedelic Studies. It combines social networking features (posts, messaging, groups, events) with unique academic features including a Research Library (papers with ratings/reviews/discussions) and a Learning Management System (courses with CE credits, quizzes, and certifications). The app is designed to integrate with WordPress/BuddyBoss via REST API but currently runs with comprehensive mock data.
+GSAPS Social Media App is a full-stack academic social platform for the Graduate Student Association for Psychedelic Studies. It combines social networking features (posts, messaging, groups, events) with unique academic features including a Research Library (100+ peer-reviewed papers), Learning Management System (courses with CE credits), and 2026 innovation features (Voice Rooms, Virtual Spaces, Circle Matching, AI Copilot).
 
-**Current Status:** Phase 7 Complete (Gold Standard) - 95%+ feature parity with major platforms
-**Tech Stack:** React 18.2.0, Material-UI 5.13.1, React Router 6.11.2, Context API for state management
-**Demo Mode:** Fully functional with comprehensive mock data for all features
-**API Integration:** Ready for WordPress/BuddyBoss integration (mock data only currently)
+**Current Status:** Phase 8+ Complete - Full-stack application with Express.js backend
+**Frontend Stack:** React 18.2.0, Material-UI 5.13.1, TanStack React Query 5.90, Three.js 0.158
+**Backend Stack:** Express.js 4.19, Prisma 5.15, SQLite (PostgreSQL-ready)
+**Real-time:** Socket.IO Client 4.8 for chat, presence, and symposium features
+**Demo Mode:** Fully functional with mock data fallback when backend unavailable
+**Tests:** 58/58 passing with accessibility coverage
 
 ## Development Commands
 
 ### Essential Commands
 
 ```bash
-# Start development server (opens http://localhost:3000)
+# Start both frontend and backend concurrently
+npm run dev
+
+# Start frontend only (localhost:3000)
 npm start
+
+# Start backend only (localhost:4000)
+npm run dev:backend
 
 # Build production bundle
 npm run build
@@ -30,8 +38,13 @@ npm test
 # Run single test file
 npm test -- path/to/test-file.test.js
 
-# Run tests in watch mode
-npm test -- --watch
+# Lint code (zero-warning enforcement)
+npm run lint
+
+# Database commands
+npm run db:setup    # Create DB, run migrations, seed data
+npm run db:seed     # Re-seed database
+npm run db:reset    # Drop and recreate database
 ```
 
 ### Testing Credentials
@@ -45,12 +58,14 @@ Password: demo123
 
 ### State Management Architecture
 
-The app uses React Context API for global state management with three primary contexts:
+The app uses React Context API combined with TanStack React Query for global state management:
+
+**Primary Contexts:**
 
 1. **AuthContext** (`src/context/AuthContext.js`)
    - Manages user authentication state and JWT tokens
    - Provides login/logout/register functions
-   - Stores token in localStorage as 'gsaps_token'
+   - Uses httpOnly cookies for secure token storage
    - Handles automatic token validation on app load
    - Usage: `const { currentUser, login, logout, loading } = useAuth()`
 
@@ -65,8 +80,23 @@ The app uses React Context API for global state management with three primary co
    - Tracks 50+ different XP-earning actions (posts, papers, courses, engagement)
    - Implements 50 progressive levels with 10 rank tiers (Novice → Mythic)
    - Handles daily streaks and achievement unlocks
-   - Persists gamification state in localStorage
    - Usage: `const { userStats, addXP, checkAchievements } = useGamification()`
+
+4. **RealtimeContext** (`src/context/RealtimeContext.js`)
+   - Socket.IO integration for real-time features
+   - Manages channel subscriptions for chat, presence, and symposium
+   - Provides fallback to localStorage for offline mode
+   - Usage: `const { socket, subscribe, emit } = useRealtime()`
+
+5. **AriaContext** (`src/context/AriaContext.js`)
+   - Manages Aria AI Copilot state
+   - Handles conversation history and AI responses
+   - Usage: `const { messages, sendMessage, isOpen } = useAria()`
+
+**Server State (TanStack React Query):**
+- Used for caching and synchronizing server data
+- Automatic refetching and cache invalidation
+- Query keys: `['currentUser']`, `['posts']`, `['gamification']`, etc.
 
 ### Component Architecture
 
@@ -79,13 +109,25 @@ Components are organized by feature domain:
 
 ### API Integration Layer
 
-- **API Client** (`src/api/api.js`): Axios instance with interceptors for auth tokens and error handling
-- **Auth API** (`src/api/auth.js`): Authentication endpoints (login/register/logout/getCurrentUser)
-- **Mock Auth** (`src/api/mockAuth.js`): Mock authentication for development without backend
+**Frontend API Layer (`src/api/`):**
+- **api.js**: Axios instance with interceptors for auth tokens and error handling
+- **backend.js**: Main CRUD operations for posts, users, courses, etc.
+- **auth.js**: Authentication endpoints (login/register/logout/getCurrentUser)
+- **aiService.js**: AI Notetaker and recommendation services
+- **symposiumClient.js**: Live symposium event handling
+- **voiceRoomService.js**: Voice room management
+- **virtualSpaceService.js**: 3D virtual space operations
 
-Currently the app uses **mock data with setTimeout()** to simulate async API calls. When integrating with WordPress/BuddyBoss:
-- Update baseURL in `src/api/api.js` to WordPress REST API endpoint
-- Replace mock API functions with real API calls to WordPress/BuddyBoss endpoints
+**Backend API (`server/src/index.js`):**
+The Express.js backend provides REST endpoints:
+- `POST /auth/register`, `/auth/login`, `/auth/logout` - Authentication
+- `GET/POST /posts`, `/posts/:id/reactions`, `/posts/:id/comments` - Social feed
+- `GET/POST /courses`, `/courses/:id/progress` - Learning management
+- `GET/POST /assets`, `/assets/:id/reviews` - Research library
+- `GET /gamification`, `/leaderboard` - Gamification system
+- `GET/POST /messages` - Private messaging
+
+The frontend includes **mock data fallback** for offline development. Set `REACT_APP_API_URL=http://localhost:4000` to use the real backend.
 
 ### Routing and Protected Routes
 
@@ -141,25 +183,43 @@ Protected routes: Feed, Profile, Members, Groups, Messages, Research Library, Co
 - **Groups**: `src/pages/Groups.js`, `GroupDetail.js`
 - **Events**: `src/pages/Events.js`, `EventDetail.js`
 
-### Integration Circles (Sprint 1 - PLANNED, NOT IMPLEMENTED)
+### 2026 Innovation Features (NEW)
 
-**IMPORTANT**: Integration Circles is a **planned feature**, NOT a completed feature.
+These features were added in December 2025 - January 2026:
 
-**What exists**:
-- ✅ Implementation plan ([SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md)) - detailed 4-week roadmap
-- ✅ Mock data files (`src/data/circlesData.js`, `circleResources.js`)
-- ✅ One component (`src/components/circles/CircleCard.js`)
+**Voice Rooms** (`src/components/voice/`, `src/pages/VoiceRooms.js`)
+- Real-time voice collaboration spaces
+- Audio visualization components
+- Room management UI
 
-**What does NOT exist**:
-- ❌ Main pages (`src/pages/IntegrationCircles.js`, `CircleDetail.js`)
-- ❌ Routes in App.js
-- ❌ Navigation menu items
-- ❌ Matching wizard component
-- ❌ Circle discussion components
-- ❌ Facilitator tools
-- ❌ Circle management features
+**Virtual Spaces** (`src/components/xr/`, `src/pages/VirtualSpaces.js`)
+- 3D immersive environments using Three.js / @react-three/fiber
+- Interactive space navigation
+- SpaceRenderer component for 3D scenes
 
-**DO NOT reference Integration Circles as a completed feature.** It is planned for future development per [SPRINT_1_IMPLEMENTATION_PLAN.md](../../planning-strategy/SPRINT_1_IMPLEMENTATION_PLAN.md).
+**Circle Matching** (`src/components/circles/`)
+- ✅ CircleMatchingWizard - guided matching flow
+- ✅ CircleCard - circle browsing component
+- ✅ CreateCircleDialog - circle creation
+- Mock data: `src/data/circlesData.js`, `circleResources.js`
+
+**Command Palette** (`src/components/common/CommandPalette.js`)
+- Global keyboard navigation (Ctrl+K)
+- Quick access to all features
+
+**Crisis Support** (`src/components/crisis/`)
+- CrisisButton - global access button
+- Mental health resources directory
+- Grounding exercises component
+
+**Aria AI Copilot** (`src/components/ai/`, `src/context/AriaContext.js`)
+- AriaFloatingButton - floating UI trigger
+- AriaCoPilot - chat interface
+- Mock AI responses (ready for real API integration)
+
+**Career & Mentoring** (`src/pages/CareerNavigator.js`, `src/pages/MentorNetwork.js`)
+- Professional development planning
+- Mentor-mentee matching
 
 ## Important Development Patterns
 
@@ -256,23 +316,30 @@ For local WordPress development, set `REACT_APP_API_URL=http://localhost/wp-json
 - Achievements: Modify `ACHIEVEMENTS` array
 - Ranks: Modify `RANKS` array
 
-## WordPress/BuddyBoss API Integration (Future)
+## Backend Integration
 
-The app is designed to connect to WordPress/BuddyBoss REST API endpoints:
-- `/jwt-auth/v1/token` - Authentication
-- `/wp/v2/users` - User management
-- `/buddyboss/v1/members` - Member profiles
-- `/buddyboss/v1/groups` - Groups
-- `/buddyboss/v1/activity` - Activity feed
-- `/buddyboss/v1/messages` - Messaging
-- `/tribe/events/v1/events` - Events
+The app now has a complete Express.js backend. To use it:
 
-When implementing real API integration:
-1. Update `src/api/api.js` baseURL
-2. Replace mock functions in `src/api/` with real API calls
-3. Update data models to match WordPress/BuddyBoss response formats
-4. Remove setTimeout mock patterns
-5. Add proper error handling for network failures
+```bash
+# Start both frontend and backend
+npm run dev
+
+# Or run separately
+npm run dev:frontend  # React on port 3000
+npm run dev:backend   # Express on port 4000
+```
+
+**Database Setup:**
+```bash
+npm run db:setup  # First-time setup
+npm run db:seed   # Re-seed with demo data
+npm run db:reset  # Drop and recreate database
+```
+
+The backend uses SQLite by default (Replit-compatible). For production, configure PostgreSQL in `server/.env`.
+
+**API Communication:**
+The frontend reads `REACT_APP_API_URL` (defaults to `http://localhost:4000`). Authentication uses httpOnly cookies for security.
 
 ## Roadmap and Documentation
 
@@ -319,8 +386,10 @@ Current production bundle size: ~326 kB (gzipped)
 ## Special Notes
 
 - The app uses **demo_user/demo123** for authentication in development
-- All user data persists in localStorage (gamification stats, theme preference, auth token)
+- All user data persists in localStorage with optional backend persistence
 - Mobile navigation uses BottomNavigation, desktop uses Navbar
-- Research Library is the "killer feature" that differentiates from generic social platforms
+- Research Library has 100+ peer-reviewed psychedelic research papers
 - Gamification system is fully integrated across all features (feed, library, courses)
-- **Integration Circles is a PLANNED feature for future development** (not yet implemented)
+- 2026 features (Voice Rooms, Virtual Spaces, Circle Matching) are implemented with mock data
+- Three.js is pinned to 0.158.0 for @react-three/drei compatibility
+- AI features (Aria Copilot, AI Notetaker) use mock responses - ready for real API integration

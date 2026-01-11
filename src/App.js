@@ -47,6 +47,7 @@ const Settings = lazy(() => import('./pages/Settings'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const IntegrationCircles = lazy(() => import('./pages/IntegrationCircles'));
 const CircleDetail = lazy(() => import('./pages/CircleDetail'));
+const CreateCircle = lazy(() => import('./pages/CreateCircle'));
 const PrepAcademy = lazy(() => import('./pages/prep-academy/PrepAcademy'));
 const CareerNavigator = lazy(() => import('./pages/career/CareerNavigator'));
 const MentorNetwork = lazy(() => import('./pages/MentorNetwork'));
@@ -236,6 +237,12 @@ function App() {
                 <Route path="/leaderboard" element={<Leaderboard />} />
 
                 <Route path="/circles" element={<IntegrationCircles />} />
+
+                <Route path="/circles/create" element={
+                  <ProtectedRoute>
+                    <CreateCircle />
+                  </ProtectedRoute>
+                } />
 
                 <Route path="/circles/:circleId" element={
                   <ProtectedRoute>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, act, cleanup, waitFor } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import { BrowserRouter } from 'react-router-dom';
 import App from '../App';
@@ -23,30 +23,63 @@ jest.mock('axios', () => ({
 
 jest.mock('../pages/workspaces/ResearchWorkspace', () => () => <div>ResearchWorkspace</div>);
 
+// Mock CrisisButton to avoid MUI Tooltip animation timing issues in tests
+jest.mock('../components/crisis/CrisisButton', () => () => (
+  <button aria-label="Crisis support resources">Crisis Support</button>
+));
+
 describe('Accessibility smoke test', () => {
   expect.extend(toHaveNoViolations);
 
-  const renderApp = () =>
-    render(
-      <BrowserRouter>
-        <QueryClientProvider client={new QueryClient()}>
-          <AuthProvider>
-            <GamificationProvider>
-              <ThemeProvider>
-                <AccessibilityProvider>
-                  <ToastProvider>
-                    <App />
-                  </ToastProvider>
-                </AccessibilityProvider>
-              </ThemeProvider>
-            </GamificationProvider>
-          </AuthProvider>
-        </QueryClientProvider>
-      </BrowserRouter>
-    );
+  let queryClient;
+
+  beforeEach(() => {
+    queryClient = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
+  });
+
+  afterEach(async () => {
+    // Clear all queries and cancel pending ones
+    queryClient.clear();
+    cleanup();
+  });
+
+  const renderApp = async () => {
+    let result;
+    await act(async () => {
+      result = render(
+        <BrowserRouter>
+          <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+              <GamificationProvider>
+                <ThemeProvider>
+                  <AccessibilityProvider>
+                    <ToastProvider>
+                      <App />
+                    </ToastProvider>
+                  </AccessibilityProvider>
+                </ThemeProvider>
+              </GamificationProvider>
+            </AuthProvider>
+          </QueryClientProvider>
+        </BrowserRouter>
+      );
+    });
+    // Allow any pending updates to settle
+    await act(async () => {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    });
+    return result;
+  };
 
   it('has no critical axe violations on initial render', async () => {
-    const { container } = renderApp();
+    const { container } = await renderApp();
+
     const results = await axe(container, {
       rules: {
         region: { enabled: false },

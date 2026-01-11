@@ -9,15 +9,35 @@ Thank you for your interest in contributing! This guide outlines how to get set 
    git clone https://github.com/mysterium-coniunctionis/gsaps-social-media-app.git
    cd gsaps-social-media-app
    ```
-2. **Install dependencies**
+
+2. **Install dependencies** (includes both frontend and backend)
    ```bash
    npm install
    ```
-3. **Run the app locally**
+
+3. **Set up the database** (first time only)
    ```bash
-   npm start
+   npm run db:setup
    ```
-   The development server runs at `http://localhost:3000` by default.
+
+4. **Run the full stack**
+   ```bash
+   npm run dev
+   ```
+   - Frontend runs at `http://localhost:3000`
+   - Backend runs at `http://localhost:4000`
+
+   Or run individually:
+   ```bash
+   npm start              # Frontend only (mock data mode)
+   npm run dev:backend    # Backend only
+   ```
+
+5. **Test credentials**
+   ```
+   Username: demo_user
+   Password: demo123
+   ```
 
 ## ✨ Coding Standards
 

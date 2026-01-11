@@ -17,7 +17,9 @@ import {
   Tab,
   alpha,
   useTheme,
-  Skeleton
+  Skeleton,
+  Fab,
+  Tooltip
 } from '@mui/material';
 import {
   Search as SearchIcon,
@@ -26,11 +28,13 @@ import {
   TrendingUp as TrendingIcon,
   People as PeopleIcon,
   Favorite as HeartIcon,
-  SupportAgent as SupportIcon
+  SupportAgent as SupportIcon,
+  AutoAwesome as WizardIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
 import { useGamification } from '../context/GamificationContext';
 import CircleCard from '../components/circles/CircleCard';
+import CircleMatchingWizard from '../components/circles/CircleMatchingWizard';
 import GlassCard from '../components/common/GlassCard';
 import Toast from '../components/common/Toast';
 import {
@@ -55,6 +59,21 @@ const IntegrationCircles = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ open: false, message: '', severity: 'success' });
+  const [wizardOpen, setWizardOpen] = useState(false);
+
+  // Handle wizard completion
+  const handleWizardComplete = (preferences, circleId) => {
+    if (circleId) {
+      navigate(`/circles/${circleId}`);
+    }
+    // Award XP for completing the wizard
+    awardXP('COMPLETE_WIZARD', 15);
+    setToast({
+      open: true,
+      message: 'Preferences saved! +15 XP',
+      severity: 'success'
+    });
+  };
 
   // Get user's circles
   const userCircles = useMemo(() => {
@@ -174,16 +193,28 @@ const IntegrationCircles = () => {
             </Typography>
             
             <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+              <Button
+                variant="contained"
+                startIcon={<WizardIcon />}
+                onClick={() => setWizardOpen(true)}
+                sx={{
+                  bgcolor: 'white',
+                  color: theme.palette.primary.main,
+                  fontWeight: 600,
+                  '&:hover': { bgcolor: alpha('#fff', 0.9) }
+                }}
+              >
+                Find Your Circle
+              </Button>
               {currentUser && (
                 <Button
-                  variant="contained"
+                  variant="outlined"
                   startIcon={<AddIcon />}
                   onClick={() => navigate('/circles/create')}
                   sx={{
-                    bgcolor: 'white',
-                    color: theme.palette.primary.main,
-                    fontWeight: 600,
-                    '&:hover': { bgcolor: alpha('#fff', 0.9) }
+                    borderColor: 'white',
+                    color: 'white',
+                    '&:hover': { borderColor: 'white', bgcolor: alpha('#fff', 0.1) }
                   }}
                 >
                   Create a Circle
@@ -458,6 +489,30 @@ const IntegrationCircles = () => {
           ))}
         </Grid>
       </Paper>
+
+      {/* Floating Action Button for mobile */}
+      <Tooltip title="Find Your Circle">
+        <Fab
+          color="primary"
+          aria-label="find your circle"
+          onClick={() => setWizardOpen(true)}
+          sx={{
+            position: 'fixed',
+            bottom: { xs: 80, sm: 24 },
+            right: 24,
+            display: { md: 'none' }
+          }}
+        >
+          <WizardIcon />
+        </Fab>
+      </Tooltip>
+
+      {/* Circle Matching Wizard */}
+      <CircleMatchingWizard
+        open={wizardOpen}
+        onClose={() => setWizardOpen(false)}
+        onComplete={handleWizardComplete}
+      />
 
       {/* Toast notifications */}
       <Toast

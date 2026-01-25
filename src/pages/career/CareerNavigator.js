@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -39,7 +38,6 @@ import { fadeInUp } from '../../theme/animations';
 
 const CareerNavigator = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   useAuth();
   const [activeTab, setActiveTab] = useState(0);
   const [selectedPathway, setSelectedPathway] = useState(null);

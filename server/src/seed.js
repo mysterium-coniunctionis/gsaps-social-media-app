@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
+import { allCourses } from './data/index.js';
 
 dotenv.config();
 
@@ -9,11 +10,19 @@ const prisma = new PrismaClient();
 const seed = async () => {
   console.log('🌱 Seeding database...');
 
-  // Clear existing data
+  // Clear existing data (order matters due to foreign keys)
   await prisma.notification.deleteMany();
   await prisma.achievement.deleteMany();
+  await prisma.paperCommentLike.deleteMany();
+  await prisma.paperComment.deleteMany();
+  await prisma.paperCollectionItem.deleteMany();
+  await prisma.collectionFollower.deleteMany();
+  await prisma.paperCollection.deleteMany();
   await prisma.paperReview.deleteMany();
   await prisma.researchAsset.deleteMany();
+  await prisma.quizResult.deleteMany();
+  await prisma.lessonProgress.deleteMany();
+  await prisma.credential.deleteMany();
   await prisma.enrollment.deleteMany();
   await prisma.lesson.deleteMany();
   await prisma.course.deleteMany();
@@ -357,83 +366,59 @@ const seed = async () => {
   console.log('✓ Created 3 events with attendees');
 
   // ============================================
-  // COURSES
+  // COURSES - Professional CE/CME Courses
   // ============================================
 
-  const course1 = await prisma.course.create({
-    data: {
-      title: 'Foundations of Psychedelic Therapy',
-      description: 'A comprehensive introduction to psychedelic-assisted therapy, covering history, pharmacology, safety protocols, and therapeutic frameworks.',
-      category: 'psychedelic-therapy',
-      level: 'beginner',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1559757175-5700dde675bc?w=400',
-      duration: 480,
-      ceCredits: 8,
-      ceType: 'APA',
-      instructorName: 'Dr. Michael Pollan'
+  console.log('📚 Creating professional CE courses...');
+
+  const createdCourses = [];
+
+  for (const courseData of allCourses) {
+    const { lessons, slug, instructorBio, learningObjectives, ...courseFields } = courseData;
+
+    // Create the course
+    const course = await prisma.course.create({
+      data: courseFields
+    });
+
+    // Create lessons for this course
+    if (lessons && lessons.length > 0) {
+      for (const lessonData of lessons) {
+        const { quizData, ...lessonFields } = lessonData;
+
+        await prisma.lesson.create({
+          data: {
+            ...lessonFields,
+            courseId: course.id,
+            quizData: quizData ? JSON.stringify(quizData) : null,
+          }
+        });
+      }
     }
-  });
 
-  const course2 = await prisma.course.create({
-    data: {
-      title: 'MDMA-Assisted Therapy: Clinical Protocols',
-      description: 'Deep dive into MAPS Phase 3 protocols for MDMA-assisted therapy for PTSD. For licensed clinicians only.',
-      category: 'clinical',
-      level: 'advanced',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=400',
-      duration: 720,
-      ceCredits: 12,
-      ceType: 'CME',
-      instructorName: 'Dr. Rachel Yehuda'
-    }
-  });
+    createdCourses.push(course);
+    console.log(`  ✓ ${course.title} (${lessons?.length || 0} lessons, ${course.ceCredits} CE credits)`);
+  }
 
-  const course3 = await prisma.course.create({
-    data: {
-      title: 'Integration Techniques for Therapists',
-      description: 'Practical integration methods including somatic, artistic, and narrative approaches for post-journey processing.',
-      category: 'integration',
-      level: 'intermediate',
-      thumbnailUrl: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400',
-      duration: 360,
-      ceCredits: 6,
-      ceType: 'CNE',
-      instructorName: 'Carol Martinez, LMFT'
-    }
-  });
+  // Create enrollments for existing users
+  const [firstCourse, secondCourse, thirdCourse] = createdCourses;
 
-  // Add lessons to courses
-  await prisma.lesson.createMany({
-    data: [
-      { courseId: course1.id, title: 'History of Psychedelic Therapy', description: 'From ancient practices to modern research', duration: 45, orderIndex: 1, contentType: 'video' },
-      { courseId: course1.id, title: 'Pharmacology Basics', description: 'How psychedelics work in the brain', duration: 60, orderIndex: 2, contentType: 'video' },
-      { courseId: course1.id, title: 'Safety Protocols', description: 'Screening, preparation, and risk management', duration: 75, orderIndex: 3, contentType: 'video' },
-      { courseId: course1.id, title: 'Set and Setting', description: 'Creating the optimal therapeutic environment', duration: 45, orderIndex: 4, contentType: 'video' },
-      { courseId: course1.id, title: 'Module Quiz', description: 'Test your knowledge', duration: 30, orderIndex: 5, contentType: 'quiz' },
-      { courseId: course2.id, title: 'MAPS Protocol Overview', description: 'Understanding the Phase 3 trial design', duration: 90, orderIndex: 1, contentType: 'video' },
-      { courseId: course2.id, title: 'Pre-Session Preparation', description: 'Client screening and preparation', duration: 60, orderIndex: 2, contentType: 'video' },
-      { courseId: course2.id, title: 'The MDMA Session', description: 'Conducting the medicine session', duration: 120, orderIndex: 3, contentType: 'video' },
-      { courseId: course2.id, title: 'Integration Sessions', description: 'Post-session processing and integration', duration: 90, orderIndex: 4, contentType: 'video' },
-      { courseId: course3.id, title: 'Understanding Integration', description: 'What is integration and why it matters', duration: 40, orderIndex: 1, contentType: 'video' },
-      { courseId: course3.id, title: 'Somatic Approaches', description: 'Body-based integration techniques', duration: 60, orderIndex: 2, contentType: 'video' },
-      { courseId: course3.id, title: 'Creative Expression', description: 'Art, music, and movement in integration', duration: 45, orderIndex: 3, contentType: 'video' }
-    ]
-  });
-
-  // Create enrollments
   await prisma.enrollment.createMany({
     data: [
-      { userId: alice.id, courseId: course1.id, status: 'completed', progress: 100 },
-      { userId: alice.id, courseId: course2.id, status: 'enrolled', progress: 65 },
-      { userId: bob.id, courseId: course1.id, status: 'completed', progress: 100 },
-      { userId: bob.id, courseId: course3.id, status: 'enrolled', progress: 40 },
-      { userId: carol.id, courseId: course1.id, status: 'enrolled', progress: 80 },
-      { userId: carol.id, courseId: course3.id, status: 'completed', progress: 100 },
-      { userId: david.id, courseId: course1.id, status: 'enrolled', progress: 25 }
+      { userId: alice.id, courseId: firstCourse.id, status: 'completed', progress: 100 },
+      { userId: alice.id, courseId: secondCourse.id, status: 'enrolled', progress: 65 },
+      { userId: bob.id, courseId: firstCourse.id, status: 'completed', progress: 100 },
+      { userId: bob.id, courseId: thirdCourse.id, status: 'enrolled', progress: 40 },
+      { userId: carol.id, courseId: firstCourse.id, status: 'enrolled', progress: 80 },
+      { userId: carol.id, courseId: thirdCourse.id, status: 'completed', progress: 100 },
+      { userId: david.id, courseId: firstCourse.id, status: 'enrolled', progress: 25 },
+      { userId: david.id, courseId: createdCourses[3]?.id || firstCourse.id, status: 'enrolled', progress: 15 },
+      { userId: alice.id, courseId: createdCourses[4]?.id || secondCourse.id, status: 'enrolled', progress: 50 },
+      { userId: bob.id, courseId: createdCourses[5]?.id || thirdCourse.id, status: 'enrolled', progress: 30 }
     ]
   });
 
-  console.log('✓ Created 3 courses with lessons and enrollments');
+  console.log(`✓ Created ${createdCourses.length} professional courses with ${createdCourses.reduce((sum, c) => sum + (allCourses.find(ac => ac.title === c.title)?.lessons?.length || 0), 0)} total lessons`);
 
   // ============================================
   // RESEARCH ASSETS - 100 Research Articles
@@ -448,11 +433,21 @@ const seed = async () => {
       type: 'paper',
       authors: JSON.stringify(['Johnson, A.', 'Williams, B.', 'Martinez, C.']),
       journal: 'Journal of Psychopharmacology',
+      volume: '38',
+      issue: '4',
+      pages: '345-367',
       doi: '10.1177/0269881120000001',
+      pmid: '34567890',
       abstract: 'This systematic review examines the current evidence for psilocybin-induced neuroplasticity across 47 neuroimaging studies.',
       keywords: JSON.stringify(['psilocybin', 'neuroplasticity', 'fMRI', 'connectivity']),
+      topics: JSON.stringify(['psilocybin', 'neuroscience']),
+      researchType: 'review',
+      methodology: 'systematic-review',
+      openAccess: true,
+      peerReviewed: true,
       citationCount: 142,
-      downloadCount: 1567
+      downloadCount: 1567,
+      viewCount: 4521
     },
     {
       title: 'Psilocybin for Treatment-Resistant Depression: 6-Month Follow-Up',
@@ -1744,11 +1739,63 @@ const seed = async () => {
   const owners = [alice, bob, carol, david, admin];
   const createdAssets = [];
 
+  // Helper to generate additional fields for research assets
+  const enhanceArticleData = (article, index) => {
+    // Determine topics based on keywords or title
+    const title = article.title.toLowerCase();
+    let topics = [];
+    if (title.includes('psilocybin')) topics.push('psilocybin');
+    if (title.includes('mdma')) topics.push('mdma');
+    if (title.includes('lsd')) topics.push('lsd');
+    if (title.includes('ketamine') || title.includes('esketamine')) topics.push('ketamine');
+    if (title.includes('ayahuasca') || title.includes('dmt') || title.includes('harmine')) topics.push('ayahuasca');
+    if (title.includes('therapy') || title.includes('clinical') || title.includes('treatment')) topics.push('therapy');
+    if (title.includes('neuro') || title.includes('brain') || title.includes('fmri') || title.includes('eeg')) topics.push('neuroscience');
+    if (topics.length === 0) topics.push('general');
+
+    // Determine research type
+    let researchType = 'basic-science';
+    if (title.includes('review') || title.includes('meta-analysis')) researchType = 'review';
+    else if (title.includes('trial') || title.includes('rct') || title.includes('controlled')) researchType = 'clinical-trial';
+    else if (title.includes('qualitative') || title.includes('experience')) researchType = 'qualitative';
+    else if (title.includes('meta-analysis')) researchType = 'meta-analysis';
+
+    // Determine methodology
+    let methodology = null;
+    if (title.includes('randomized') || title.includes('rct') || title.includes('controlled')) methodology = 'RCT';
+    else if (title.includes('open-label') || title.includes('pilot')) methodology = 'open-label';
+    else if (title.includes('systematic review')) methodology = 'systematic-review';
+    else if (title.includes('cohort') || title.includes('longitudinal')) methodology = 'cohort';
+
+    // Generate searchIndex for relevance searching
+    const searchIndex = [
+      article.title,
+      article.description || '',
+      article.abstract || '',
+      article.journal || '',
+      ...(typeof article.keywords === 'string' ? JSON.parse(article.keywords) : (article.keywords || []))
+    ].join(' ').toLowerCase();
+
+    return {
+      ...article,
+      topics: article.topics || JSON.stringify(topics),
+      researchType: article.researchType || researchType,
+      methodology: article.methodology || methodology,
+      sampleSize: article.sampleSize || (researchType === 'clinical-trial' ? Math.floor(Math.random() * 200) + 20 : null),
+      openAccess: article.openAccess !== undefined ? article.openAccess : Math.random() > 0.4,
+      peerReviewed: article.peerReviewed !== undefined ? article.peerReviewed : true,
+      viewCount: article.viewCount || Math.floor(Math.random() * 5000) + 500,
+      commentCount: 0,
+      searchIndex
+    };
+  };
+
   for (let i = 0; i < researchArticlesData.length; i++) {
     const owner = owners[i % owners.length];
+    const enhancedData = enhanceArticleData(researchArticlesData[i], i);
     const asset = await prisma.researchAsset.create({
       data: {
-        ...researchArticlesData[i],
+        ...enhancedData,
         ownerId: owner.id
       }
     });
@@ -1796,6 +1843,275 @@ const seed = async () => {
   await prisma.paperReview.createMany({ data: reviewData });
 
   console.log(`✓ Created ${reviewData.length} paper reviews`);
+
+  // ============================================
+  // PAPER COLLECTIONS
+  // ============================================
+
+  // Create some collections for users
+  const aliceCollection1 = await prisma.paperCollection.create({
+    data: {
+      name: 'Psilocybin Depression Research',
+      description: 'My collection of key papers on psilocybin for depression treatment. Includes clinical trials and mechanism studies.',
+      isPublic: true,
+      ownerId: alice.id
+    }
+  });
+
+  const aliceCollection2 = await prisma.paperCollection.create({
+    data: {
+      name: 'Neuroimaging Studies',
+      description: 'Brain imaging studies across different psychedelics.',
+      isPublic: true,
+      ownerId: alice.id
+    }
+  });
+
+  const bobCollection1 = await prisma.paperCollection.create({
+    data: {
+      name: 'MDMA-PTSD Treatment Protocol',
+      description: 'Essential readings for MDMA-assisted therapy for PTSD. Perfect for clinicians getting started.',
+      isPublic: true,
+      ownerId: bob.id
+    }
+  });
+
+  const bobCollection2 = await prisma.paperCollection.create({
+    data: {
+      name: 'Clinical Safety Papers',
+      description: 'Safety profiles and adverse event reviews.',
+      isPublic: false,
+      ownerId: bob.id
+    }
+  });
+
+  const carolCollection1 = await prisma.paperCollection.create({
+    data: {
+      name: 'Integration & Therapy Practices',
+      description: 'Papers on integration techniques, set & setting, and therapeutic frameworks.',
+      isPublic: true,
+      ownerId: carol.id
+    }
+  });
+
+  const davidCollection1 = await prisma.paperCollection.create({
+    data: {
+      name: 'Research Methodology',
+      description: 'Clinical trial design and methodology papers.',
+      isPublic: false,
+      ownerId: david.id
+    }
+  });
+
+  console.log('✓ Created 6 paper collections');
+
+  // Add papers to collections (based on topics)
+  const psilocybinPapers = createdAssets.filter(a => a.title.toLowerCase().includes('psilocybin')).slice(0, 8);
+  const mdmaPapers = createdAssets.filter(a => a.title.toLowerCase().includes('mdma')).slice(0, 8);
+  const neuroPapers = createdAssets.filter(a =>
+    a.title.toLowerCase().includes('neuro') ||
+    a.title.toLowerCase().includes('brain') ||
+    a.title.toLowerCase().includes('fmri')
+  ).slice(0, 6);
+  const integrationPapers = createdAssets.filter(a =>
+    a.title.toLowerCase().includes('integration') ||
+    a.title.toLowerCase().includes('therapy') ||
+    a.title.toLowerCase().includes('set and setting')
+  ).slice(0, 6);
+  const safetyPapers = createdAssets.filter(a =>
+    a.title.toLowerCase().includes('safety') ||
+    a.title.toLowerCase().includes('adverse')
+  ).slice(0, 5);
+
+  // Alice's psilocybin collection
+  for (let i = 0; i < psilocybinPapers.length; i++) {
+    await prisma.paperCollectionItem.create({
+      data: {
+        collectionId: aliceCollection1.id,
+        assetId: psilocybinPapers[i].id,
+        orderIndex: i,
+        notes: i === 0 ? 'Foundational paper for understanding mechanism' : null
+      }
+    });
+  }
+
+  // Alice's neuroimaging collection
+  for (let i = 0; i < neuroPapers.length; i++) {
+    await prisma.paperCollectionItem.create({
+      data: {
+        collectionId: aliceCollection2.id,
+        assetId: neuroPapers[i].id,
+        orderIndex: i
+      }
+    });
+  }
+
+  // Bob's MDMA collection
+  for (let i = 0; i < mdmaPapers.length; i++) {
+    await prisma.paperCollectionItem.create({
+      data: {
+        collectionId: bobCollection1.id,
+        assetId: mdmaPapers[i].id,
+        orderIndex: i,
+        notes: i === 0 ? 'Start here - Phase 3 trial results' : null
+      }
+    });
+  }
+
+  // Bob's safety collection
+  for (let i = 0; i < safetyPapers.length; i++) {
+    await prisma.paperCollectionItem.create({
+      data: {
+        collectionId: bobCollection2.id,
+        assetId: safetyPapers[i].id,
+        orderIndex: i
+      }
+    });
+  }
+
+  // Carol's integration collection
+  for (let i = 0; i < integrationPapers.length; i++) {
+    await prisma.paperCollectionItem.create({
+      data: {
+        collectionId: carolCollection1.id,
+        assetId: integrationPapers[i].id,
+        orderIndex: i
+      }
+    });
+  }
+
+  console.log('✓ Added papers to collections');
+
+  // Add followers to public collections
+  await prisma.collectionFollower.createMany({
+    data: [
+      { collectionId: aliceCollection1.id, userId: bob.id },
+      { collectionId: aliceCollection1.id, userId: carol.id },
+      { collectionId: aliceCollection1.id, userId: david.id },
+      { collectionId: aliceCollection2.id, userId: bob.id },
+      { collectionId: bobCollection1.id, userId: alice.id },
+      { collectionId: bobCollection1.id, userId: carol.id },
+      { collectionId: carolCollection1.id, userId: alice.id },
+      { collectionId: carolCollection1.id, userId: bob.id },
+      { collectionId: carolCollection1.id, userId: david.id }
+    ]
+  });
+
+  console.log('✓ Added collection followers');
+
+  // ============================================
+  // PAPER DISCUSSIONS (Comments on Research)
+  // ============================================
+
+  const discussionComments = [
+    'Fascinating methodology here. The control design really addresses my earlier concerns about placebo effects.',
+    'Has anyone tried replicating these findings? The sample size is promising but I\'d love to see larger cohorts.',
+    'This aligns well with what we\'re seeing in our clinic. The 6-month follow-up data is particularly compelling.',
+    'Important paper for understanding mechanisms. The neuroimaging data is beautifully presented.',
+    'I have some concerns about the exclusion criteria - they may limit generalizability to real-world clinical settings.',
+    'Great addition to the literature. The discussion of limitations is refreshingly honest.',
+    'This will be essential reading for our training program. Thank you for sharing!',
+    'The statistical approach here is innovative. Would love to see the raw data made available.',
+    'Excellent review. One minor point - the section on integration could be expanded.',
+    'This changed how I think about dosing protocols. Very practical implications for clinicians.',
+    'Strong evidence base here. The comparison with existing treatments is particularly valuable.',
+    'I appreciate the attention to safety data. This will help with regulatory discussions.',
+  ];
+
+  const discussionReplies = [
+    'Agreed! We\'ve been using similar protocols with good results.',
+    'Good point. I think the authors addressed this somewhat in the supplementary materials.',
+    'Our team is planning a replication study - happy to collaborate if interested.',
+    'Thanks for raising this. I had the same thought about generalizability.',
+    'The authors have an upcoming paper that expands on this point.',
+    'Very helpful perspective. Would you mind elaborating on your clinical experience?',
+  ];
+
+  // Add comments to first 15 papers
+  const paperCommentData = [];
+  const commenters = [alice, bob, carol, david];
+
+  for (let i = 0; i < Math.min(15, createdAssets.length); i++) {
+    const numComments = Math.floor(Math.random() * 3) + 1; // 1-3 comments per paper
+
+    for (let j = 0; j < numComments; j++) {
+      const commenter = commenters[(i + j) % commenters.length];
+      if (commenter.id === createdAssets[i].ownerId) continue; // Skip if same as owner
+
+      paperCommentData.push({
+        assetId: createdAssets[i].id,
+        userId: commenter.id,
+        content: discussionComments[(i + j) % discussionComments.length]
+      });
+    }
+  }
+
+  // Create parent comments
+  const createdComments = [];
+  for (const commentData of paperCommentData) {
+    const comment = await prisma.paperComment.create({
+      data: commentData
+    });
+    createdComments.push(comment);
+  }
+
+  // Add some replies to first 10 comments
+  for (let i = 0; i < Math.min(10, createdComments.length); i++) {
+    const replier = commenters[(i + 1) % commenters.length];
+    const parentComment = createdComments[i];
+
+    // Don't reply to own comment
+    if (replier.id === parentComment.userId) continue;
+
+    await prisma.paperComment.create({
+      data: {
+        assetId: parentComment.assetId,
+        userId: replier.id,
+        parentId: parentComment.id,
+        content: discussionReplies[i % discussionReplies.length]
+      }
+    });
+  }
+
+  console.log(`✓ Created ${paperCommentData.length} paper discussion comments with replies`);
+
+  // Add likes to some comments
+  const commentLikeData = [];
+  for (let i = 0; i < Math.min(15, createdComments.length); i++) {
+    const numLikes = Math.floor(Math.random() * 3) + 1;
+    const usedLikers = new Set();
+
+    for (let j = 0; j < numLikes; j++) {
+      const liker = commenters[(i + j) % commenters.length];
+      if (usedLikers.has(liker.id) || liker.id === createdComments[i].userId) continue;
+      usedLikers.add(liker.id);
+
+      commentLikeData.push({
+        commentId: createdComments[i].id,
+        userId: liker.id
+      });
+    }
+  }
+
+  await prisma.paperCommentLike.createMany({ data: commentLikeData });
+
+  console.log(`✓ Created ${commentLikeData.length} comment likes`);
+
+  // Update comment counts on assets
+  const assetCommentCounts = {};
+  for (const comment of [...paperCommentData, ...createdComments.slice(0, 10)]) {
+    const assetId = comment.assetId;
+    assetCommentCounts[assetId] = (assetCommentCounts[assetId] || 0) + 1;
+  }
+
+  for (const [assetId, count] of Object.entries(assetCommentCounts)) {
+    await prisma.researchAsset.update({
+      where: { id: parseInt(assetId) },
+      data: { commentCount: count }
+    });
+  }
+
+  console.log('✓ Updated paper comment counts');
 
   // ============================================
   // ACHIEVEMENTS

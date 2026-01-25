@@ -35,6 +35,8 @@ const Messages = lazy(() => import('./pages/Messages'));
 const Conversation = lazy(() => import('./pages/Conversation'));
 const ResearchLibrary = lazy(() => import('./pages/library/ResearchLibrary'));
 const PaperDetail = lazy(() => import('./pages/library/PaperDetail'));
+const Collections = lazy(() => import('./pages/library/Collections'));
+const CollectionDetail = lazy(() => import('./pages/library/CollectionDetail'));
 const ResearchWorkspace = lazy(() => import('./pages/workspaces/ResearchWorkspace'));
 const SymposiumRoom = lazy(() => import('./pages/workspaces/SymposiumRoom'));
 const Courses = lazy(() => import('./pages/courses/Courses'));
@@ -51,6 +53,7 @@ const CreateCircle = lazy(() => import('./pages/CreateCircle'));
 const PrepAcademy = lazy(() => import('./pages/prep-academy/PrepAcademy'));
 const CareerNavigator = lazy(() => import('./pages/career/CareerNavigator'));
 const MentorNetwork = lazy(() => import('./pages/MentorNetwork'));
+const CETranscript = lazy(() => import('./pages/CETranscript'));
 
 // 2026 Killer Features
 const VoiceRooms = lazy(() => import('./pages/VoiceRooms'));
@@ -198,6 +201,18 @@ function App() {
 
                 <Route path="/library" element={<ResearchLibrary />} />
 
+                <Route path="/library/collections" element={
+                  <ProtectedRoute>
+                    <Collections />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/library/collections/:collectionId" element={
+                  <ProtectedRoute>
+                    <CollectionDetail />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/library/:paperId" element={<PaperDetail />} />
 
                 <Route
@@ -257,6 +272,12 @@ function App() {
                 <Route path="/network" element={
                   <ProtectedRoute>
                     <MentorNetwork />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/transcript" element={
+                  <ProtectedRoute>
+                    <CETranscript />
                   </ProtectedRoute>
                 } />
 

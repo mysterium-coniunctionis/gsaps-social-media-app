@@ -1328,6 +1328,583 @@ app.post('/courses/:id/progress', authMiddleware, async (req, res, next) => {
 });
 
 // ============================================
+// LESSON PROGRESS ROUTES
+// ============================================
+
+// Get lesson with progress data
+app.get('/courses/:courseId/lessons/:lessonId', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.courseId);
+    const lessonId = parseInt(req.params.lessonId);
+
+    const lesson = await prisma.lesson.findFirst({
+      where: { id: lessonId, courseId }
+    });
+
+    if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
+
+    // Get enrollment and lesson progress
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } },
+      include: {
+        lessonProgress: { where: { lessonId } }
+      }
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({ message: 'Not enrolled in this course' });
+    }
+
+    const progress = enrollment.lessonProgress[0] || null;
+
+    res.json({
+      id: lesson.id,
+      courseId: lesson.courseId,
+      title: lesson.title,
+      description: lesson.description,
+      content: lesson.content,
+      contentUrl: lesson.contentUrl,
+      contentType: lesson.contentType,
+      duration: lesson.duration,
+      orderIndex: lesson.orderIndex,
+      quizData: lesson.quizData ? JSON.parse(lesson.quizData) : null,
+      completed: progress?.completed || false,
+      completedAt: progress?.completedAt || null,
+      watchTime: progress?.watchTime || 0
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Mark lesson as complete
+app.post('/courses/:courseId/lessons/:lessonId/complete', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.courseId);
+    const lessonId = parseInt(req.params.lessonId);
+    const { watchTime } = req.body;
+
+    // Verify enrollment
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } }
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({ message: 'Not enrolled in this course' });
+    }
+
+    // Create or update lesson progress
+    const lessonProgress = await prisma.lessonProgress.upsert({
+      where: { enrollmentId_lessonId: { enrollmentId: enrollment.id, lessonId } },
+      create: {
+        enrollmentId: enrollment.id,
+        lessonId,
+        completed: true,
+        completedAt: new Date(),
+        watchTime: watchTime || 0
+      },
+      update: {
+        completed: true,
+        completedAt: new Date(),
+        watchTime: watchTime || 0
+      }
+    });
+
+    // Recalculate course progress
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: { lessons: true }
+    });
+
+    const completedLessons = await prisma.lessonProgress.count({
+      where: { enrollmentId: enrollment.id, completed: true }
+    });
+
+    const totalLessons = course.lessons.length;
+    const newProgress = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+    await prisma.enrollment.update({
+      where: { id: enrollment.id },
+      data: { progress: newProgress }
+    });
+
+    // Award XP for completing a lesson
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { xp: { increment: 10 } }
+    });
+
+    res.json({
+      lessonProgress,
+      courseProgress: newProgress,
+      completedLessons,
+      totalLessons
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update lesson watch time (for video progress tracking)
+app.post('/courses/:courseId/lessons/:lessonId/watchtime', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.courseId);
+    const lessonId = parseInt(req.params.lessonId);
+    const { watchTime } = req.body;
+
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } }
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({ message: 'Not enrolled in this course' });
+    }
+
+    const lessonProgress = await prisma.lessonProgress.upsert({
+      where: { enrollmentId_lessonId: { enrollmentId: enrollment.id, lessonId } },
+      create: {
+        enrollmentId: enrollment.id,
+        lessonId,
+        watchTime: watchTime || 0
+      },
+      update: {
+        watchTime: watchTime || 0
+      }
+    });
+
+    res.json(lessonProgress);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ============================================
+// QUIZ ROUTES
+// ============================================
+
+// Get quiz status for a lesson
+app.get('/courses/:courseId/lessons/:lessonId/quiz/status', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.courseId);
+    const lessonId = parseInt(req.params.lessonId);
+
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } }
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({ message: 'Not enrolled in this course' });
+    }
+
+    const quizResults = await prisma.quizResult.findMany({
+      where: { enrollmentId: enrollment.id, lessonId },
+      orderBy: { completedAt: 'desc' }
+    });
+
+    const bestResult = quizResults.reduce((best, current) => {
+      return (current.score > (best?.score || 0)) ? current : best;
+    }, null);
+
+    res.json({
+      attempts: quizResults.length,
+      bestScore: bestResult?.score || 0,
+      passed: bestResult?.passed || false,
+      lastAttempt: quizResults[0] || null,
+      results: quizResults
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Submit quiz results
+app.post('/courses/:courseId/lessons/:lessonId/quiz/submit', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.courseId);
+    const lessonId = parseInt(req.params.lessonId);
+    const { score, answers } = req.body;
+
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } }
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({ message: 'Not enrolled in this course' });
+    }
+
+    // Get attempt number
+    const previousAttempts = await prisma.quizResult.count({
+      where: { enrollmentId: enrollment.id, lessonId }
+    });
+
+    const passed = score >= 70;
+
+    const quizResult = await prisma.quizResult.create({
+      data: {
+        enrollmentId: enrollment.id,
+        lessonId,
+        score,
+        passed,
+        answers: JSON.stringify(answers || {}),
+        attemptNumber: previousAttempts + 1
+      }
+    });
+
+    // If passed, mark lesson as complete
+    if (passed) {
+      await prisma.lessonProgress.upsert({
+        where: { enrollmentId_lessonId: { enrollmentId: enrollment.id, lessonId } },
+        create: {
+          enrollmentId: enrollment.id,
+          lessonId,
+          completed: true,
+          completedAt: new Date()
+        },
+        update: {
+          completed: true,
+          completedAt: new Date()
+        }
+      });
+
+      // Recalculate course progress
+      const course = await prisma.course.findUnique({
+        where: { id: courseId },
+        include: { lessons: true }
+      });
+
+      const completedLessons = await prisma.lessonProgress.count({
+        where: { enrollmentId: enrollment.id, completed: true }
+      });
+
+      const newProgress = course.lessons.length > 0
+        ? Math.round((completedLessons / course.lessons.length) * 100)
+        : 0;
+
+      await prisma.enrollment.update({
+        where: { id: enrollment.id },
+        data: { progress: newProgress }
+      });
+
+      // Award XP for passing quiz
+      await prisma.user.update({
+        where: { id: req.user.id },
+        data: { xp: { increment: 25 } }
+      });
+    }
+
+    res.status(201).json({
+      ...quizResult,
+      answers: JSON.parse(quizResult.answers)
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ============================================
+// COURSE COMPLETION & CREDENTIALS ROUTES
+// ============================================
+
+// Helper function to generate certificate ID
+const generateCertificateId = () => {
+  const year = new Date().getFullYear();
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let code = '';
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return `GSAPS-${year}-${code}`;
+};
+
+// Complete course and generate credential
+app.post('/courses/:id/complete', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.id);
+
+    // Get course with lessons
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: { lessons: true }
+    });
+
+    if (!course) return res.status(404).json({ message: 'Course not found' });
+
+    // Get enrollment with progress
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } },
+      include: {
+        lessonProgress: true,
+        quizResults: true
+      }
+    });
+
+    if (!enrollment) {
+      return res.status(403).json({ message: 'Not enrolled in this course' });
+    }
+
+    // Verify all lessons completed
+    const completedLessonIds = enrollment.lessonProgress
+      .filter(lp => lp.completed)
+      .map(lp => lp.lessonId);
+
+    const allLessonsCompleted = course.lessons.every(lesson =>
+      completedLessonIds.includes(lesson.id)
+    );
+
+    if (!allLessonsCompleted) {
+      return res.status(400).json({
+        message: 'Not all lessons completed',
+        completedLessons: completedLessonIds.length,
+        totalLessons: course.lessons.length
+      });
+    }
+
+    // Verify quiz lessons passed
+    const quizLessons = course.lessons.filter(l => l.contentType === 'quiz');
+    for (const quizLesson of quizLessons) {
+      const quizPassed = enrollment.quizResults.some(
+        qr => qr.lessonId === quizLesson.id && qr.passed
+      );
+      if (!quizPassed) {
+        return res.status(400).json({
+          message: `Quiz not passed: ${quizLesson.title}`,
+          lessonId: quizLesson.id
+        });
+      }
+    }
+
+    // Get best quiz score for the course
+    const bestQuizScore = enrollment.quizResults.reduce((best, current) => {
+      return Math.max(best, current.score);
+    }, 0);
+
+    // Check if credential already exists
+    let credential = await prisma.credential.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } }
+    });
+
+    if (!credential) {
+      // Generate certificate
+      const certificateId = generateCertificateId();
+      const verificationUrl = `/verify/${certificateId}`;
+
+      credential = await prisma.credential.create({
+        data: {
+          userId: req.user.id,
+          courseId,
+          certificateId,
+          score: bestQuizScore,
+          ceCredits: course.ceCredits,
+          ceType: course.ceType,
+          verificationUrl
+        }
+      });
+
+      // Update enrollment status
+      await prisma.enrollment.update({
+        where: { id: enrollment.id },
+        data: {
+          status: 'completed',
+          progress: 100,
+          completedAt: new Date()
+        }
+      });
+
+      // Award XP for course completion
+      await prisma.user.update({
+        where: { id: req.user.id },
+        data: { xp: { increment: 100 } }
+      });
+
+      // Create achievement
+      await prisma.achievement.create({
+        data: {
+          userId: req.user.id,
+          type: 'course_completed',
+          name: `Completed: ${course.title}`,
+          description: `Earned certificate for ${course.title}`,
+          points: 100
+        }
+      });
+    }
+
+    // Get user details for response
+    const user = await prisma.user.findUnique({ where: { id: req.user.id } });
+
+    res.json({
+      credential: {
+        id: credential.id,
+        certificateId: credential.certificateId,
+        score: credential.score,
+        ceCredits: credential.ceCredits,
+        ceType: credential.ceType,
+        issuedAt: credential.issuedAt,
+        verificationUrl: credential.verificationUrl
+      },
+      course: {
+        id: course.id,
+        title: course.title,
+        instructorName: course.instructorName
+      },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email
+      }
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Public credential verification
+app.get('/verify/:certificateId', async (req, res, next) => {
+  try {
+    const { certificateId } = req.params;
+
+    const credential = await prisma.credential.findUnique({
+      where: { certificateId },
+      include: {
+        user: true,
+        course: true
+      }
+    });
+
+    if (!credential) {
+      return res.status(404).json({ message: 'Certificate not found' });
+    }
+
+    res.json({
+      verified: true,
+      certificateId: credential.certificateId,
+      issuedAt: credential.issuedAt,
+      recipient: {
+        name: credential.user.name
+      },
+      course: {
+        title: credential.course.title,
+        instructorName: credential.course.instructorName
+      },
+      ceCredits: credential.ceCredits,
+      ceType: credential.ceType,
+      score: credential.score
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get user's credentials (CE transcript)
+app.get('/users/:id/credentials', optionalAuthMiddleware, async (req, res, next) => {
+  try {
+    const userId = parseInt(req.params.id);
+
+    // Only allow users to see their own credentials or if they're an admin
+    if (!req.user || (req.user.id !== userId && req.user.role !== 'administrator')) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const credentials = await prisma.credential.findMany({
+      where: { userId },
+      include: { course: true },
+      orderBy: { issuedAt: 'desc' }
+    });
+
+    // Calculate CE credit totals by type
+    const ceTotals = credentials.reduce((acc, cred) => {
+      if (cred.ceCredits && cred.ceType) {
+        acc[cred.ceType] = (acc[cred.ceType] || 0) + cred.ceCredits;
+        acc.total = (acc.total || 0) + cred.ceCredits;
+      }
+      return acc;
+    }, { total: 0 });
+
+    res.json({
+      credentials: credentials.map(c => ({
+        id: c.id,
+        certificateId: c.certificateId,
+        course: {
+          id: c.course.id,
+          title: c.course.title,
+          instructorName: c.course.instructorName
+        },
+        score: c.score,
+        ceCredits: c.ceCredits,
+        ceType: c.ceType,
+        issuedAt: c.issuedAt,
+        verificationUrl: c.verificationUrl
+      })),
+      ceTotals
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get enrollment details with all progress data
+app.get('/courses/:id/enrollment', authMiddleware, async (req, res, next) => {
+  try {
+    const courseId = parseInt(req.params.id);
+
+    const enrollment = await prisma.enrollment.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } },
+      include: {
+        course: {
+          include: { lessons: { orderBy: { orderIndex: 'asc' } } }
+        },
+        lessonProgress: true,
+        quizResults: true
+      }
+    });
+
+    if (!enrollment) {
+      return res.status(404).json({ message: 'Not enrolled' });
+    }
+
+    // Check if credential exists
+    const credential = await prisma.credential.findUnique({
+      where: { userId_courseId: { userId: req.user.id, courseId } }
+    });
+
+    res.json({
+      id: enrollment.id,
+      courseId: enrollment.courseId,
+      status: enrollment.status,
+      progress: enrollment.progress,
+      startedAt: enrollment.startedAt,
+      completedAt: enrollment.completedAt,
+      credential: credential ? {
+        certificateId: credential.certificateId,
+        issuedAt: credential.issuedAt,
+        verificationUrl: credential.verificationUrl
+      } : null,
+      lessons: enrollment.course.lessons.map(lesson => {
+        const progress = enrollment.lessonProgress.find(lp => lp.lessonId === lesson.id);
+        const quizResult = enrollment.quizResults
+          .filter(qr => qr.lessonId === lesson.id)
+          .sort((a, b) => b.score - a.score)[0];
+
+        return {
+          id: lesson.id,
+          title: lesson.title,
+          contentType: lesson.contentType,
+          duration: lesson.duration,
+          orderIndex: lesson.orderIndex,
+          completed: progress?.completed || false,
+          completedAt: progress?.completedAt || null,
+          watchTime: progress?.watchTime || 0,
+          quizPassed: quizResult?.passed || false,
+          quizScore: quizResult?.score || null,
+          quizAttempts: enrollment.quizResults.filter(qr => qr.lessonId === lesson.id).length
+        };
+      })
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ============================================
 // RESEARCH ASSETS ROUTES
 // ============================================
 
@@ -1394,8 +1971,15 @@ app.get('/assets', optionalAuthMiddleware, async (req, res, next) => {
 });
 
 app.get('/assets/:id', optionalAuthMiddleware, async (req, res, next) => {
+  // Skip if 'id' is 'search' - let the search route handle it
+  if (req.params.id === 'search') {
+    return next('route');
+  }
   try {
     const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid asset ID' });
+    }
     const asset = await prisma.researchAsset.findUnique({
       where: { id },
       include: {
@@ -1513,18 +2097,54 @@ app.post('/assets', authMiddleware, async (req, res, next) => {
   }
 });
 
+// GET reviews for a paper
+app.get('/assets/:id/reviews', async (req, res, next) => {
+  try {
+    const assetId = parseInt(req.params.id);
+
+    const reviews = await prisma.paperReview.findMany({
+      where: { assetId },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            username: true,
+            avatarUrl: true,
+            credentials: true
+          }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(reviews.map(r => ({
+      id: r.id,
+      userId: r.userId,
+      rating: r.rating,
+      text: r.review,
+      createdAt: r.createdAt,
+      user: r.user
+    })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST (create/update) a review for a paper
 app.post('/assets/:id/reviews', authMiddleware, async (req, res, next) => {
   try {
     const assetId = parseInt(req.params.id);
-    const { rating, review } = req.body;
+    const { rating, review, text } = req.body;
+    const reviewText = text || review; // Accept both field names
     if (!rating || rating < 1 || rating > 5) {
       return res.status(400).json({ message: 'Rating (1-5) required' });
     }
 
     const paperReview = await prisma.paperReview.upsert({
       where: { assetId_userId: { assetId, userId: req.user.id } },
-      create: { assetId, userId: req.user.id, rating, review },
-      update: { rating, review },
+      create: { assetId, userId: req.user.id, rating, review: reviewText },
+      update: { rating, review: reviewText },
       include: { user: true }
     });
 
@@ -1540,6 +2160,900 @@ app.post('/assets/:id/reviews', authMiddleware, async (req, res, next) => {
       },
       createdAt: paperReview.createdAt
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ============================================
+// ADVANCED SEARCH ROUTES
+// ============================================
+
+// Calculate relevance score for search results
+const calculateRelevanceScore = (asset, query, queryWords) => {
+  const lowerQuery = query.toLowerCase();
+  const title = asset.title.toLowerCase();
+  const abstract = (asset.abstract || '').toLowerCase();
+  const keywords = parseJsonField(asset.keywords);
+  const topics = parseJsonField(asset.topics);
+
+  let score = 0;
+
+  // Exact title match - highest weight
+  if (title === lowerQuery) score += 100;
+  // Title contains query
+  else if (title.includes(lowerQuery)) score += 50;
+
+  // Word matches in title
+  queryWords.forEach(word => {
+    if (title.includes(word)) score += 20;
+  });
+
+  // Abstract matches
+  queryWords.forEach(word => {
+    if (abstract.includes(word)) score += 5;
+  });
+
+  // Keyword exact matches
+  keywords.forEach(kw => {
+    if (kw.toLowerCase() === lowerQuery) score += 30;
+    else if (queryWords.some(w => kw.toLowerCase().includes(w))) score += 15;
+  });
+
+  // Topic matches
+  topics.forEach(topic => {
+    if (topic.toLowerCase() === lowerQuery) score += 25;
+    else if (queryWords.some(w => topic.toLowerCase().includes(w))) score += 10;
+  });
+
+  // Citation boost (normalized)
+  score += Math.min(asset.citationCount * 0.1, 20);
+
+  // Recency boost (papers < 2 years old)
+  const publishedDate = asset.publishedDate ? new Date(asset.publishedDate) : new Date(asset.createdAt);
+  const yearsOld = (Date.now() - publishedDate.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
+  if (yearsOld < 2) score += 10;
+
+  return Math.round(score);
+};
+
+app.get('/assets/search', optionalAuthMiddleware, async (req, res, next) => {
+  try {
+    const {
+      q,
+      topics,
+      researchType,
+      methodology,
+      journal,
+      yearFrom,
+      yearTo,
+      openAccess,
+      sortBy = 'relevance',
+      limit = 20,
+      offset = 0
+    } = req.query;
+
+    const where = {};
+
+    // Topic filter
+    if (topics) {
+      const topicList = topics.split(',').map(t => t.trim());
+      where.OR = topicList.map(topic => ({
+        topics: { contains: topic }
+      }));
+    }
+
+    // Research type filter
+    if (researchType) {
+      const types = researchType.split(',').map(t => t.trim());
+      where.researchType = { in: types };
+    }
+
+    // Methodology filter
+    if (methodology) {
+      const methods = methodology.split(',').map(m => m.trim());
+      where.methodology = { in: methods };
+    }
+
+    // Journal filter
+    if (journal) {
+      where.journal = { contains: journal };
+    }
+
+    // Year range filter
+    if (yearFrom || yearTo) {
+      where.publishedDate = {};
+      if (yearFrom) where.publishedDate.gte = new Date(`${yearFrom}-01-01`);
+      if (yearTo) where.publishedDate.lte = new Date(`${yearTo}-12-31`);
+    }
+
+    // Open access filter
+    if (openAccess === 'true') {
+      where.openAccess = true;
+    }
+
+    // Text search
+    if (q) {
+      where.AND = where.AND || [];
+      where.AND.push({
+        OR: [
+          { title: { contains: q } },
+          { abstract: { contains: q } },
+          { keywords: { contains: q } },
+          { searchIndex: { contains: q } }
+        ]
+      });
+    }
+
+    let assets = await prisma.researchAsset.findMany({
+      where,
+      include: {
+        owner: true,
+        reviews: true,
+        _count: { select: { reviews: true, comments: true } }
+      },
+      take: parseInt(limit) * 5, // Get more for relevance sorting
+      skip: 0
+    });
+
+    // Calculate relevance scores if searching
+    if (q) {
+      const queryWords = q.toLowerCase().split(/\s+/).filter(w => w.length > 2);
+      assets = assets.map(asset => ({
+        ...asset,
+        relevanceScore: calculateRelevanceScore(asset, q, queryWords)
+      }));
+    }
+
+    // Sort results
+    switch (sortBy) {
+      case 'relevance':
+        assets.sort((a, b) => (b.relevanceScore || 0) - (a.relevanceScore || 0));
+        break;
+      case 'citations':
+        assets.sort((a, b) => b.citationCount - a.citationCount);
+        break;
+      case 'recent':
+        assets.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        break;
+      case 'downloads':
+        assets.sort((a, b) => b.downloadCount - a.downloadCount);
+        break;
+    }
+
+    // Apply pagination
+    const paginatedAssets = assets.slice(parseInt(offset), parseInt(offset) + parseInt(limit));
+
+    res.json({
+      results: paginatedAssets.map(a => {
+        const avgRating = a.reviews.length > 0
+          ? a.reviews.reduce((sum, r) => sum + r.rating, 0) / a.reviews.length
+          : 0;
+
+        return {
+          id: a.id,
+          title: a.title,
+          description: a.description,
+          url: a.url,
+          type: a.type,
+          authors: parseJsonField(a.authors),
+          publishedDate: a.publishedDate,
+          journal: a.journal,
+          volume: a.volume,
+          issue: a.issue,
+          pages: a.pages,
+          doi: a.doi,
+          pmid: a.pmid,
+          abstract: a.abstract,
+          keywords: parseJsonField(a.keywords),
+          topics: parseJsonField(a.topics),
+          researchType: a.researchType,
+          methodology: a.methodology,
+          sampleSize: a.sampleSize,
+          openAccess: a.openAccess,
+          peerReviewed: a.peerReviewed,
+          citationCount: a.citationCount,
+          downloadCount: a.downloadCount,
+          viewCount: a.viewCount,
+          reviewCount: a._count.reviews,
+          commentCount: a._count.comments,
+          averageRating: Math.round(avgRating * 10) / 10,
+          relevanceScore: a.relevanceScore || null,
+          owner: {
+            id: a.owner.id,
+            name: a.owner.name,
+            username: a.owner.username,
+            avatar: a.owner.avatarUrl
+          },
+          createdAt: a.createdAt
+        };
+      }),
+      total: assets.length,
+      limit: parseInt(limit),
+      offset: parseInt(offset)
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ============================================
+// PAPER COLLECTIONS ROUTES
+// ============================================
+
+// Get user's collections
+app.get('/collections', authMiddleware, async (req, res, next) => {
+  try {
+    const { includePublic } = req.query;
+
+    let where = { ownerId: req.user.id };
+
+    if (includePublic === 'true') {
+      where = {
+        OR: [
+          { ownerId: req.user.id },
+          { isPublic: true }
+        ]
+      };
+    }
+
+    const collections = await prisma.paperCollection.findMany({
+      where,
+      include: {
+        owner: true,
+        _count: { select: { items: true, followers: true } },
+        followers: req.user ? {
+          where: { userId: req.user.id },
+          take: 1
+        } : false
+      },
+      orderBy: { updatedAt: 'desc' }
+    });
+
+    res.json(collections.map(c => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      isPublic: c.isPublic,
+      coverUrl: c.coverUrl,
+      paperCount: c._count.items,
+      followerCount: c._count.followers,
+      isFollowing: c.followers ? c.followers.length > 0 : false,
+      isOwner: c.ownerId === req.user.id,
+      owner: {
+        id: c.owner.id,
+        name: c.owner.name,
+        username: c.owner.username,
+        avatar: c.owner.avatarUrl
+      },
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt
+    })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Browse public collections
+app.get('/collections/public', optionalAuthMiddleware, async (req, res, next) => {
+  try {
+    const { limit = 20, offset = 0, search } = req.query;
+
+    const where = {
+      isPublic: true,
+      ...(search && {
+        OR: [
+          { name: { contains: search } },
+          { description: { contains: search } }
+        ]
+      })
+    };
+
+    const collections = await prisma.paperCollection.findMany({
+      where,
+      include: {
+        owner: true,
+        _count: { select: { items: true, followers: true } },
+        followers: req.user ? {
+          where: { userId: req.user.id },
+          take: 1
+        } : false
+      },
+      orderBy: { updatedAt: 'desc' },
+      take: parseInt(limit),
+      skip: parseInt(offset)
+    });
+
+    res.json(collections.map(c => ({
+      id: c.id,
+      name: c.name,
+      description: c.description,
+      isPublic: c.isPublic,
+      coverUrl: c.coverUrl,
+      paperCount: c._count.items,
+      followerCount: c._count.followers,
+      isFollowing: req.user && c.followers ? c.followers.length > 0 : false,
+      isOwner: req.user ? c.ownerId === req.user.id : false,
+      owner: {
+        id: c.owner.id,
+        name: c.owner.name,
+        username: c.owner.username,
+        avatar: c.owner.avatarUrl
+      },
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt
+    })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get single collection with papers
+app.get('/collections/:id', optionalAuthMiddleware, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    const collection = await prisma.paperCollection.findUnique({
+      where: { id },
+      include: {
+        owner: true,
+        items: {
+          include: {
+            asset: {
+              include: {
+                owner: true,
+                reviews: true,
+                _count: { select: { reviews: true, comments: true } }
+              }
+            }
+          },
+          orderBy: { orderIndex: 'asc' }
+        },
+        followers: {
+          include: { user: true },
+          take: 20
+        },
+        _count: { select: { items: true, followers: true } }
+      }
+    });
+
+    if (!collection) {
+      return res.status(404).json({ message: 'Collection not found' });
+    }
+
+    // Check access for private collections
+    if (!collection.isPublic && (!req.user || collection.ownerId !== req.user.id)) {
+      return res.status(403).json({ message: 'This collection is private' });
+    }
+
+    const isFollowing = req.user
+      ? collection.followers.some(f => f.userId === req.user.id)
+      : false;
+
+    res.json({
+      id: collection.id,
+      name: collection.name,
+      description: collection.description,
+      isPublic: collection.isPublic,
+      coverUrl: collection.coverUrl,
+      paperCount: collection._count.items,
+      followerCount: collection._count.followers,
+      isFollowing,
+      isOwner: req.user ? collection.ownerId === req.user.id : false,
+      owner: {
+        id: collection.owner.id,
+        name: collection.owner.name,
+        username: collection.owner.username,
+        avatar: collection.owner.avatarUrl
+      },
+      papers: collection.items.map(item => {
+        const a = item.asset;
+        const avgRating = a.reviews.length > 0
+          ? a.reviews.reduce((sum, r) => sum + r.rating, 0) / a.reviews.length
+          : 0;
+
+        return {
+          id: a.id,
+          title: a.title,
+          authors: parseJsonField(a.authors),
+          journal: a.journal,
+          publishedDate: a.publishedDate,
+          doi: a.doi,
+          abstract: a.abstract,
+          topics: parseJsonField(a.topics),
+          citationCount: a.citationCount,
+          averageRating: Math.round(avgRating * 10) / 10,
+          notes: item.notes,
+          addedAt: item.addedAt
+        };
+      }),
+      followers: collection.followers.map(f => ({
+        id: f.user.id,
+        name: f.user.name,
+        username: f.user.username,
+        avatar: f.user.avatarUrl
+      })),
+      createdAt: collection.createdAt,
+      updatedAt: collection.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Create collection
+app.post('/collections', authMiddleware, async (req, res, next) => {
+  try {
+    const { name, description, isPublic = false, coverUrl } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: 'Name is required' });
+    }
+
+    const collection = await prisma.paperCollection.create({
+      data: {
+        name,
+        description,
+        isPublic,
+        coverUrl,
+        ownerId: req.user.id
+      },
+      include: { owner: true }
+    });
+
+    // Award XP for creating collection
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { xp: { increment: 15 } }
+    });
+
+    res.status(201).json({
+      id: collection.id,
+      name: collection.name,
+      description: collection.description,
+      isPublic: collection.isPublic,
+      coverUrl: collection.coverUrl,
+      paperCount: 0,
+      followerCount: 0,
+      isFollowing: false,
+      isOwner: true,
+      owner: {
+        id: collection.owner.id,
+        name: collection.owner.name,
+        username: collection.owner.username,
+        avatar: collection.owner.avatarUrl
+      },
+      createdAt: collection.createdAt,
+      updatedAt: collection.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update collection
+app.patch('/collections/:id', authMiddleware, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { name, description, isPublic, coverUrl } = req.body;
+
+    const collection = await prisma.paperCollection.findUnique({ where: { id } });
+
+    if (!collection) {
+      return res.status(404).json({ message: 'Collection not found' });
+    }
+
+    if (collection.ownerId !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const updated = await prisma.paperCollection.update({
+      where: { id },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(description !== undefined && { description }),
+        ...(isPublic !== undefined && { isPublic }),
+        ...(coverUrl !== undefined && { coverUrl })
+      },
+      include: { owner: true, _count: { select: { items: true, followers: true } } }
+    });
+
+    res.json({
+      id: updated.id,
+      name: updated.name,
+      description: updated.description,
+      isPublic: updated.isPublic,
+      coverUrl: updated.coverUrl,
+      paperCount: updated._count.items,
+      followerCount: updated._count.followers,
+      isOwner: true,
+      owner: {
+        id: updated.owner.id,
+        name: updated.owner.name,
+        username: updated.owner.username,
+        avatar: updated.owner.avatarUrl
+      },
+      createdAt: updated.createdAt,
+      updatedAt: updated.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Delete collection
+app.delete('/collections/:id', authMiddleware, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    const collection = await prisma.paperCollection.findUnique({ where: { id } });
+
+    if (!collection) {
+      return res.status(404).json({ message: 'Collection not found' });
+    }
+
+    if (collection.ownerId !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    await prisma.paperCollection.delete({ where: { id } });
+
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Add paper to collection
+app.post('/collections/:id/papers', authMiddleware, async (req, res, next) => {
+  try {
+    const collectionId = parseInt(req.params.id);
+    const { assetId, notes } = req.body;
+
+    if (!assetId) {
+      return res.status(400).json({ message: 'assetId is required' });
+    }
+
+    const collection = await prisma.paperCollection.findUnique({ where: { id: collectionId } });
+
+    if (!collection) {
+      return res.status(404).json({ message: 'Collection not found' });
+    }
+
+    if (collection.ownerId !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    // Get current max order index
+    const maxOrder = await prisma.paperCollectionItem.aggregate({
+      where: { collectionId },
+      _max: { orderIndex: true }
+    });
+
+    const item = await prisma.paperCollectionItem.create({
+      data: {
+        collectionId,
+        assetId: parseInt(assetId),
+        notes,
+        orderIndex: (maxOrder._max.orderIndex || 0) + 1
+      },
+      include: { asset: true }
+    });
+
+    res.status(201).json({
+      id: item.id,
+      assetId: item.assetId,
+      paper: {
+        id: item.asset.id,
+        title: item.asset.title,
+        authors: parseJsonField(item.asset.authors),
+        journal: item.asset.journal
+      },
+      notes: item.notes,
+      orderIndex: item.orderIndex,
+      addedAt: item.addedAt
+    });
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return res.status(409).json({ message: 'Paper already in collection' });
+    }
+    next(error);
+  }
+});
+
+// Update paper notes in collection
+app.patch('/collections/:id/papers/:assetId', authMiddleware, async (req, res, next) => {
+  try {
+    const collectionId = parseInt(req.params.id);
+    const assetId = parseInt(req.params.assetId);
+    const { notes } = req.body;
+
+    const collection = await prisma.paperCollection.findUnique({ where: { id: collectionId } });
+
+    if (!collection || collection.ownerId !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const item = await prisma.paperCollectionItem.update({
+      where: { collectionId_assetId: { collectionId, assetId } },
+      data: { notes }
+    });
+
+    res.json({
+      id: item.id,
+      assetId: item.assetId,
+      notes: item.notes,
+      orderIndex: item.orderIndex,
+      addedAt: item.addedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Remove paper from collection
+app.delete('/collections/:id/papers/:assetId', authMiddleware, async (req, res, next) => {
+  try {
+    const collectionId = parseInt(req.params.id);
+    const assetId = parseInt(req.params.assetId);
+
+    const collection = await prisma.paperCollection.findUnique({ where: { id: collectionId } });
+
+    if (!collection || collection.ownerId !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    await prisma.paperCollectionItem.delete({
+      where: { collectionId_assetId: { collectionId, assetId } }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Follow collection
+app.post('/collections/:id/follow', authMiddleware, async (req, res, next) => {
+  try {
+    const collectionId = parseInt(req.params.id);
+
+    const collection = await prisma.paperCollection.findUnique({ where: { id: collectionId } });
+
+    if (!collection) {
+      return res.status(404).json({ message: 'Collection not found' });
+    }
+
+    if (!collection.isPublic && collection.ownerId !== req.user.id) {
+      return res.status(403).json({ message: 'Cannot follow private collection' });
+    }
+
+    await prisma.collectionFollower.create({
+      data: { collectionId, userId: req.user.id }
+    });
+
+    res.json({ success: true, isFollowing: true });
+  } catch (error) {
+    if (error.code === 'P2002') {
+      return res.json({ success: true, isFollowing: true }); // Already following
+    }
+    next(error);
+  }
+});
+
+// Unfollow collection
+app.delete('/collections/:id/follow', authMiddleware, async (req, res, next) => {
+  try {
+    const collectionId = parseInt(req.params.id);
+
+    await prisma.collectionFollower.delete({
+      where: { collectionId_userId: { collectionId, userId: req.user.id } }
+    }).catch(() => {});
+
+    res.json({ success: true, isFollowing: false });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// ============================================
+// PAPER DISCUSSION (COMMENTS) ROUTES
+// ============================================
+
+// Get comments for an asset
+app.get('/assets/:id/comments', optionalAuthMiddleware, async (req, res, next) => {
+  try {
+    const assetId = parseInt(req.params.id);
+
+    const comments = await prisma.paperComment.findMany({
+      where: { assetId, parentId: null },
+      include: {
+        user: true,
+        likes: true,
+        replies: {
+          include: {
+            user: true,
+            likes: true
+          },
+          orderBy: { createdAt: 'asc' }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+
+    res.json(comments.map(c => ({
+      id: c.id,
+      content: c.content,
+      user: {
+        id: c.user.id,
+        name: c.user.name,
+        username: c.user.username,
+        avatar: c.user.avatarUrl,
+        credentials: c.user.credentials,
+        verified: c.user.verified
+      },
+      likeCount: c.likes.length,
+      isLiked: req.user ? c.likes.some(l => l.userId === req.user.id) : false,
+      replies: c.replies.map(r => ({
+        id: r.id,
+        content: r.content,
+        user: {
+          id: r.user.id,
+          name: r.user.name,
+          username: r.user.username,
+          avatar: r.user.avatarUrl,
+          credentials: r.user.credentials,
+          verified: r.user.verified
+        },
+        likeCount: r.likes.length,
+        isLiked: req.user ? r.likes.some(l => l.userId === req.user.id) : false,
+        createdAt: r.createdAt
+      })),
+      createdAt: c.createdAt
+    })));
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Post comment on asset
+app.post('/assets/:id/comments', authMiddleware, async (req, res, next) => {
+  try {
+    const assetId = parseInt(req.params.id);
+    const { content, parentId } = req.body;
+
+    if (!content) {
+      return res.status(400).json({ message: 'Content is required' });
+    }
+
+    const comment = await prisma.paperComment.create({
+      data: {
+        assetId,
+        userId: req.user.id,
+        content,
+        parentId: parentId ? parseInt(parentId) : null
+      },
+      include: { user: true }
+    });
+
+    // Update comment count on asset
+    await prisma.researchAsset.update({
+      where: { id: assetId },
+      data: { commentCount: { increment: 1 } }
+    });
+
+    // Award XP for commenting
+    await prisma.user.update({
+      where: { id: req.user.id },
+      data: { xp: { increment: parentId ? 5 : 10 } }
+    });
+
+    res.status(201).json({
+      id: comment.id,
+      content: comment.content,
+      user: {
+        id: comment.user.id,
+        name: comment.user.name,
+        username: comment.user.username,
+        avatar: comment.user.avatarUrl,
+        credentials: comment.user.credentials,
+        verified: comment.user.verified
+      },
+      likeCount: 0,
+      isLiked: false,
+      replies: [],
+      createdAt: comment.createdAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Update comment
+app.patch('/assets/comments/:id', authMiddleware, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+    const { content } = req.body;
+
+    const comment = await prisma.paperComment.findUnique({ where: { id } });
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    if (comment.userId !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const updated = await prisma.paperComment.update({
+      where: { id },
+      data: { content },
+      include: { user: true }
+    });
+
+    res.json({
+      id: updated.id,
+      content: updated.content,
+      user: {
+        id: updated.user.id,
+        name: updated.user.name,
+        username: updated.user.username,
+        avatar: updated.user.avatarUrl
+      },
+      updatedAt: updated.updatedAt
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Delete comment
+app.delete('/assets/comments/:id', authMiddleware, async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id);
+
+    const comment = await prisma.paperComment.findUnique({ where: { id } });
+
+    if (!comment) {
+      return res.status(404).json({ message: 'Comment not found' });
+    }
+
+    if (comment.userId !== req.user.id && req.user.role !== 'administrator') {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    await prisma.paperComment.delete({ where: { id } });
+
+    // Update comment count on asset
+    await prisma.researchAsset.update({
+      where: { id: comment.assetId },
+      data: { commentCount: { decrement: 1 } }
+    });
+
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Like/unlike comment
+app.post('/assets/comments/:id/like', authMiddleware, async (req, res, next) => {
+  try {
+    const commentId = parseInt(req.params.id);
+
+    const existing = await prisma.paperCommentLike.findUnique({
+      where: { commentId_userId: { commentId, userId: req.user.id } }
+    });
+
+    if (existing) {
+      await prisma.paperCommentLike.delete({ where: { id: existing.id } });
+      res.json({ success: true, isLiked: false });
+    } else {
+      await prisma.paperCommentLike.create({
+        data: { commentId, userId: req.user.id }
+      });
+      res.json({ success: true, isLiked: true });
+    }
   } catch (error) {
     next(error);
   }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, act, cleanup, waitFor } from '@testing-library/react';
+import { render, cleanup, waitFor } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import { BrowserRouter } from 'react-router-dom';
 import App from '../App';
@@ -50,31 +50,28 @@ describe('Accessibility smoke test', () => {
   });
 
   const renderApp = async () => {
-    let result;
-    await act(async () => {
-      result = render(
-        <BrowserRouter>
-          <QueryClientProvider client={queryClient}>
-            <AuthProvider>
-              <GamificationProvider>
-                <ThemeProvider>
-                  <AccessibilityProvider>
-                    <ToastProvider>
-                      <App />
-                    </ToastProvider>
-                  </AccessibilityProvider>
-                </ThemeProvider>
-              </GamificationProvider>
-            </AuthProvider>
-          </QueryClientProvider>
-        </BrowserRouter>
-      );
-    });
+    const view = render(
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <GamificationProvider>
+              <ThemeProvider>
+                <AccessibilityProvider>
+                  <ToastProvider>
+                    <App />
+                  </ToastProvider>
+                </AccessibilityProvider>
+              </ThemeProvider>
+            </GamificationProvider>
+          </AuthProvider>
+        </QueryClientProvider>
+      </BrowserRouter>
+    );
     // Allow any pending updates to settle
-    await act(async () => {
-      await new Promise(resolve => setTimeout(resolve, 0));
+    await waitFor(() => {
+      expect(view.container).toBeInTheDocument();
     });
-    return result;
+    return view;
   };
 
   it('has no critical axe violations on initial render', async () => {

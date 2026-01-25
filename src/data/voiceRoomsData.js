@@ -309,7 +309,7 @@ export const reactionTypes = [
   { type: 'raised_hands', emoji: '🙌', label: 'Raised Hands' }
 ];
 
-export default {
+const voiceRoomsData = {
   mockSpeakers,
   mockListeners,
   mockTranscript,
@@ -318,3 +318,5 @@ export default {
   roomCategories,
   reactionTypes
 };
+
+export default voiceRoomsData;

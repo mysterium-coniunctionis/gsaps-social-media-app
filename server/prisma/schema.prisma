@@ -33,20 +33,26 @@ model User {
   updatedAt    DateTime @updatedAt
 
   // Relations
-  posts             Post[]
-  comments          Comment[]
-  reactions         Reaction[]
-  sentMessages      Message[]        @relation("sentMessages")
-  receivedMessages  Message[]        @relation("receivedMessages")
-  enrollments       Enrollment[]
-  achievements      Achievement[]
-  researchAssets    ResearchAsset[]
-  paperReviews      PaperReview[]
-  groupMemberships  GroupMember[]
-  eventAttendances  EventAttendee[]
-  ownedGroups       Group[]          @relation("groupOwner")
-  createdEvents     Event[]          @relation("eventCreator")
-  notifications     Notification[]
+  posts              Post[]
+  comments           Comment[]
+  reactions          Reaction[]
+  sentMessages       Message[]            @relation("sentMessages")
+  receivedMessages   Message[]            @relation("receivedMessages")
+  enrollments        Enrollment[]
+  achievements       Achievement[]
+  researchAssets     ResearchAsset[]
+  paperReviews       PaperReview[]
+  groupMemberships   GroupMember[]
+  eventAttendances   EventAttendee[]
+  ownedGroups        Group[]              @relation("groupOwner")
+  createdEvents      Event[]              @relation("eventCreator")
+  notifications      Notification[]
+  earnedCredentials  Credential[]
+  // Research Library collections and discussions
+  paperCollections   PaperCollection[]
+  followedCollections CollectionFollower[]
+  paperComments      PaperComment[]
+  paperCommentLikes  PaperCommentLike[]
 }
 
 // ============================================
@@ -225,6 +231,7 @@ model Course {
   // Relations
   enrollments Enrollment[]
   lessons     Lesson[]
+  credentials Credential[]
 }
 
 model Lesson {
@@ -232,14 +239,17 @@ model Lesson {
   courseId    Int
   title       String
   description String?
+  content     String?  // Text/HTML content for text lessons
   contentUrl  String?
   contentType String   @default("video") // video, text, quiz
   duration    Int? // in minutes
   orderIndex  Int      @default(0)
+  quizData    String?  // JSON quiz questions for quiz lessons
   createdAt   DateTime @default(now())
 
   // Relations
-  course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course   Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress LessonProgress[]
 }
 
 model Enrollment {
@@ -253,6 +263,57 @@ model Enrollment {
   updatedAt DateTime @updatedAt
 
   // Relations
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  course         Course           @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  lessonProgress LessonProgress[]
+  quizResults    QuizResult[]
+
+  @@unique([userId, courseId])
+}
+
+model LessonProgress {
+  id           Int       @id @default(autoincrement())
+  enrollmentId Int
+  lessonId     Int
+  completed    Boolean   @default(false)
+  completedAt  DateTime?
+  watchTime    Int       @default(0) // seconds watched
+  createdAt    DateTime  @default(now())
+
+  // Relations
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  lesson     Lesson     @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([enrollmentId, lessonId])
+}
+
+model QuizResult {
+  id            Int      @id @default(autoincrement())
+  enrollmentId  Int
+  lessonId      Int      // Reference to the quiz lesson
+  score         Int      // Percentage score (0-100)
+  passed        Boolean  @default(false)
+  answers       String   @default("{}") // JSON of user answers
+  attemptNumber Int      @default(1)
+  completedAt   DateTime @default(now())
+
+  // Relations
+  enrollment Enrollment @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+}
+
+model Credential {
+  id              Int      @id @default(autoincrement())
+  userId          Int
+  courseId        Int
+  certificateId   String   @unique // Unique verification code (e.g., GSAPS-2026-XXXXX)
+  score           Int?     // Final quiz score
+  ceCredits       Float?   // CE credits awarded
+  ceType          String?  // APA, CME, CNE
+  pdfPath         String?  // Path to generated PDF certificate
+  issuedAt        DateTime @default(now())
+  verificationUrl String?  // Public verification URL
+
+  // Relations
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   course Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
 
@@ -264,26 +325,43 @@ model Enrollment {
 // ============================================
 
 model ResearchAsset {
-  id            Int      @id @default(autoincrement())
+  id            Int       @id @default(autoincrement())
   title         String
   description   String
   url           String
-  type          String // paper, dataset, document, presentation
-  authors       String   @default("[]") // JSON array
+  type          String    // paper, dataset, document, presentation
+  authors       String    @default("[]") // JSON array
   publishedDate DateTime?
   journal       String?
+  volume        String?
+  issue         String?
+  pages         String?
   doi           String?
+  pmid          String?   // PubMed ID
   abstract      String?
-  keywords      String   @default("[]") // JSON array
-  citationCount Int      @default(0)
-  downloadCount Int      @default(0)
+  keywords      String    @default("[]") // JSON array
+  topics        String    @default("[]") // JSON array for filtering
+  researchType  String?   // clinical-trial, review, meta-analysis, basic-science, qualitative
+  methodology   String?   // RCT, open-label, cohort, systematic-review
+  sampleSize    Int?
+  openAccess    Boolean   @default(false)
+  peerReviewed  Boolean   @default(true)
+  citationCount Int       @default(0)
+  downloadCount Int       @default(0)
+  viewCount     Int       @default(0)
+  commentCount  Int       @default(0)
   ownerId       Int
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // Search index - concatenated searchable text for relevance scoring
+  searchIndex   String?
 
   // Relations
-  owner   User          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  reviews PaperReview[]
+  owner           User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  reviews         PaperReview[]
+  collectionItems PaperCollectionItem[]
+  comments        PaperComment[]
 }
 
 model PaperReview {
@@ -300,6 +378,88 @@ model PaperReview {
   user  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([assetId, userId])
+}
+
+// ============================================
+// PAPER COLLECTIONS (Personal Library)
+// ============================================
+
+model PaperCollection {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  isPublic    Boolean   @default(false)
+  coverUrl    String?
+  ownerId     Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  owner     User                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  items     PaperCollectionItem[]
+  followers CollectionFollower[]
+}
+
+model PaperCollectionItem {
+  id           Int       @id @default(autoincrement())
+  collectionId Int
+  assetId      Int
+  notes        String?
+  orderIndex   Int       @default(0)
+  addedAt      DateTime  @default(now())
+
+  // Relations
+  collection PaperCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  asset      ResearchAsset   @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, assetId])
+}
+
+model CollectionFollower {
+  id           Int       @id @default(autoincrement())
+  collectionId Int
+  userId       Int
+  followedAt   DateTime  @default(now())
+
+  // Relations
+  collection PaperCollection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  user       User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, userId])
+}
+
+// ============================================
+// PAPER DISCUSSIONS (Comments on Research)
+// ============================================
+
+model PaperComment {
+  id        Int       @id @default(autoincrement())
+  assetId   Int
+  userId    Int
+  parentId  Int?      // For threading
+  content   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  // Relations
+  asset     ResearchAsset    @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent    PaperComment?    @relation("PaperCommentThread", fields: [parentId], references: [id])
+  replies   PaperComment[]   @relation("PaperCommentThread")
+  likes     PaperCommentLike[]
+}
+
+model PaperCommentLike {
+  id        Int       @id @default(autoincrement())
+  commentId Int
+  userId    Int
+  createdAt DateTime  @default(now())
+
+  // Relations
+  comment PaperComment @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([commentId, userId])
 }
 
 // ============================================

@@ -72,6 +72,7 @@ const VoiceRooms = () => {
 
   useEffect(() => {
     loadRooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedCategory, searchQuery, tabValue]);
 
   const loadRooms = async () => {

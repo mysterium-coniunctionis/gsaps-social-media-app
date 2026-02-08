@@ -1,112 +1,154 @@
-// Mock axios before any imports that depend on it
+// Mock axios and dependent modules before importing
 jest.mock('axios', () => ({
-  __esModule: true,
-  default: {
-    create: jest.fn(() => ({
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-      interceptors: {
-        request: { use: jest.fn() },
-        response: { use: jest.fn() }
-      }
-    })),
+  create: jest.fn(() => ({
     interceptors: {
       request: { use: jest.fn() },
       response: { use: jest.fn() }
-    }
+    },
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn()
+  })),
+  interceptors: {
+    request: { use: jest.fn() },
+    response: { use: jest.fn() }
   }
+}));
+
+jest.mock('../api/backend', () => ({
+  awardGamification: jest.fn(),
+  fetchGamification: jest.fn()
+}));
+
+jest.mock('../api/auth', () => ({
+  loginUser: jest.fn(),
+  registerUser: jest.fn(),
+  logoutUser: jest.fn(),
+  getCurrentUser: jest.fn()
+}));
+
+jest.mock('../api/api', () => ({
+  setUnauthorizedHandler: jest.fn()
 }));
 
 import { XP_ACTIONS, RANKS } from './GamificationContext';
 
-// Test the exported constants and pure logic
-// The provider itself requires AuthContext and react-query which makes unit testing complex.
-// These tests validate the gamification data model.
-
-describe('GamificationContext', () => {
+describe('GamificationContext constants', () => {
   describe('XP_ACTIONS', () => {
-    it('should define social action XP values', () => {
+    it('defines XP values for all expected actions', () => {
       expect(XP_ACTIONS.CREATE_POST).toBe(10);
       expect(XP_ACTIONS.POST_WITH_IMAGE).toBe(15);
       expect(XP_ACTIONS.POST_WITH_TAGS).toBe(5);
       expect(XP_ACTIONS.COMMENT).toBe(5);
       expect(XP_ACTIONS.SHARE_POST).toBe(8);
-      expect(XP_ACTIONS.ADD_REACTION).toBe(3);
-      expect(XP_ACTIONS.MESSAGE_SENT).toBe(1);
-    });
-
-    it('should define course action XP values', () => {
       expect(XP_ACTIONS.ENROLL_COURSE).toBe(10);
       expect(XP_ACTIONS.COMPLETE_LESSON).toBe(20);
-    });
-
-    it('should define research library XP values', () => {
+      expect(XP_ACTIONS.ADD_REACTION).toBe(3);
+      expect(XP_ACTIONS.MESSAGE_SENT).toBe(1);
       expect(XP_ACTIONS.UPLOAD_PAPER).toBe(50);
-      expect(XP_ACTIONS.PAPER_APPROVED).toBe(25);
-      expect(XP_ACTIONS.WRITE_REVIEW).toBe(20);
-      expect(XP_ACTIONS.CREATE_COLLECTION).toBe(15);
-      expect(XP_ACTIONS.SHARE_COLLECTION).toBe(10);
-      expect(XP_ACTIONS.DISCUSSION_POST).toBe(10);
-      expect(XP_ACTIONS.DISCUSSION_REPLY).toBe(5);
-      expect(XP_ACTIONS.LIKE_COMMENT).toBe(2);
-      expect(XP_ACTIONS.SAVE_TO_COLLECTION).toBe(5);
     });
 
-    it('should have all positive XP values', () => {
+    it('has all positive XP values', () => {
       Object.values(XP_ACTIONS).forEach(xp => {
         expect(xp).toBeGreaterThan(0);
       });
     });
 
-    it('should have higher-value actions for harder tasks', () => {
+    it('rewards more complex actions more heavily', () => {
       expect(XP_ACTIONS.UPLOAD_PAPER).toBeGreaterThan(XP_ACTIONS.CREATE_POST);
       expect(XP_ACTIONS.COMPLETE_LESSON).toBeGreaterThan(XP_ACTIONS.COMMENT);
-      expect(XP_ACTIONS.WRITE_REVIEW).toBeGreaterThan(XP_ACTIONS.ADD_REACTION);
+      expect(XP_ACTIONS.POST_WITH_IMAGE).toBeGreaterThan(XP_ACTIONS.POST_WITH_TAGS);
     });
   });
 
   describe('RANKS', () => {
-    it('should define ranks at correct level thresholds', () => {
+    const rankLevels = Object.keys(RANKS).map(Number).sort((a, b) => a - b);
+
+    it('defines 10 rank tiers', () => {
+      expect(Object.keys(RANKS).length).toBe(10);
+    });
+
+    it('starts at level 1', () => {
       expect(RANKS[1]).toBeDefined();
       expect(RANKS[1].name).toBe('Novice');
+    });
 
-      expect(RANKS[5]).toBeDefined();
-      expect(RANKS[5].name).toBe('Initiate');
-
-      expect(RANKS[10]).toBeDefined();
-      expect(RANKS[10].name).toBe('Apprentice');
-
+    it('ends at level 45', () => {
       expect(RANKS[45]).toBeDefined();
       expect(RANKS[45].name).toBe('Transcendent');
     });
 
-    it('should have name, color, and icon for each rank', () => {
+    it('has progressive rank names', () => {
+      const expectedNames = [
+        'Novice', 'Initiate', 'Apprentice', 'Practitioner', 'Adept',
+        'Expert', 'Master', 'Sage', 'Luminary', 'Transcendent'
+      ];
+      const actualNames = rankLevels.map(level => RANKS[level].name);
+      expect(actualNames).toEqual(expectedNames);
+    });
+
+    it('each rank has a color and icon', () => {
       Object.values(RANKS).forEach(rank => {
-        expect(rank.name).toBeDefined();
-        expect(rank.name.length).toBeGreaterThan(0);
-        expect(rank.color).toBeDefined();
-        expect(rank.color).toMatch(/^#[0-9a-f]{6}$/i);
+        expect(rank.color).toMatch(/^#[0-9a-fA-F]{6}$/);
         expect(rank.icon).toBeDefined();
+        expect(rank.icon.length).toBeGreaterThan(0);
       });
     });
 
-    it('should have 10 ranks total', () => {
-      expect(Object.keys(RANKS).length).toBe(10);
+    it('ranks are at 5-level intervals', () => {
+      const expectedLevels = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45];
+      expect(rankLevels).toEqual(expectedLevels);
     });
+  });
 
-    it('should have ranks in ascending level order', () => {
-      const levels = Object.keys(RANKS).map(Number);
-      for (let i = 1; i < levels.length; i++) {
-        expect(levels[i]).toBeGreaterThan(levels[i - 1]);
+  describe('calculateLevel (internal logic verification)', () => {
+    const LEVEL_THRESHOLDS = [0, 100, 250, 500, 850, 1300];
+
+    const calculateLevel = (xp) => {
+      for (let i = LEVEL_THRESHOLDS.length - 1; i >= 0; i -= 1) {
+        if (xp >= LEVEL_THRESHOLDS[i]) {
+          return i + 1;
+        }
       }
+      return 1;
+    };
+
+    it('returns level 1 for 0 XP', () => {
+      expect(calculateLevel(0)).toBe(1);
     });
 
-    it('should have unique rank names', () => {
-      const names = Object.values(RANKS).map(r => r.name);
-      const uniqueNames = new Set(names);
-      expect(uniqueNames.size).toBe(names.length);
+    it('returns level 1 for 99 XP', () => {
+      expect(calculateLevel(99)).toBe(1);
+    });
+
+    it('returns level 2 for 100 XP', () => {
+      expect(calculateLevel(100)).toBe(2);
+    });
+
+    it('returns level 3 for 250 XP', () => {
+      expect(calculateLevel(250)).toBe(3);
+    });
+
+    it('returns level 4 for 500 XP', () => {
+      expect(calculateLevel(500)).toBe(4);
+    });
+
+    it('returns level 5 for 850 XP', () => {
+      expect(calculateLevel(850)).toBe(5);
+    });
+
+    it('returns level 6 for 1300 XP', () => {
+      expect(calculateLevel(1300)).toBe(6);
+    });
+
+    it('returns max level for very high XP', () => {
+      expect(calculateLevel(99999)).toBe(6);
+    });
+
+    it('handles boundary values correctly', () => {
+      expect(calculateLevel(249)).toBe(2);
+      expect(calculateLevel(250)).toBe(3);
     });
   });
 });

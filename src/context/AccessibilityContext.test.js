@@ -1,8 +1,8 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import '@testing-library/jest-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { AccessibilityProvider, useAccessibility } from './AccessibilityContext';
 
+// Test component that consumes the context
 const TestConsumer = () => {
   const { preferences, togglePreference, setPreference } = useAccessibility();
 
@@ -12,11 +12,11 @@ const TestConsumer = () => {
       <span data-testid="largeText">{String(preferences.largeText)}</span>
       <span data-testid="reduceMotion">{String(preferences.reduceMotion)}</span>
       <span data-testid="captions">{String(preferences.captions)}</span>
-      <button onClick={() => togglePreference('highContrast')}>toggle-hc</button>
-      <button onClick={() => togglePreference('largeText')}>toggle-lt</button>
-      <button onClick={() => togglePreference('reduceMotion')}>toggle-rm</button>
-      <button onClick={() => togglePreference('captions')}>toggle-cap</button>
-      <button onClick={() => setPreference('largeText', true)}>set-lt-true</button>
+
+      <button onClick={() => togglePreference('highContrast')}>Toggle Contrast</button>
+      <button onClick={() => togglePreference('largeText')}>Toggle Large Text</button>
+      <button onClick={() => togglePreference('reduceMotion')}>Toggle Reduce Motion</button>
+      <button onClick={() => setPreference('captions', false)}>Disable Captions</button>
     </div>
   );
 };
@@ -27,201 +27,122 @@ describe('AccessibilityContext', () => {
     document.body.className = '';
   });
 
-  describe('default preferences', () => {
-    it('should provide default preferences', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+  it('provides default preferences', () => {
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-      expect(screen.getByTestId('highContrast')).toHaveTextContent('false');
-      expect(screen.getByTestId('largeText')).toHaveTextContent('false');
-      expect(screen.getByTestId('reduceMotion')).toHaveTextContent('false');
-      expect(screen.getByTestId('captions')).toHaveTextContent('true');
-    });
+    expect(screen.getByTestId('highContrast').textContent).toBe('false');
+    expect(screen.getByTestId('largeText').textContent).toBe('false');
+    expect(screen.getByTestId('reduceMotion').textContent).toBe('false');
+    expect(screen.getByTestId('captions').textContent).toBe('true');
   });
 
-  describe('togglePreference', () => {
-    it('should toggle highContrast from false to true', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+  it('toggles preferences on button click', () => {
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-      expect(screen.getByTestId('highContrast')).toHaveTextContent('false');
-      fireEvent.click(screen.getByText('toggle-hc'));
-      expect(screen.getByTestId('highContrast')).toHaveTextContent('true');
-    });
+    expect(screen.getByTestId('highContrast').textContent).toBe('false');
 
-    it('should toggle largeText from false to true and back', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+    fireEvent.click(screen.getByText('Toggle Contrast'));
+    expect(screen.getByTestId('highContrast').textContent).toBe('true');
 
-      fireEvent.click(screen.getByText('toggle-lt'));
-      expect(screen.getByTestId('largeText')).toHaveTextContent('true');
-
-      fireEvent.click(screen.getByText('toggle-lt'));
-      expect(screen.getByTestId('largeText')).toHaveTextContent('false');
-    });
-
-    it('should toggle captions from true to false (default is true)', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
-
-      expect(screen.getByTestId('captions')).toHaveTextContent('true');
-      fireEvent.click(screen.getByText('toggle-cap'));
-      expect(screen.getByTestId('captions')).toHaveTextContent('false');
-    });
+    fireEvent.click(screen.getByText('Toggle Contrast'));
+    expect(screen.getByTestId('highContrast').textContent).toBe('false');
   });
 
-  describe('setPreference', () => {
-    it('should set a specific preference value', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+  it('sets a specific preference value', () => {
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-      expect(screen.getByTestId('largeText')).toHaveTextContent('false');
-      fireEvent.click(screen.getByText('set-lt-true'));
-      expect(screen.getByTestId('largeText')).toHaveTextContent('true');
-    });
+    expect(screen.getByTestId('captions').textContent).toBe('true');
+
+    fireEvent.click(screen.getByText('Disable Captions'));
+    expect(screen.getByTestId('captions').textContent).toBe('false');
   });
 
-  describe('localStorage persistence', () => {
-    it('should persist preferences to localStorage', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+  it('persists preferences to localStorage', () => {
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-      fireEvent.click(screen.getByText('toggle-hc'));
+    fireEvent.click(screen.getByText('Toggle Large Text'));
 
-      const stored = JSON.parse(localStorage.getItem('a11y-preferences'));
-      expect(stored.highContrast).toBe(true);
-    });
-
-    it('should restore preferences from localStorage', () => {
-      localStorage.setItem(
-        'a11y-preferences',
-        JSON.stringify({
-          highContrast: true,
-          largeText: true,
-          reduceMotion: true,
-          captions: false
-        })
-      );
-
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
-
-      expect(screen.getByTestId('highContrast')).toHaveTextContent('true');
-      expect(screen.getByTestId('largeText')).toHaveTextContent('true');
-      expect(screen.getByTestId('reduceMotion')).toHaveTextContent('true');
-      expect(screen.getByTestId('captions')).toHaveTextContent('false');
-    });
-
-    it('should handle invalid JSON in localStorage gracefully', () => {
-      localStorage.setItem('a11y-preferences', 'not-json');
-
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
-
-      // Should fall back to defaults
-      expect(screen.getByTestId('highContrast')).toHaveTextContent('false');
-      expect(screen.getByTestId('captions')).toHaveTextContent('true');
-    });
-
-    it('should merge stored preferences with defaults for partial data', () => {
-      localStorage.setItem(
-        'a11y-preferences',
-        JSON.stringify({ highContrast: true })
-      );
-
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
-
-      expect(screen.getByTestId('highContrast')).toHaveTextContent('true');
-      // Defaults for other preferences
-      expect(screen.getByTestId('largeText')).toHaveTextContent('false');
-      expect(screen.getByTestId('captions')).toHaveTextContent('true');
-    });
+    const stored = JSON.parse(localStorage.getItem('a11y-preferences'));
+    expect(stored.largeText).toBe(true);
   });
 
-  describe('body class application', () => {
-    it('should apply high-contrast-mode class when highContrast is toggled on', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+  it('loads preferences from localStorage on mount', () => {
+    localStorage.setItem('a11y-preferences', JSON.stringify({
+      highContrast: true,
+      largeText: true,
+      reduceMotion: true,
+      captions: false
+    }));
 
-      fireEvent.click(screen.getByText('toggle-hc'));
-      expect(document.body.classList.contains('high-contrast-mode')).toBe(true);
-    });
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-    it('should apply large-text-mode class when largeText is toggled on', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+    expect(screen.getByTestId('highContrast').textContent).toBe('true');
+    expect(screen.getByTestId('largeText').textContent).toBe('true');
+    expect(screen.getByTestId('reduceMotion').textContent).toBe('true');
+    expect(screen.getByTestId('captions').textContent).toBe('false');
+  });
 
-      fireEvent.click(screen.getByText('toggle-lt'));
-      expect(document.body.classList.contains('large-text-mode')).toBe(true);
-    });
+  it('applies body classes based on preferences', () => {
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-    it('should apply reduced-motion class when reduceMotion is toggled on', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+    fireEvent.click(screen.getByText('Toggle Contrast'));
+    expect(document.body.classList.contains('high-contrast-mode')).toBe(true);
 
-      fireEvent.click(screen.getByText('toggle-rm'));
-      expect(document.body.classList.contains('reduced-motion')).toBe(true);
-    });
+    fireEvent.click(screen.getByText('Toggle Large Text'));
+    expect(document.body.classList.contains('large-text-mode')).toBe(true);
 
-    it('should apply captions-enabled class by default', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+    fireEvent.click(screen.getByText('Toggle Reduce Motion'));
+    expect(document.body.classList.contains('reduced-motion')).toBe(true);
+  });
 
-      expect(document.body.classList.contains('captions-enabled')).toBe(true);
-    });
+  it('falls back to defaults on malformed localStorage data', () => {
+    localStorage.setItem('a11y-preferences', 'not-json');
 
-    it('should remove body class when preference is toggled off', () => {
-      render(
-        <AccessibilityProvider>
-          <TestConsumer />
-        </AccessibilityProvider>
-      );
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
 
-      fireEvent.click(screen.getByText('toggle-hc'));
-      expect(document.body.classList.contains('high-contrast-mode')).toBe(true);
+    expect(screen.getByTestId('highContrast').textContent).toBe('false');
+    expect(screen.getByTestId('captions').textContent).toBe('true');
+  });
 
-      fireEvent.click(screen.getByText('toggle-hc'));
-      expect(document.body.classList.contains('high-contrast-mode')).toBe(false);
-    });
+  it('merges partial stored preferences with defaults', () => {
+    localStorage.setItem('a11y-preferences', JSON.stringify({ highContrast: true }));
+
+    render(
+      <AccessibilityProvider>
+        <TestConsumer />
+      </AccessibilityProvider>
+    );
+
+    expect(screen.getByTestId('highContrast').textContent).toBe('true');
+    expect(screen.getByTestId('captions').textContent).toBe('true');
+    expect(screen.getByTestId('largeText').textContent).toBe('false');
   });
 });

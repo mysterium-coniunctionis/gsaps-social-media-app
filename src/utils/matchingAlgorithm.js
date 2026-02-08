@@ -207,10 +207,6 @@ export const calculateMatchScore = (person1, person2, weights = {}) => {
   const w = { ...defaultWeights, ...weights };
 
   // Determine relationship type for experience gap calculation
-  const isSeekingMentor = person1.goals?.includes('seeking-mentor') &&
-                          person2.goals?.includes('mentor');
-  const isMentoring = person1.goals?.includes('mentor') &&
-                      person2.goals?.includes('seeking-mentor');
   const isPeerRelationship = person1.goals?.includes('peer-collaboration') &&
                              person2.goals?.includes('peer-collaboration');
 
@@ -486,9 +482,11 @@ export const recordMatchFeedback = (matchId, rating, feedback = {}) => {
   };
 };
 
-export default {
+const matchingAlgorithm = {
   calculateMatchScore,
   findTopMatches,
   getColdStartRecommendations,
   recordMatchFeedback
 };
+
+export default matchingAlgorithm;

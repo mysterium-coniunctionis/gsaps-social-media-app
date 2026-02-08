@@ -16,7 +16,6 @@ import {
 import {
   Send as SendIcon,
   EmojiEmotions as EmojiIcon,
-  Link as LinkIcon,
   MoreVert as MoreIcon
 } from '@mui/icons-material';
 import { format } from 'date-fns';

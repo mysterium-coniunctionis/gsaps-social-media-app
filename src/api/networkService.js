@@ -3,14 +3,13 @@
  * Handles all mentor matching and networking API calls
  */
 
-import api from './api';
 import {
   professionalProfiles,
   mockConnectionRequests,
   mockSuccessStories,
   networkAnalyticsData
 } from '../data/networkData';
-import { findTopMatches, getColdStartRecommendations } from '../utils/matchingAlgorithm';
+import { findTopMatches } from '../utils/matchingAlgorithm';
 
 // Simulate API delay for realistic UX
 const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -443,7 +442,7 @@ export const getProfessionalProfile = async (profileId) => {
   }
 };
 
-export default {
+const networkService = {
   getMatchRecommendations,
   getConnectionRequests,
   sendConnectionRequest,
@@ -458,3 +457,5 @@ export default {
   getIntroMessageSuggestions,
   getProfessionalProfile
 };
+
+export default networkService;

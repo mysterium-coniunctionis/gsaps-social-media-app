@@ -30,7 +30,6 @@ import {
   Devices as DevicesIcon
 } from '@mui/icons-material';
 import { useAuth } from '../context/AuthContext';
-import { useAccessibility } from '../context/AccessibilityContext';
 import { useNavigate } from 'react-router-dom';
 import { fadeInUp } from '../theme/animations';
 import { enableMfa, disableMfa, getSessions, revokeSession, requestEmailVerification } from '../api/auth';
@@ -126,6 +125,7 @@ const Settings = () => {
     if (activeTab === 3) {
       fetchSessions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, currentUser]);
 
   const handleEnableMfa = async () => {

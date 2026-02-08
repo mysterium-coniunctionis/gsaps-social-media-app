@@ -1,9 +1,8 @@
 // SpatialUI.js - 3D interface elements for virtual spaces
 // Floating menus, tooltips, minimap, user lists, and settings panels
 
-import React, { useState, useRef } from 'react';
-import { Html, Billboard, Text } from '@react-three/drei';
-import { useFrame } from '@react-three/fiber';
+import React from 'react';
+import { Html, Billboard } from '@react-three/drei';
 import {
   Box,
   Typography,
@@ -22,8 +21,6 @@ import {
   Close as CloseIcon,
   Mic as MicIcon,
   MicOff as MicOffIcon,
-  Videocam as VideocamIcon,
-  VideocamOff as VideocamOffIcon,
   Settings as SettingsIcon,
   Map as MapIcon,
   People as PeopleIcon,
@@ -555,7 +552,7 @@ export const WelcomeOverlay = ({ spaceName, visible = true, onDismiss }) => {
   );
 };
 
-export default {
+const spatialUI = {
   FloatingMenu,
   UserListPanel,
   MinimapPanel,
@@ -564,3 +561,5 @@ export default {
   ControlHUD,
   WelcomeOverlay
 };
+
+export default spatialUI;

@@ -3,8 +3,6 @@
 
 import {
   mockVoiceRooms,
-  mockSpeakers,
-  mockListeners,
   mockTranscript,
   mockChatMessages
 } from '../data/voiceRoomsData';
@@ -440,7 +438,7 @@ export const searchTranscript = async (roomId, query) => {
   );
 };
 
-export default {
+const voiceRoomService = {
   getVoiceRooms,
   getVoiceRoom,
   createVoiceRoom,
@@ -457,3 +455,5 @@ export default {
   getCurrentUserStatus,
   searchTranscript
 };
+
+export default voiceRoomService;

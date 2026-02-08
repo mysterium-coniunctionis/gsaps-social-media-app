@@ -1,10 +1,12 @@
 # Technical Debt & TODO Tracking
 
 **Created**: December 12, 2025
-**Last Updated**: December 12, 2025
-**Total TODOs**: 36
+**Last Updated**: January 11, 2026
+**Total TODOs**: 36 (many now have backend support available)
 
 This document tracks all TODO items in the codebase, organized by category and priority.
+
+> **Note (January 2026)**: An Express.js backend with SQLite database has been implemented. Many of these TODOs can now be addressed by connecting the frontend to the backend API endpoints. See `server/src/index.js` for available endpoints.
 
 ---
 

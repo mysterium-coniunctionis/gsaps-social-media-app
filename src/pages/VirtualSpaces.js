@@ -34,7 +34,7 @@ import {
   Star as StarIcon,
   Schedule as ScheduleIcon,
   PersonOutline as PersonIcon,
-  Theater as TheaterIcon
+  Theaters as TheaterIcon
 } from '@mui/icons-material';
 import { getAllSpaces, getUpcomingEvents } from '../api/virtualSpaceService';
 import { useAuth } from '../context/AuthContext';

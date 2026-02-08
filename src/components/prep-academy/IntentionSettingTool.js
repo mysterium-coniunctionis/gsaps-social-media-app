@@ -18,10 +18,7 @@ import {
 } from '@mui/material';
 import {
   LightbulbOutlined as IdeaIcon,
-  Edit as EditIcon,
   Save as SaveIcon,
-  Refresh as RefreshIcon,
-  CheckCircle as CheckIcon,
   Favorite as HeartIcon
 } from '@mui/icons-material';
 import { INTENTION_PROMPTS } from '../../data/prepAcademyData';

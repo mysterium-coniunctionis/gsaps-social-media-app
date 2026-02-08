@@ -372,10 +372,12 @@ export const performanceProfiles = {
   }
 };
 
-export default {
+const virtualSpacesData = {
   virtualSpaces,
   scheduledEvents,
   spacePresets,
   avatarCustomization,
   performanceProfiles
 };
+
+export default virtualSpacesData;

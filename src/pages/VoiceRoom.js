@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogActions,
   useTheme,
-  useMediaQuery,
   alpha,
   Tooltip,
   Divider
@@ -30,7 +29,6 @@ import {
   ExitToApp as LeaveIcon,
   Share as ShareIcon,
   MoreVert as MoreIcon,
-  ContentCopy as CopyIcon,
   Settings as SettingsIcon,
   FiberManualRecord as LiveIcon
 } from '@mui/icons-material';
@@ -48,7 +46,6 @@ import {
   toggleMute,
   sendReaction,
   sendChatMessage,
-  inviteToStage,
   removeFromStage
 } from '../api/voiceRoomService';
 import { useAuth } from '../context/AuthContext';
@@ -60,7 +57,6 @@ import { fadeInUp } from '../theme/animations';
  */
 const VoiceRoom = () => {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { roomId } = useParams();
   const navigate = useNavigate();
   const { currentUser } = useAuth();
@@ -79,6 +75,7 @@ const VoiceRoom = () => {
 
   useEffect(() => {
     loadRoom();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
   const loadRoom = async () => {

@@ -33,9 +33,7 @@ import {
   Person as ProfileIcon,
   Keyboard as KeyboardIcon,
   AutoAwesome as AriaIcon,
-  Add as AddIcon,
-  TrendingUp as TrendingIcon,
-  History as RecentIcon
+  Add as AddIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -147,6 +145,7 @@ const CommandPalette = () => {
     } else if (e.key === 'Escape') {
       setOpen(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filteredCommands, selectedIndex]);
 
   const executeCommand = (command) => {

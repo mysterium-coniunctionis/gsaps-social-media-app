@@ -1,0 +1,237 @@
+name: Preview Deploy
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - 'claude/**'
+      - 'feature/**'
+      - 'fix/**'
+
+concurrency:
+  group: preview-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+
+jobs:
+  # Option 1: Deploy to Vercel (Recommended)
+  deploy-vercel:
+    name: Deploy Preview to Vercel
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_TARGET == 'vercel' || vars.DEPLOY_TARGET == '' }}
+    environment:
+      name: Preview
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Pull Vercel Environment
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build Project
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+          echo "### 🚀 Preview Deployed!" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**URL:** $URL" >> $GITHUB_STEP_SUMMARY
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const url = '${{ steps.deploy.outputs.url }}';
+            const body = `## 🚀 Preview Deployment Ready!
+
+            | Environment | URL |
+            |-------------|-----|
+            | **Preview** | [${url}](${url}) |
+
+            ### ✨ 2026 Killer Features to Test:
+            - 🤖 **Aria AI** - Press \`Ctrl+K\` anywhere
+            - 🎙️ **Voice Rooms** - \`/voice-rooms\`
+            - 🌐 **3D Spaces** - \`/virtual-spaces\`
+            - 🤝 **Network** - \`/network\`
+            - 📊 **Smart Feed** - \`/feed\`
+
+            ---
+            *Deployed by GitHub Actions • Commit: \`${{ github.sha.substring(0, 7) }}\`*`;
+
+            // Find existing comment
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(c => c.body.includes('Preview Deployment Ready'));
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+  # Option 2: Deploy to Netlify
+  deploy-netlify:
+    name: Deploy Preview to Netlify
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_TARGET == 'netlify' }}
+    environment:
+      name: Preview
+      url: ${{ steps.deploy.outputs.deploy-url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+        env:
+          CI: false
+          GENERATE_SOURCEMAP: false
+
+      - name: Deploy to Netlify
+        id: deploy
+        uses: nwtgck/actions-netlify@v3
+        with:
+          publish-dir: './build'
+          production-branch: main
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy from GitHub Actions - ${{ github.sha }}"
+          enable-pull-request-comment: true
+          enable-commit-comment: false
+          overwrites-pull-request-comment: true
+          alias: pr-${{ github.event.number }}
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 10
+
+  # Option 3: Deploy to GitHub Pages (Free)
+  deploy-pages:
+    name: Deploy Preview to GitHub Pages
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_TARGET == 'pages' }}
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+        env:
+          CI: false
+          GENERATE_SOURCEMAP: false
+          PUBLIC_URL: /${{ github.event.repository.name }}
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './build'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  # Option 4: Deploy to Surge.sh (Simple & Fast)
+  deploy-surge:
+    name: Deploy Preview to Surge
+    runs-on: ubuntu-latest
+    if: ${{ vars.DEPLOY_TARGET == 'surge' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build
+        run: npm run build
+        env:
+          CI: false
+          GENERATE_SOURCEMAP: false
+
+      - name: Add 200.html for SPA routing
+        run: cp build/index.html build/200.html
+
+      - name: Deploy to Surge
+        run: npx surge ./build gsaps-pr-${{ github.event.number || github.ref_name }}.surge.sh
+        env:
+          SURGE_LOGIN: ${{ secrets.SURGE_LOGIN }}
+          SURGE_TOKEN: ${{ secrets.SURGE_TOKEN }}
+
+      - name: Comment Preview URL
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const prNumber = context.issue.number;
+            const url = `https://gsaps-pr-${prNumber}.surge.sh`;
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: prNumber,
+              body: `🚀 **Preview deployed!**\n\n🔗 ${url}`
+            });

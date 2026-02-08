@@ -1,0 +1,89 @@
+# Netlify Configuration for GSAPS Social Media App
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command = "npm run build"
+  publish = "build"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--legacy-peer-deps"
+  CI = "false"
+  GENERATE_SOURCEMAP = "false"
+
+# Production context - deploys from main branch
+[context.production]
+  command = "npm run build"
+
+[context.production.environment]
+  REACT_APP_ENV = "production"
+
+# Deploy Preview context - PR preview deployments
+[context.deploy-preview]
+  command = "npm run build"
+
+[context.deploy-preview.environment]
+  REACT_APP_ENV = "preview"
+
+# Branch deploy context - feature branches
+[context.branch-deploy]
+  command = "npm run build"
+
+[context.branch-deploy.environment]
+  REACT_APP_ENV = "staging"
+
+# Dev command for local development with Netlify CLI
+[dev]
+  command = "npm start"
+  port = 3000
+  targetPort = 3000
+  autoLaunch = true
+
+# SPA redirect - send all routes to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# API proxy (if using backend)
+[[redirects]]
+  from = "/api/*"
+  to = "https://api.gsaps.example.com/:splat"
+  status = 200
+  force = true
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(self), geolocation=()"
+
+# Cache static assets
+[[headers]]
+  for = "/static/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache service worker
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-cache"
+
+# Plugins
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+
+  [plugins.inputs]
+    output_path = "reports/lighthouse.html"
+
+[[plugins]]
+  package = "netlify-plugin-checklinks"
+
+  [plugins.inputs]
+    skipPatterns = ["localhost"]

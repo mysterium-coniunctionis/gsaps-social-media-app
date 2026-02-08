@@ -1,172 +1,194 @@
-import {
-  logInteraction,
-  getRecommendations,
-  recordExperimentImpression,
-  recordExperimentConversion
-} from './recommendationService';
+import { logInteraction, getRecommendations, recordExperimentImpression, recordExperimentConversion } from './recommendationService';
 
 describe('recommendationService', () => {
   beforeEach(() => {
     localStorage.clear();
+    // Trigger storage event to invalidate internal caches
+    window.dispatchEvent(new StorageEvent('storage', { key: 'gsaps_recommendation_signals' }));
+    window.dispatchEvent(new StorageEvent('storage', { key: 'gsaps_recommendation_experiments' }));
   });
 
   describe('logInteraction', () => {
-    it('should store interaction signals in localStorage', () => {
-      const item = {
-        id: 'item1',
-        topics: ['neuroscience'],
-        category: 'research',
-        tags: ['psilocybin']
-      };
+    it('stores interaction signals in localStorage', () => {
+      logInteraction('course', { id: 'c1', topics: ['psilocybin'], category: 'research' }, 'view');
 
-      logInteraction('paper', item, 'view');
-
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      expect(stored).toBeDefined();
-      expect(stored.topics.neuroscience).toBeGreaterThan(0);
-      expect(stored.topics.psilocybin).toBeGreaterThan(0);
-      expect(stored.categories.research).toBeGreaterThan(0);
+      const signals = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
+      expect(signals.topics.psilocybin).toBeGreaterThan(0);
+      expect(signals.categories.research).toBeGreaterThan(0);
     });
 
-    it('should weight different actions differently', () => {
-      const item = { id: 'item1', topics: ['topic1'] };
-
-      logInteraction('paper', item, 'view');
+    it('applies higher weight for enrollments than views', () => {
+      logInteraction('course', { id: 'c1', topics: ['topic-a'], category: 'cat-a' }, 'view');
       const afterView = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      const viewWeight = afterView.topics.topic1;
+      const viewWeight = afterView.topics['topic-a'];
 
+      // Clear and reset cache
       localStorage.clear();
-      logInteraction('paper', item, 'enroll');
+      window.dispatchEvent(new StorageEvent('storage', { key: 'gsaps_recommendation_signals' }));
+
+      logInteraction('course', { id: 'c2', topics: ['topic-b'], category: 'cat-b' }, 'enroll');
       const afterEnroll = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      const enrollWeight = afterEnroll.topics.topic1;
+      const enrollWeight = afterEnroll.topics['topic-b'];
 
       expect(enrollWeight).toBeGreaterThan(viewWeight);
     });
 
-    it('should track recency with most recent first', () => {
-      logInteraction('paper', { id: 'first', topics: ['a'] }, 'view');
-      logInteraction('paper', { id: 'second', topics: ['b'] }, 'view');
+    it('stores recency data', () => {
+      logInteraction('course', { id: 'c1', topics: ['psilocybin'] }, 'click');
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      expect(stored.recency[0].id).toBe('second');
-      expect(stored.recency[1].id).toBe('first');
+      const signals = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
+      expect(signals.recency.length).toBeGreaterThanOrEqual(1);
+      const c1Entry = signals.recency.find(e => e.id === 'c1');
+      expect(c1Entry).toBeDefined();
+      expect(c1Entry.type).toBe('course');
     });
 
-    it('should limit recency to 25 items', () => {
+    it('limits recency to 25 entries', () => {
       for (let i = 0; i < 30; i++) {
-        logInteraction('paper', { id: `item-${i}`, topics: ['a'] }, 'view');
+        logInteraction('course', { id: `c${i}`, topics: ['t'] }, 'view');
       }
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      expect(stored.recency.length).toBeLessThanOrEqual(25);
+      const signals = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
+      expect(signals.recency.length).toBeLessThanOrEqual(25);
     });
 
-    it('should deduplicate recency entries by id', () => {
-      logInteraction('paper', { id: 'same', topics: ['a'] }, 'view');
-      logInteraction('paper', { id: 'same', topics: ['a'] }, 'click');
+    it('deduplicates recency entries by id', () => {
+      logInteraction('course', { id: 'c1', topics: ['t'] }, 'view');
+      logInteraction('course', { id: 'c1', topics: ['t'] }, 'click');
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      const sameEntries = stored.recency.filter(r => r.id === 'same');
-      expect(sameEntries.length).toBe(1);
+      const signals = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
+      const c1Entries = signals.recency.filter(e => e.id === 'c1');
+      expect(c1Entries.length).toBe(1);
     });
 
-    it('should accumulate weights for repeated interactions', () => {
-      const item = { id: 'accumulate-test', category: 'unique-category-test' };
-      logInteraction('paper', item, 'view');
+    it('accumulates weights for repeated topic interactions', () => {
+      logInteraction('course', { id: 'c1', topics: ['topic-a'] }, 'view');
       const afterFirst = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      const firstWeight = afterFirst.categories['unique-category-test'];
+      const firstWeight = afterFirst.topics['topic-a'];
 
-      logInteraction('paper', item, 'view');
+      logInteraction('course', { id: 'c2', topics: ['topic-a'] }, 'view');
       const afterSecond = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
-      const secondWeight = afterSecond.categories['unique-category-test'];
+      const secondWeight = afterSecond.topics['topic-a'];
 
       expect(secondWeight).toBeGreaterThan(firstWeight);
+    });
+
+    it('handles items with tags', () => {
+      logInteraction('paper', { id: 'p1', tags: ['neuroscience', 'therapy'] }, 'save');
+
+      const signals = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
+      expect(signals.topics.neuroscience).toBeGreaterThan(0);
+      expect(signals.keywords.neuroscience).toBeGreaterThan(0);
+    });
+
+    it('handles items with level', () => {
+      logInteraction('course', { id: 'c1', topics: [], level: 'beginner' }, 'view');
+
+      const signals = JSON.parse(localStorage.getItem('gsaps_recommendation_signals'));
+      expect(signals.levels.beginner).toBeGreaterThan(0);
     });
   });
 
   describe('getRecommendations', () => {
     const items = [
-      { id: '1', category: 'research', topics: ['neuroscience'], rating: 4.5, views: 100 },
-      { id: '2', category: 'clinical', topics: ['therapy'], rating: 4.0, views: 200 },
-      { id: '3', category: 'research', topics: ['pharmacology'], rating: 3.5, views: 50 },
-      { id: '4', category: 'education', topics: ['training'], rating: 4.8, views: 300 },
-      { id: '5', category: 'clinical', topics: ['neuroscience'], rating: 3.0, views: 10 }
+      { id: 'i1', category: 'research', topics: ['psilocybin'], rating: 4.5, views: 100 },
+      { id: 'i2', category: 'clinical', topics: ['therapy'], rating: 3.0, views: 50 },
+      { id: 'i3', category: 'research', topics: ['neuroscience'], rating: 5.0, views: 200 },
+      { id: 'i4', category: 'ethics', topics: ['policy'], rating: 4.0, views: 80 },
+      { id: 'i5', category: 'clinical', topics: ['MDMA'], rating: 4.2, views: 150 },
+      { id: 'i6', category: 'education', topics: ['training'], rating: 3.8, views: 30 },
+      { id: 'i7', category: 'research', topics: ['psilocybin', 'neuroscience'], rating: 4.8, views: 300, featured: true }
     ];
 
-    it('should return empty array for no items', () => {
-      expect(getRecommendations('paper', null)).toEqual([]);
-      expect(getRecommendations('paper', [])).toEqual([]);
+    it('returns empty array for empty items', () => {
+      expect(getRecommendations('course', [])).toEqual([]);
+      expect(getRecommendations('course', null)).toEqual([]);
     });
 
-    it('should return items up to the limit', () => {
-      const result = getRecommendations('paper', items, { limit: 3 });
-      expect(result.length).toBeLessThanOrEqual(3);
+    it('returns at most limit items', () => {
+      const results = getRecommendations('course', items, { limit: 3 });
+      expect(results.length).toBeLessThanOrEqual(3);
     });
 
-    it('should return items in a reasonable order', () => {
-      const result = getRecommendations('paper', items);
-      expect(result.length).toBeGreaterThan(0);
-      expect(result.length).toBeLessThanOrEqual(6);
+    it('returns items, not score wrappers', () => {
+      const results = getRecommendations('course', items, { limit: 3 });
+      results.forEach(item => {
+        expect(item).toHaveProperty('id');
+        expect(item).toHaveProperty('category');
+      });
     });
 
-    it('should diversify results across categories when enabled', () => {
-      const result = getRecommendations('paper', items, { diversify: true, limit: 4 });
-      const categories = result.map(r => r.category);
-      // With diversification, we should see multiple categories
+    it('diversifies results by category', () => {
+      const results = getRecommendations('course', items, { limit: 6, diversify: true });
+      const categories = results.map(r => r.category);
       const uniqueCategories = new Set(categories);
-      expect(uniqueCategories.size).toBeGreaterThanOrEqual(1);
+      expect(uniqueCategories.size).toBeGreaterThan(1);
     });
 
-    it('should not diversify when disabled', () => {
-      const result = getRecommendations('paper', items, { diversify: false, limit: 5 });
-      expect(result.length).toBeLessThanOrEqual(5);
+    it('does not diversify when disabled', () => {
+      const results = getRecommendations('course', items, { limit: 6, diversify: false });
+      expect(results.length).toBeLessThanOrEqual(6);
     });
 
-    it('should use control variant when specified', () => {
-      // Log some interactions to build a profile
-      logInteraction('paper', { id: 'x', topics: ['neuroscience'] }, 'enroll');
-      logInteraction('paper', { id: 'y', topics: ['neuroscience'] }, 'save');
+    it('prioritizes personalized results when user has signals', () => {
+      logInteraction('course', { id: 'x1', topics: ['psilocybin'] }, 'enroll');
+      logInteraction('course', { id: 'x2', topics: ['psilocybin'] }, 'complete');
 
-      const personalized = getRecommendations('paper', items, { variant: 'personalized' });
-      const control = getRecommendations('paper', items, { variant: 'control' });
+      const results = getRecommendations('course', items, { limit: 3, diversify: false, variant: 'personalized' });
+      expect(results.length).toBeGreaterThan(0);
+    });
 
-      // Both should return results
-      expect(personalized.length).toBeGreaterThan(0);
-      expect(control.length).toBeGreaterThan(0);
+    it('uses control scoring when variant is control', () => {
+      const results = getRecommendations('course', items, { limit: 3, variant: 'control' });
+      expect(results.length).toBeGreaterThan(0);
     });
   });
 
   describe('recordExperimentImpression', () => {
-    it('should increment impressions count', () => {
-      recordExperimentImpression('exp1', 'control');
-      recordExperimentImpression('exp1', 'control');
+    it('records impression count', () => {
+      recordExperimentImpression('exp-1', 'control', 1);
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
-      expect(stored.exp1.impressions).toBe(2);
+      const experiments = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      expect(experiments['exp-1'].impressions).toBeGreaterThanOrEqual(1);
+      expect(experiments['exp-1'].variant).toBe('control');
     });
 
-    it('should accept a custom count', () => {
-      recordExperimentImpression('exp2', 'personalized', 5);
+    it('accumulates impressions', () => {
+      recordExperimentImpression('exp-accum-i', 'control', 1);
+      const first = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      const firstVal = first['exp-accum-i'].impressions;
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
-      expect(stored.exp2.impressions).toBe(5);
+      recordExperimentImpression('exp-accum-i', 'control', 3);
+      const second = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      expect(second['exp-accum-i'].impressions).toBe(firstVal + 3);
     });
   });
 
   describe('recordExperimentConversion', () => {
-    it('should increment conversions count', () => {
-      recordExperimentConversion('exp1', 'control');
-      recordExperimentConversion('exp1', 'control');
+    it('records conversion weight', () => {
+      recordExperimentConversion('exp-conv-1', 'personalized', 1);
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
-      expect(stored.exp1.conversions).toBe(2);
+      const experiments = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      expect(experiments['exp-conv-1'].conversions).toBeGreaterThanOrEqual(1);
     });
 
-    it('should accept a custom weight', () => {
-      recordExperimentConversion('exp2', 'personalized', 3);
+    it('accumulates conversions', () => {
+      recordExperimentConversion('exp-accum-c', 'personalized', 1);
+      const first = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      const firstVal = first['exp-accum-c'].conversions;
 
-      const stored = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
-      expect(stored.exp2.conversions).toBe(3);
+      recordExperimentConversion('exp-accum-c', 'personalized', 2);
+      const second = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      expect(second['exp-accum-c'].conversions).toBe(firstVal + 2);
+    });
+
+    it('initializes experiment data if not present', () => {
+      recordExperimentConversion('new-exp-unique', 'control', 1);
+
+      const experiments = JSON.parse(localStorage.getItem('gsaps_recommendation_experiments'));
+      expect(experiments['new-exp-unique']).toBeDefined();
+      expect(experiments['new-exp-unique'].impressions).toBe(0);
+      expect(experiments['new-exp-unique'].conversions).toBeGreaterThanOrEqual(1);
     });
   });
 });

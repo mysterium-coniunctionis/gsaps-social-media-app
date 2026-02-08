@@ -18,27 +18,18 @@ import {
   Menu as MenuIcon,
   Home as HomeIcon,
   DynamicFeed as FeedIcon,
-  Groups as GroupsIcon,
   Event as EventIcon,
-  People as PeopleIcon,
-  Message as MessageIcon,
   LibraryBooks as LibraryIcon,
-  Science,
   School as CoursesIcon,
   EmojiEvents as LeaderboardIcon,
-  CoPresent,
   Security as SecurityIcon,
   Brightness4,
   Brightness7,
   Favorite as CirclesIcon,
-  MenuBook as PrepIcon,
-  Explore as CareerIcon,
   Mic as VoiceIcon,
   ViewInAr as VRIcon,
-  Hub as NetworkIcon,
-  AutoAwesome as NewIcon
+  Hub as NetworkIcon
 } from '@mui/icons-material';
-import { CreditCard as CreditCardIcon, Analytics as AnalyticsIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme as useCustomTheme } from '../../context/ThemeContext';
@@ -52,11 +43,9 @@ import AccessibilityMenu from '../accessibility/AccessibilityMenu';
 const Navbar = () => {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const { toggleTheme, mode, colorMode } = useCustomTheme();
+  const { toggleTheme, mode } = useCustomTheme();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-
-  const handleThemeToggle = toggleTheme || colorMode?.toggleColorMode || (() => {});
 
   const [anchorEl, setAnchorEl] = useState(null);
   const [mobileMenuAnchor, setMobileMenuAnchor] = useState(null);

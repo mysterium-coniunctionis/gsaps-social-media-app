@@ -76,7 +76,7 @@ const defaultInvoices = [
 const SubscriptionProvider = ({ children }) => {
   const [organization, setOrganization] = useState(defaultOrg);
   const [licenses, setLicenses] = useState(defaultLicenses);
-  const [invoices, setInvoices] = useState(defaultInvoices);
+  const [invoices] = useState(defaultInvoices);
   const [credentials, setCredentials] = useState([]);
 
   const activePlan = useMemo(

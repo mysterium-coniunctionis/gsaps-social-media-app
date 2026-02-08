@@ -5,13 +5,12 @@ import React, { Suspense, useRef, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import {
   OrbitControls,
-  PerspectiveCamera,
   Environment,
   Sky,
   Stars,
   Loader
 } from '@react-three/drei';
-import { Box, Typography, CircularProgress } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { spacePresets } from '../../data/virtualSpacesData';
 
 /**
@@ -314,28 +313,6 @@ const SpaceLighting = ({ spaceType }) => {
         </>
       )}
     </>
-  );
-};
-
-/**
- * Loading fallback
- */
-const LoadingFallback = () => {
-  return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        textAlign: 'center'
-      }}
-    >
-      <CircularProgress size={60} />
-      <Typography variant="h6" sx={{ mt: 2, color: 'white' }}>
-        Loading 3D Space...
-      </Typography>
-    </Box>
   );
 };
 

@@ -184,6 +184,63 @@ export const updateCourseProgress = async ({ courseId, progress }) => {
 };
 
 // ============================================
+// LESSON PROGRESS
+// ============================================
+
+export const fetchLesson = async (courseId, lessonId) => {
+  const { data } = await api.get(`/courses/${courseId}/lessons/${lessonId}`);
+  return data;
+};
+
+export const completeLesson = async (courseId, lessonId, watchTime = 0) => {
+  const { data } = await api.post(`/courses/${courseId}/lessons/${lessonId}/complete`, { watchTime });
+  return data;
+};
+
+export const updateLessonWatchTime = async (courseId, lessonId, watchTime) => {
+  const { data } = await api.post(`/courses/${courseId}/lessons/${lessonId}/watchtime`, { watchTime });
+  return data;
+};
+
+// ============================================
+// QUIZ
+// ============================================
+
+export const fetchQuizStatus = async (courseId, lessonId) => {
+  const { data } = await api.get(`/courses/${courseId}/lessons/${lessonId}/quiz/status`);
+  return data;
+};
+
+export const submitQuizResult = async (courseId, lessonId, score, answers) => {
+  const { data } = await api.post(`/courses/${courseId}/lessons/${lessonId}/quiz/submit`, { score, answers });
+  return data;
+};
+
+// ============================================
+// COURSE COMPLETION & CREDENTIALS
+// ============================================
+
+export const completeCourse = async (courseId) => {
+  const { data } = await api.post(`/courses/${courseId}/complete`);
+  return data;
+};
+
+export const verifyCredential = async (certificateId) => {
+  const { data } = await api.get(`/verify/${certificateId}`);
+  return data;
+};
+
+export const fetchUserCredentials = async (userId) => {
+  const { data } = await api.get(`/users/${userId}/credentials`);
+  return data;
+};
+
+export const fetchCourseEnrollment = async (courseId) => {
+  const { data } = await api.get(`/courses/${courseId}/enrollment`);
+  return data;
+};
+
+// ============================================
 // RESEARCH ASSETS
 // ============================================
 
@@ -204,6 +261,117 @@ export const createResearchAsset = async (payload) => {
 
 export const reviewResearchAsset = async (assetId, payload) => {
   const { data } = await api.post(`/assets/${assetId}/reviews`, payload);
+  return data;
+};
+
+// ============================================
+// ADVANCED RESEARCH SEARCH
+// ============================================
+
+export const searchResearchAssets = async (params = {}) => {
+  const { data } = await api.get('/assets/search', { params });
+  return data;
+};
+
+// ============================================
+// PAPER COLLECTIONS
+// ============================================
+
+export const fetchMyCollections = async () => {
+  const { data } = await api.get('/collections');
+  return data;
+};
+
+export const fetchPublicCollections = async (params = {}) => {
+  const { data } = await api.get('/collections/public', { params });
+  return data;
+};
+
+export const fetchCollection = async (collectionId) => {
+  const { data } = await api.get(`/collections/${collectionId}`);
+  return data;
+};
+
+export const createCollection = async (payload) => {
+  const { data } = await api.post('/collections', payload);
+  return data;
+};
+
+export const updateCollection = async (collectionId, payload) => {
+  const { data } = await api.patch(`/collections/${collectionId}`, payload);
+  return data;
+};
+
+export const deleteCollection = async (collectionId) => {
+  await api.delete(`/collections/${collectionId}`);
+  return collectionId;
+};
+
+export const addPaperToCollection = async (collectionId, assetId, notes = null) => {
+  const { data } = await api.post(`/collections/${collectionId}/papers`, { assetId, notes });
+  return data;
+};
+
+export const updatePaperInCollection = async (collectionId, assetId, notes) => {
+  const { data } = await api.patch(`/collections/${collectionId}/papers/${assetId}`, { notes });
+  return data;
+};
+
+export const removePaperFromCollection = async (collectionId, assetId) => {
+  await api.delete(`/collections/${collectionId}/papers/${assetId}`);
+  return { collectionId, assetId };
+};
+
+export const followCollection = async (collectionId) => {
+  const { data } = await api.post(`/collections/${collectionId}/follow`);
+  return data;
+};
+
+export const unfollowCollection = async (collectionId) => {
+  await api.delete(`/collections/${collectionId}/follow`);
+  return collectionId;
+};
+
+// ============================================
+// PAPER DISCUSSIONS (Comments on Research)
+// ============================================
+
+export const fetchPaperComments = async (assetId) => {
+  const { data } = await api.get(`/assets/${assetId}/comments`);
+  return data;
+};
+
+export const createPaperComment = async (assetId, content, parentId = null) => {
+  const { data } = await api.post(`/assets/${assetId}/comments`, { content, parentId });
+  return data;
+};
+
+export const updatePaperComment = async (commentId, content) => {
+  const { data } = await api.patch(`/assets/comments/${commentId}`, { content });
+  return data;
+};
+
+export const deletePaperComment = async (commentId) => {
+  await api.delete(`/assets/comments/${commentId}`);
+  return commentId;
+};
+
+export const togglePaperCommentLike = async (commentId) => {
+  const { data } = await api.post(`/assets/comments/${commentId}/like`);
+  return data;
+};
+
+// ============================================
+// PAPER REVIEWS
+// ============================================
+
+export const fetchPaperReviews = async (assetId) => {
+  const { data } = await api.get(`/assets/${assetId}/reviews`);
+  return data;
+};
+
+export const createPaperReview = async (assetId, { rating, text }) => {
+  const { data } = await api.post(`/assets/${assetId}/reviews`, { rating, text });
   return data;
 };
 

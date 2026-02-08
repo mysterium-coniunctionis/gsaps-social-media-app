@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Box, Card, CardContent, Typography, Tooltip } from '@mui/material';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 import { useAccessibility } from '../../context/AccessibilityContext';
 
 /**
@@ -12,14 +12,14 @@ const CompatibilityRadar = ({ breakdown, size = 280, animated = true }) => {
   const [animationProgress, setAnimationProgress] = useState(0);
   const { preferences } = useAccessibility();
 
-  const axes = [
+  const axes = useMemo(() => [
     { key: 'expertise', label: 'Research Interests', angle: 0 },
     { key: 'experience', label: 'Experience Level', angle: 60 },
     { key: 'availability', label: 'Availability', angle: 120 },
     { key: 'communication', label: 'Communication Style', angle: 180 },
     { key: 'goals', label: 'Goals Alignment', angle: 240 },
     { key: 'mutualConnections', label: 'Network', angle: 300 }
-  ];
+  ], []);
 
   const shouldAnimate = animated && !preferences.reduceMotion;
 

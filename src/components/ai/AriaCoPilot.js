@@ -10,14 +10,11 @@ import {
   Chip,
   Fab,
   Zoom,
-  Collapse,
   useTheme,
   useMediaQuery,
   alpha,
   Tooltip,
-  CircularProgress,
   Divider,
-  Button,
 } from '@mui/material';
 import {
   AutoAwesome as AIIcon,
@@ -281,6 +278,7 @@ const AriaCoPilot = () => {
     if (isOpen && suggestions.length === 0) {
       loadSuggestions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   // Focus input when opened

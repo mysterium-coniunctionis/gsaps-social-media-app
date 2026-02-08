@@ -8,7 +8,6 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
-  Divider,
   Box
 } from '@mui/material';
 import {

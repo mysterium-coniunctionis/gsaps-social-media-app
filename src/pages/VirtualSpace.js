@@ -1,7 +1,7 @@
 // VirtualSpace.js - Individual 3D space experience
 // Immersive environment with avatars, spatial audio, and interactions
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import {
   Box,
@@ -12,7 +12,7 @@ import {
 } from '@mui/material';
 import Space3D from '../components/xr/Space3D';
 import { AvatarGroup } from '../components/xr/Avatar3D';
-import VirtualScreen, { ScreenGallery } from '../components/xr/VirtualScreen';
+import { ScreenGallery } from '../components/xr/VirtualScreen';
 import {
   ControlHUD,
   UserListPanel,
@@ -24,8 +24,6 @@ import {
   getSpaceById,
   joinSpace,
   leaveSpace,
-  updateAvatarPosition,
-  updatePresenceState,
   updateSpeakingState,
   teleportToPoint,
   initializeVoiceChat
@@ -44,7 +42,6 @@ const VirtualSpace = () => {
   const [error, setError] = useState(null);
   const [activeUsers, setActiveUsers] = useState([]);
   const [currentPosition, setCurrentPosition] = useState([0, 0, 15]);
-  const [currentRotation, setCurrentRotation] = useState([0, 0, 0]);
 
   // UI State
   const [showUserList, setShowUserList] = useState(false);
@@ -66,7 +63,6 @@ const VirtualSpace = () => {
   const isVRMode = viewMode === 'vr';
 
   // Refs
-  const positionUpdateTimer = useRef(null);
   const userSessionRef = useRef(null);
 
   // Load space data and join
@@ -85,6 +81,7 @@ const VirtualSpace = () => {
         leaveSpace(spaceId, currentUser.id);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [spaceId, currentUser]);
 
   const loadAndJoinSpace = async () => {
@@ -132,23 +129,6 @@ const VirtualSpace = () => {
       setLoading(false);
     }
   };
-
-  // Update position (throttled)
-  const handlePositionUpdate = useCallback((newPosition, newRotation) => {
-    setCurrentPosition(newPosition);
-    setCurrentRotation(newRotation);
-
-    // Throttle server updates
-    if (positionUpdateTimer.current) {
-      clearTimeout(positionUpdateTimer.current);
-    }
-
-    positionUpdateTimer.current = setTimeout(() => {
-      if (currentUser) {
-        updateAvatarPosition(spaceId, currentUser.id, newPosition, newRotation);
-      }
-    }, 100);
-  }, [spaceId, currentUser]);
 
   // Handle teleport
   const handleTeleport = async (pointName) => {

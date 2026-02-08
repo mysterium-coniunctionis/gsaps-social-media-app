@@ -21,7 +21,7 @@ import { fadeInUp } from '../../theme/animations';
 const CourseDetail = () => {
   const { courseId } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  useAuth();
   const { awardXP } = useGamification();
   const queryClient = useQueryClient();
   const { data: courses = [], isLoading } = useQuery({ queryKey: ['courses'], queryFn: fetchCourses });

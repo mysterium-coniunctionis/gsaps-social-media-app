@@ -10,6 +10,10 @@ import BottomNavigation from './components/layout/BottomNavigation';
 import LoadingSpinner from './components/common/LoadingSpinner';
 import XPNotification from './components/gamification/XPNotification';
 import ErrorBoundary from './components/common/ErrorBoundary';
+import CrisisButton from './components/crisis/CrisisButton';
+import { AriaCoPilot, AriaFloatingButton } from './components/ai';
+import CommandPalette from './components/common/CommandPalette';
+import WhatsNew from './components/common/WhatsNew';
 
 // Eagerly loaded pages (critical for initial load)
 import Home from './pages/Home';
@@ -31,6 +35,8 @@ const Messages = lazy(() => import('./pages/Messages'));
 const Conversation = lazy(() => import('./pages/Conversation'));
 const ResearchLibrary = lazy(() => import('./pages/library/ResearchLibrary'));
 const PaperDetail = lazy(() => import('./pages/library/PaperDetail'));
+const Collections = lazy(() => import('./pages/library/Collections'));
+const CollectionDetail = lazy(() => import('./pages/library/CollectionDetail'));
 const ResearchWorkspace = lazy(() => import('./pages/workspaces/ResearchWorkspace'));
 const SymposiumRoom = lazy(() => import('./pages/workspaces/SymposiumRoom'));
 const Courses = lazy(() => import('./pages/courses/Courses'));
@@ -41,6 +47,19 @@ const OrgReporting = lazy(() => import('./pages/admin/OrgReporting'));
 const Leaderboard = lazy(() => import('./pages/Leaderboard'));
 const Settings = lazy(() => import('./pages/Settings'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const IntegrationCircles = lazy(() => import('./pages/IntegrationCircles'));
+const CircleDetail = lazy(() => import('./pages/CircleDetail'));
+const CreateCircle = lazy(() => import('./pages/CreateCircle'));
+const PrepAcademy = lazy(() => import('./pages/prep-academy/PrepAcademy'));
+const CareerNavigator = lazy(() => import('./pages/career/CareerNavigator'));
+const MentorNetwork = lazy(() => import('./pages/MentorNetwork'));
+const CETranscript = lazy(() => import('./pages/CETranscript'));
+
+// 2026 Killer Features
+const VoiceRooms = lazy(() => import('./pages/VoiceRooms'));
+const VoiceRoom = lazy(() => import('./pages/VoiceRoom'));
+const VirtualSpaces = lazy(() => import('./pages/VirtualSpaces'));
+const VirtualSpace = lazy(() => import('./pages/VirtualSpace'));
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -117,6 +136,19 @@ function App() {
             </ProtectedRoute>
           } />
 
+          {/* 2026 Killer Features - Full-width immersive experiences */}
+          <Route path="/voice-rooms/:roomId" element={
+            <ProtectedRoute>
+              <VoiceRoom />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/virtual-space/:spaceId" element={
+            <ProtectedRoute>
+              <VirtualSpace />
+            </ProtectedRoute>
+          } />
+
           {/* Container-wrapped routes (standard pages) */}
           <Route path="*" element={
             <Container maxWidth="lg" sx={{ py: 2 }}>
@@ -169,6 +201,18 @@ function App() {
 
                 <Route path="/library" element={<ResearchLibrary />} />
 
+                <Route path="/library/collections" element={
+                  <ProtectedRoute>
+                    <Collections />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/library/collections/:collectionId" element={
+                  <ProtectedRoute>
+                    <CollectionDetail />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/library/:paperId" element={<PaperDetail />} />
 
                 <Route
@@ -207,6 +251,49 @@ function App() {
 
                 <Route path="/leaderboard" element={<Leaderboard />} />
 
+                <Route path="/circles" element={<IntegrationCircles />} />
+
+                <Route path="/circles/create" element={
+                  <ProtectedRoute>
+                    <CreateCircle />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/circles/:circleId" element={
+                  <ProtectedRoute>
+                    <CircleDetail />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/prep-academy" element={<PrepAcademy />} />
+
+                <Route path="/career" element={<CareerNavigator />} />
+
+                <Route path="/network" element={
+                  <ProtectedRoute>
+                    <MentorNetwork />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/transcript" element={
+                  <ProtectedRoute>
+                    <CETranscript />
+                  </ProtectedRoute>
+                } />
+
+                {/* 2026 Killer Features */}
+                <Route path="/voice-rooms" element={
+                  <ProtectedRoute>
+                    <VoiceRooms />
+                  </ProtectedRoute>
+                } />
+
+                <Route path="/virtual-spaces" element={
+                  <ProtectedRoute>
+                    <VirtualSpaces />
+                  </ProtectedRoute>
+                } />
+
                 <Route path="/settings" element={
                   <ProtectedRoute>
                     <Settings />
@@ -228,6 +315,21 @@ function App() {
       </Box>
 
       {currentUser && <BottomNavigation />}
+      <CrisisButton />
+
+      {/* Aria AI Research Co-Pilot */}
+      {currentUser && (
+        <>
+          <AriaCoPilot />
+          <AriaFloatingButton />
+        </>
+      )}
+
+      {/* Command Palette - Global quick navigation (Ctrl+K) */}
+      {currentUser && <CommandPalette />}
+
+      {/* What's New - Feature discovery for new features */}
+      {currentUser && <WhatsNew />}
       </Box>
     </ErrorBoundary>
   );

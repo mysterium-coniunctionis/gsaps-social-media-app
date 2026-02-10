@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -111,8 +111,22 @@ const PostComposer = ({ open, onClose, onSubmit, currentUser = null }) => {
   };
 
   const handleRemoveImage = (index) => {
+    // Revoke the object URL to prevent memory leak
+    URL.revokeObjectURL(images[index]);
     setImages(images.filter((_, i) => i !== index));
   };
+
+  // Cleanup object URLs when component unmounts or images change
+  useEffect(() => {
+    return () => {
+      // Revoke all object URLs on cleanup
+      images.forEach((imageUrl) => {
+        if (imageUrl.startsWith('blob:')) {
+          URL.revokeObjectURL(imageUrl);
+        }
+      });
+    };
+  }, [images]);
 
   const handleAddTag = (event) => {
     if (event.key === 'Enter' && tagInput.trim()) {

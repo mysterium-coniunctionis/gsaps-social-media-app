@@ -37,8 +37,25 @@ export const citationSuggestions = async (notes) => {
   ];
 };
 
-export default {
+/**
+ * Runs all AI notetaker operations in parallel
+ * @param {Array} notes - Array of note objects
+ * @returns {Promise<Object>} Object with summary, actions, and citations
+ */
+export const runAINotetaker = async (notes) => {
+  const [summary, actions, citations] = await Promise.all([
+    generateSummary(notes),
+    actionItems(notes),
+    citationSuggestions(notes)
+  ]);
+  return { summary, actions, citations };
+};
+
+const aiService = {
   generateSummary,
   actionItems,
-  citationSuggestions
+  citationSuggestions,
+  runAINotetaker
 };
+
+export default aiService;

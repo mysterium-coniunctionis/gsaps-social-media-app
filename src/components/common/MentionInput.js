@@ -12,6 +12,7 @@ import {
   ClickAwayListener,
   Typography
 } from '@mui/material';
+import { findMentionStart, extractMentionQuery, filterUsersForMention } from '../../utils/mentionUtils';
 
 /**
  * MentionInput Component
@@ -65,26 +66,14 @@ const MentionInput = ({
     const cursor = cursorPosition;
 
     // Find the @ symbol before cursor
-    let atIndex = -1;
-    for (let i = cursor - 1; i >= 0; i--) {
-      if (text[i] === '@') {
-        atIndex = i;
-        break;
-      }
-      if (text[i] === ' ' || text[i] === '\n') {
-        break;
-      }
-    }
+    const atIndex = findMentionStart(text, cursor);
 
     if (atIndex !== -1 && cursor > atIndex) {
       // Extract query after @
-      const query = text.substring(atIndex + 1, cursor).toLowerCase();
+      const query = extractMentionQuery(text, atIndex, cursor);
 
       // Filter users
-      const filtered = availableUsers.filter(user =>
-        user.name.toLowerCase().includes(query) ||
-        user.username.toLowerCase().includes(query)
-      );
+      const filtered = filterUsersForMention(availableUsers, query);
 
       setFilteredUsers(filtered);
       setShowSuggestions(filtered.length > 0);
@@ -130,13 +119,7 @@ const MentionInput = ({
     const cursor = cursorPosition;
 
     // Find the @ symbol before cursor
-    let atIndex = -1;
-    for (let i = cursor - 1; i >= 0; i--) {
-      if (text[i] === '@') {
-        atIndex = i;
-        break;
-      }
-    }
+    const atIndex = findMentionStart(text, cursor);
 
     if (atIndex !== -1) {
       // Replace @query with @username

@@ -1,22 +1,5 @@
-import api from './api';
+import api, { clearAuthToken } from './api';
 import { login, register, getCurrentUser as fetchCurrentUser } from './backend';
-
-const MOCK_SESSIONS = [
-  {
-    id: 'sess-current',
-    device: 'Chrome on macOS',
-    location: 'San Francisco, US',
-    lastActive: new Date().toISOString(),
-    current: true
-  },
-  {
-    id: 'sess-remote',
-    device: 'Firefox on Linux',
-    location: 'Toronto, CA',
-    lastActive: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    current: false
-  }
-];
 
 export const loginUser = async (username, password) => {
   const { user } = await login(username, password);
@@ -34,6 +17,7 @@ export const logoutUser = async () => {
   } catch (error) {
     // Best-effort logout; ignore errors to allow UI state to clear
   }
+  clearAuthToken();
   return { success: true };
 };
 
@@ -42,14 +26,13 @@ export const getCurrentUser = async () => {
 };
 
 export const requestPasswordReset = async (email) => {
-  // TODO: Implement password reset request
-  // This would typically send a password reset email
-  return api.post('/auth/request-reset', { email });
+  const response = await api.post('/auth/request-reset', { email });
+  return response.data;
 };
 
 export const resetPassword = async (token, newPassword) => {
-  // TODO: Implement password reset with token
-  return api.post('/auth/reset-password', { token, newPassword });
+  const response = await api.post('/auth/reset-password', { token, newPassword });
+  return response.data;
 };
 
 export const refreshAccessToken = async () => {
@@ -57,32 +40,32 @@ export const refreshAccessToken = async () => {
   return response.data;
 };
 
-export const enableMfa = async () => {
-  // TODO: Implement MFA enable
-  return api.post('/auth/mfa/enable');
-};
-
-export const disableMfa = async () => {
-  // TODO: Implement MFA disable
-  return api.post('/auth/mfa/disable');
-};
-
-export const getSessions = async () => {
-  // TODO: Implement get active sessions
-  return api.get('/auth/sessions');
+export const getSessions = async (userId) => {
+  const response = await api.get(`/auth/sessions${userId ? `/${userId}` : ''}`);
+  return response.data;
 };
 
 export const revokeSession = async (sessionId) => {
-  // TODO: Implement revoke session
-  return api.delete(`/auth/sessions/${sessionId}`);
+  const response = await api.delete(`/auth/sessions/${sessionId}`);
+  return response.data;
+};
+
+export const enableMfa = async () => {
+  const response = await api.post('/auth/mfa/enable');
+  return response.data;
+};
+
+export const disableMfa = async () => {
+  const response = await api.post('/auth/mfa/disable');
+  return response.data;
 };
 
 export const requestEmailVerification = async () => {
-  // TODO: Implement email verification request
-  return api.post('/auth/request-verification');
+  const response = await api.post('/auth/verify-email/request');
+  return response.data;
 };
 
 export const verifyEmailToken = async (token) => {
-  // TODO: Implement email verification with token
-  return api.post('/auth/verify-email', { token });
+  const response = await api.post('/auth/verify-email', { token });
+  return response.data;
 };

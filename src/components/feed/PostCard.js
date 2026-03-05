@@ -14,7 +14,10 @@ import {
   Tooltip,
   Collapse,
   Divider,
-  Button
+  Button,
+  Snackbar,
+  ListItemIcon,
+  ListItemText
 } from '@mui/material';
 import {
   Comment as CommentIcon,
@@ -25,7 +28,9 @@ import {
   Delete as DeleteIcon,
   Edit as EditIcon,
   Report as ReportIcon,
-  Verified as VerifiedIcon
+  Verified as VerifiedIcon,
+  Link as LinkIcon,
+  Email as EmailIcon
 } from '@mui/icons-material';
 import CommentSection from './CommentSection';
 import ReactionButton from '../reactions/ReactionButton';
@@ -47,8 +52,10 @@ const PostCard = React.memo(({
   currentUserId = 'current-user'
 }) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [shareAnchorEl, setShareAnchorEl] = useState(null);
   const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [copySnackbarOpen, setCopySnackbarOpen] = useState(false);
 
   const isOwnPost = useMemo(() => post.author.id === currentUserId, [post.author.id, currentUserId]);
   const menuOpen = Boolean(anchorEl);
@@ -69,10 +76,49 @@ const PostCard = React.memo(({
     setShowComments(prev => !prev);
   }, []);
 
-  const handleShare = useCallback(() => {
+  const shareMenuOpen = Boolean(shareAnchorEl);
+
+  const handleShareClick = useCallback((event) => {
+    setShareAnchorEl(event.currentTarget);
+  }, []);
+
+  const handleShareClose = useCallback(() => {
+    setShareAnchorEl(null);
+  }, []);
+
+  const getPostUrl = useCallback(() => {
+    return `${window.location.origin}/post/${post.id}`;
+  }, [post.id]);
+
+  const handleCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(getPostUrl());
+    setCopySnackbarOpen(true);
     onShare(post.id);
-    // TODO: Show share dialog
-  }, [onShare, post.id]);
+    handleShareClose();
+  }, [getPostUrl, onShare, post.id, handleShareClose]);
+
+  const handleShareToTwitter = useCallback(() => {
+    const text = encodeURIComponent(post.content.substring(0, 200));
+    const url = encodeURIComponent(getPostUrl());
+    window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank', 'noopener,noreferrer');
+    onShare(post.id);
+    handleShareClose();
+  }, [post.content, getPostUrl, onShare, post.id, handleShareClose]);
+
+  const handleShareToLinkedIn = useCallback(() => {
+    const url = encodeURIComponent(getPostUrl());
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${url}`, '_blank', 'noopener,noreferrer');
+    onShare(post.id);
+    handleShareClose();
+  }, [getPostUrl, onShare, post.id, handleShareClose]);
+
+  const handleShareViaEmail = useCallback(() => {
+    const subject = encodeURIComponent(`Check out this post by ${post.author.name}`);
+    const body = encodeURIComponent(`${post.content.substring(0, 300)}\n\n${getPostUrl()}`);
+    window.location.href = `mailto:?subject=${subject}&body=${body}`;
+    onShare(post.id);
+    handleShareClose();
+  }, [post.author.name, post.content, getPostUrl, onShare, post.id, handleShareClose]);
 
   const handleBookmark = useCallback(() => {
     onBookmark(post.id);
@@ -318,7 +364,7 @@ const PostCard = React.memo(({
           <Button
             size="small"
             startIcon={<ShareIcon />}
-            onClick={handleShare}
+            onClick={handleShareClick}
             sx={{
               textTransform: 'none',
               minWidth: 'auto',
@@ -392,6 +438,54 @@ const PostCard = React.memo(({
           </MenuItem>
         )}
       </Menu>
+
+      {/* Share Menu */}
+      <Menu
+        anchorEl={shareAnchorEl}
+        open={shareMenuOpen}
+        onClose={handleShareClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'center'
+        }}
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center'
+        }}
+      >
+        <MenuItem onClick={handleCopyLink}>
+          <ListItemIcon>
+            <LinkIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Copy link</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleShareToTwitter}>
+          <ListItemIcon>
+            <ShareIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Share on X</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleShareToLinkedIn}>
+          <ListItemIcon>
+            <ShareIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Share on LinkedIn</ListItemText>
+        </MenuItem>
+        <MenuItem onClick={handleShareViaEmail}>
+          <ListItemIcon>
+            <EmailIcon fontSize="small" />
+          </ListItemIcon>
+          <ListItemText>Share via email</ListItemText>
+        </MenuItem>
+      </Menu>
+
+      {/* Copy Link Confirmation */}
+      <Snackbar
+        open={copySnackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setCopySnackbarOpen(false)}
+        message="Link copied to clipboard"
+      />
     </Card>
   );
 });

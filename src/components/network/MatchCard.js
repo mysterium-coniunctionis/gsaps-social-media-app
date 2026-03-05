@@ -8,7 +8,6 @@ import {
   Chip,
   Button,
   IconButton,
-  Collapse,
   CircularProgress,
   Tooltip
 } from '@mui/material';

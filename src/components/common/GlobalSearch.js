@@ -22,7 +22,6 @@ import {
 } from '@mui/material';
 import {
   Search as SearchIcon,
-  Close as CloseIcon,
   DynamicFeed as PostIcon,
   LibraryBooks as PaperIcon,
   School as CourseIcon,
@@ -34,10 +33,8 @@ import {
   Clear as ClearIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { useDebounce } from '../../hooks/useDebounce';
 import {
   globalSearch,
-  quickSearch,
   getTrendingSearches,
   getRecentSearches,
   saveRecentSearch,
@@ -165,6 +162,7 @@ const GlobalSearch = ({ open, onClose }) => {
     } else if (e.key === 'Escape') {
       onClose();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [results, selectedIndex, onClose]);
 
   // Get all results as flat array for rendering

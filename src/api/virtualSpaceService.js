@@ -440,7 +440,7 @@ export const getSpaceAnalytics = async (spaceId, timeRange = '7d') => {
 };
 
 // Export all functions
-export default {
+const virtualSpaceService = {
   getAllSpaces,
   getSpaceById,
   getSpaceEvents,
@@ -460,3 +460,5 @@ export default {
   searchSpaces,
   getSpaceAnalytics
 };
+
+export default virtualSpaceService;

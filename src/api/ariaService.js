@@ -68,7 +68,6 @@ const terminology = {
 export const analyzePaper = async (paper) => {
   await delay(1200);
 
-  const paperId = typeof paper === 'string' ? paper : paper?.id;
   const paperTitle = paper?.title || 'the selected paper';
 
   return {
@@ -322,7 +321,7 @@ export const batchAnalyzePapers = async (papers) => {
   return analyses;
 };
 
-export default {
+const ariaService = {
   analyzePaper,
   answerQuestion,
   findRelatedPapers,
@@ -332,3 +331,5 @@ export default {
   streamResponse,
   batchAnalyzePapers,
 };
+
+export default ariaService;

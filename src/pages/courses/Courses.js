@@ -12,8 +12,7 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Card,
-  CardContent,
-  Chip as MuiChip
+  CardContent
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -27,7 +26,6 @@ import CourseCard from '../../components/courses/CourseCard';
 import CreateCourseDialog from '../../components/courses/CreateCourseDialog';
 import { SearchTextField } from '../../components/common';
 import { fadeInUp } from '../../theme/animations';
-import { useExperiment } from '../../utils/recommendationService';
 
 const Courses = () => {
   const [viewMode, setViewMode] = useState('grid');
@@ -36,9 +34,6 @@ const Courses = () => {
   const [filterLevel, setFilterLevel] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [recommendedCourses, setRecommendedCourses] = useState([]);
-  // TODO: Implement useExperiment hook for A/B testing
-  const courseVariant = 'control'; // useExperiment('course-feed', ['control', 'personalized']);
 
   const { data: courses = [], isLoading } = useQuery({ queryKey: ['courses'], queryFn: fetchCourses });
 
@@ -49,14 +44,21 @@ const Courses = () => {
     () =>
       courses.map((course) => ({
         ...course,
-        slug: `course-${course.id}`,
-        thumbnail: course.thumbnail || 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&w=800&q=60',
+        slug: course.slug || `course-${course.id}`,
+        thumbnail: course.thumbnailUrl || course.thumbnail || 'https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&w=800&q=60',
         instructor: course.instructor || {
-          name: 'GSAPS Faculty',
+          name: course.instructorName || 'GSAPS Faculty',
           avatar_url: course.avatarUrl || 'https://i.pravatar.cc/150?img=32',
           verified: true
         },
-        duration: course.duration || 'Self-paced',
+        duration: typeof course.duration === 'number'
+          ? `${Math.floor(course.duration / 60)}h ${course.duration % 60}m`
+          : course.duration || 'Self-paced',
+        lessonsCount: course.lessonCount || course.lessonsCount || 0,
+        studentsEnrolled: course.enrollmentCount || course.studentsEnrolled || 0,
+        rating: course.rating ?? 4.5,
+        ratingCount: course.ratingCount ?? 0,
+        price: course.price ?? 0,
         modules: course.modules || []
       })),
     [courses]

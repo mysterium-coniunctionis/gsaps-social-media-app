@@ -189,6 +189,7 @@ export const AriaSuggestionsComponent = () => {
 
   React.useEffect(() => {
     loadSuggestions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadSuggestions = async () => {
@@ -249,7 +250,7 @@ export const KeyboardShortcutInfo = () => {
 };
 
 // Export all examples
-export default {
+const ariaExamples = {
   PaperSummaryButton,
   ExplainTermButton,
   FindRelatedPapersButton,
@@ -261,3 +262,5 @@ export default {
   ClearHistoryButton,
   KeyboardShortcutInfo,
 };
+
+export default ariaExamples;

@@ -51,9 +51,11 @@ export const runAINotetaker = async (notes) => {
   return { summary, actions, citations };
 };
 
-export default {
+const aiService = {
   generateSummary,
   actionItems,
   citationSuggestions,
   runAINotetaker
 };
+
+export default aiService;

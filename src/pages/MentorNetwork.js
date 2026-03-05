@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -45,7 +45,6 @@ import {
   getIntroMessageSuggestions,
   searchProfessionals
 } from '../api/networkService';
-import { professionalProfiles } from '../data/networkData';
 
 /**
  * Mentor Network Page
@@ -95,12 +94,14 @@ const MentorNetwork = () => {
 
   useEffect(() => {
     loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   useEffect(() => {
     if (activeTab === 0 || activeTab === 1 || activeTab === 2) {
       loadMatches();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab, expertiseFilter, locationFilter, experienceLevelFilter, availabilityFilter, searchQuery]);
 
   const loadData = async () => {

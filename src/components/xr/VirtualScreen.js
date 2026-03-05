@@ -1,10 +1,9 @@
 // VirtualScreen.js - In-world presentation display
 // Supports slides, videos, documents, and interactive annotations
 
-import React, { useRef, useState, useMemo } from 'react';
+import React, { useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { Text, Html } from '@react-three/drei';
-import * as THREE from 'three';
 
 /**
  * Screen frame/bezel

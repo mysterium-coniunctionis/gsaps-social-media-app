@@ -106,11 +106,6 @@ const FeedExplainer = ({
     setLocalPreferences(userProfile?.topicInterests || {});
   };
 
-  // Calculate total positive score
-  const totalScore = explanation
-    .filter(e => !e.isNegative)
-    .reduce((sum, e) => sum + (e.percentage || 0), 0);
-
   return (
     <Dialog
       open={open}

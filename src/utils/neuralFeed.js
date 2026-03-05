@@ -480,7 +480,7 @@ export const getABVariant = (userId) => {
   return variants[hash % variants.length];
 };
 
-export default {
+const neuralFeed = {
   rankFeedPosts,
   calculateCompositeScore,
   explainRecommendation,
@@ -489,3 +489,5 @@ export default {
   getABVariant,
   ALGORITHM_CONFIG
 };
+
+export default neuralFeed;

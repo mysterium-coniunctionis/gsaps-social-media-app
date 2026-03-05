@@ -1,7 +1,7 @@
 {
   "name": "gsaps-backend",
   "version": "1.0.0",
-  "description": "Cloud-ready backend for GSAPS social platform",
+  "description": "Replit-compatible backend for GSAPS social platform with SQLite database",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -9,8 +9,9 @@
     "start": "node src/index.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate deploy",
-    "prisma:push": "prisma db push",
-    "seed": "node src/seed.js"
+    "prisma:push": "mkdir -p prisma/data && prisma db push",
+    "seed": "node src/seed.js",
+    "setup": "npm run prisma:generate && npm run prisma:push && npm run seed"
   },
   "keywords": [],
   "author": "",

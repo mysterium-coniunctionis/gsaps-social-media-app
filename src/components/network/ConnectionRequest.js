@@ -34,8 +34,7 @@ import {
   getConnectionRequests,
   acceptConnectionRequest,
   declineConnectionRequest,
-  sendConnectionRequest,
-  getIntroMessageSuggestions
+  sendConnectionRequest
 } from '../../api/networkService';
 
 /**
@@ -48,15 +47,16 @@ const ConnectionRequest = ({ currentUser }) => {
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
   const [sendDialogOpen, setSendDialogOpen] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState(null);
+  const [selectedProfile] = useState(null);
   const [connectionType, setConnectionType] = useState('peer');
   const [message, setMessage] = useState('');
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions] = useState([]);
   const [expandedRequest, setExpandedRequest] = useState(null);
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
     loadRequests();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadRequests = async () => {
@@ -98,25 +98,6 @@ const ConnectionRequest = ({ currentUser }) => {
     } finally {
       setProcessingId(null);
       setTimeout(() => setSuccessMessage(''), 3000);
-    }
-  };
-
-  const handleOpenSendDialog = async (profile) => {
-    setSelectedProfile(profile);
-    setSendDialogOpen(true);
-    setMessage('');
-
-    // Get AI suggestions
-    try {
-      const introSuggestions = await getIntroMessageSuggestions(
-        currentUser,
-        profile,
-        connectionType
-      );
-      setSuggestions(introSuggestions);
-    } catch (error) {
-      console.error('Error getting suggestions:', error);
-      setSuggestions([]);
     }
   };
 

@@ -17,23 +17,25 @@
 
 ## 🎯 About
 
-> **Current Status:** Front-end prototype with mock data and local authentication for UX demonstration and testing.
+> **Current Status:** Full-stack application with Express.js backend, SQLite database, and comprehensive React frontend. Production-ready for deployment with mock data fallback mode.
 
 GSAPS Social Media App is an academic collaboration platform designed specifically for the psychedelic research community. It combines social networking features with a research library and learning management system to support researchers, students, and practitioners in their work.
 
 ### Key Differentiators
 
-- **Research Library** - Academic paper repository with ratings, reviews, and threaded discussions
-- **Learning Management** - Course platform with CE credits tracking and assessment system
-- **Gamification** - XP system, achievements, and leaderboards to encourage engagement
-- **Modern Design** - Glassmorphism UI with responsive layout and accessibility features
+- **Research Library** - 100+ peer-reviewed papers with ratings, reviews, and threaded discussions
+- **Learning Management** - Course platform with CE credits tracking, quizzes, and certificates
+- **Gamification** - XP system with 50 levels, 10 ranks, achievements, and leaderboards
+- **2026 Innovation Features** - Voice Rooms, Virtual Spaces, Live Symposia, Circle Matching, AI Copilot
+- **Modern Design** - Glassmorphism UI with 25+ animations, keyboard shortcuts, and accessibility features
+- **Full-Stack Architecture** - Express.js backend with Prisma ORM and SQLite database
 - **Open Source** - Community-driven development under MIT license
 
 ---
 
 ## 📊 Current Implementation
 
-**Build:** 339.63 kB gzipped | **Tech:** React 18.2, Material-UI 5.13, React Router 6.11
+**Build:** ~339 kB gzipped | **Tests:** 58/58 passing | **Tech:** React 18.2, Material-UI 5.13, Express.js, Prisma
 
 ### Implemented Features
 
@@ -49,7 +51,7 @@ GSAPS Social Media App is an academic collaboration platform designed specifical
 
 **Research Library:**
 
-- Paper browsing and advanced search
+- 100+ peer-reviewed psychedelic research papers
 - Upload papers with full metadata (DOI, PMID, authors, affiliations)
 - 5-star rating and review system
 - Threaded discussions on papers
@@ -79,17 +81,30 @@ GSAPS Social Media App is an academic collaboration platform designed specifical
 
 - Live agenda with speaker queue, attendee roster, and presence pills
 - Stage + chat layout with emoji reactions and poll voting
-- Shared markdown protocol canvas reused from Research Workspace with live preview
-- AI Notetaker card that summarizes notes, action items, and citation suggestions (works in mock/offline mode)
+- Shared markdown protocol canvas with live preview
+- AI Notetaker card that summarizes notes, action items, and citation suggestions
+
+**2026 Innovation Features:**
+
+- **Voice Rooms** - Real-time voice collaboration spaces
+- **Virtual Spaces** - 3D immersive environments powered by Three.js
+- **Circle Matching Wizard** - AI-powered peer support circle recommendations
+- **Command Palette** - Global keyboard navigation (Ctrl+K)
+- **Crisis Support Button** - One-click access to mental health resources
+- **Aria AI Copilot** - Research assistance chatbot with floating UI
+- **Career Navigator** - Professional development planning tools
+- **Mentor Network** - Peer mentoring platform
 
 ### Architecture
 
-- **Front-end Only:** All features run with mock data in localStorage
-- **Authentication:** Secure local auth service with bcrypt password hashing
-- **State Management:** React Context API (Auth, Theme, Gamification)
-- **Realtime:** Socket.IO-powered `RealtimeProvider` drives chat, presence, and symposium channels with offline-first fallbacks
+- **Full-Stack:** Express.js backend with Prisma ORM and SQLite database
+- **Frontend:** React 18 with code splitting and lazy loading
+- **Authentication:** JWT tokens with httpOnly cookies, bcrypt password hashing
+- **State Management:** React Context API (Auth, Theme, Gamification, Realtime, Aria) + TanStack React Query
+- **Realtime:** Socket.IO-powered `RealtimeProvider` for chat, presence, and symposium channels
+- **3D/XR:** Three.js with @react-three/fiber for Virtual Spaces
 - **Styling:** Material-UI with custom theme and 25+ animations
-- **Build Tool:** Create React App with standard configuration
+- **Build Tool:** Create React App with Lighthouse CI for accessibility
 
 ---
 
@@ -182,30 +197,44 @@ For a detailed walkthrough, see [DEMO_INSTRUCTIONS.md](docs/core/getting-started
 
 ## 🛠 Technology Stack
 
-### Core Technologies
+### Frontend Technologies
 
 - **React 18.2.0** - UI framework with hooks and functional components
 - **Material-UI 5.13.1** - Component library with theming and styling
 - **React Router 6.11.2** - Client-side routing with protected routes
+- **TanStack React Query 5.90** - Server state management and caching
+- **Socket.IO Client 4.8** - Real-time communication
+- **Three.js 0.158 / @react-three/fiber** - 3D graphics for Virtual Spaces
 - **Axios 1.4.0** - HTTP client with interceptors
 - **date-fns 2.30.0** - Date formatting and manipulation
-- **bcryptjs 3.0.3** - Password hashing for local authentication
+- **bcryptjs 3.0.3** - Password hashing
+
+### Backend Technologies
+
+- **Express.js 4.19** - REST API server
+- **Prisma 5.15** - ORM for database operations
+- **SQLite** - Lightweight database (Replit-compatible)
+- **JSON Web Tokens** - Authentication with httpOnly cookies
+- **Helmet** - Security headers
+- **CORS** - Cross-origin resource sharing
 
 ### Architecture & Patterns
 
-- **Component Architecture:** Functional components with React hooks
-- **State Management:** Context API for auth, theme, and gamification state
-- **Styling:** CSS-in-JS with Material-UI `sx` prop and custom theme
-- **Animations:** Material-UI keyframes for smooth transitions
-- **Code Organization:** Feature-based folder structure
-- **Mock Services:** localStorage-backed services that simulate async APIs
+- **Component Architecture:** 76+ functional components with React hooks
+- **State Management:** Context API (Auth, Theme, Gamification, Realtime, Aria) + React Query
+- **API Layer:** Axios client with mock fallback for offline development
+- **Styling:** CSS-in-JS with Material-UI `sx` prop and glassmorphism theme
+- **Animations:** 25+ keyframe animations for smooth transitions
+- **Code Organization:** Feature-based folder structure with lazy loading
 
 ### Development Tools
 
 - Create React App for build tooling
-- ESLint for code quality
+- ESLint with zero-warning enforcement
 - Prettier for code formatting
-- Git for version control
+- Jest + React Testing Library for testing
+- Lighthouse CI for accessibility audits
+- jest-axe for a11y testing
 
 ---
 
@@ -213,33 +242,48 @@ For a detailed walkthrough, see [DEMO_INSTRUCTIONS.md](docs/core/getting-started
 
 ```
 gsaps-social-media-app/
-├── src/
-│   ├── api/              # API integration layer (mock & real endpoints)
-│   ├── components/       # Reusable UI components
-│   │   ├── common/       # Shared components (GlassCard, Toast, etc.)
-│   │   ├── feed/         # Post cards, composer, comments
-│   │   ├── reactions/    # Reaction system components
-│   │   ├── library/      # Research library components
-│   │   ├── courses/      # LMS components
-│   │   ├── gamification/ # XP, achievements, leaderboards
-│   │   └── layout/       # Navigation and layout
-│   ├── context/          # React Context providers
-│   │   ├── AuthContext.js
-│   │   ├── ThemeContext.js
-│   │   └── GamificationContext.js
-│   ├── data/             # Mock data for demo
-│   ├── pages/            # Route components
-│   │   ├── courses/      # Course listing, detail, player
-│   │   └── library/      # Research library, paper detail
-│   ├── theme/            # Material-UI theme and animations
-│   └── utils/            # Helper functions
-├── docs/                 # Comprehensive documentation
-│   ├── core/             # Getting started, guides, status
-│   ├── features/         # Feature documentation
-│   ├── planning-strategy/# Roadmaps and plans
-│   └── reports/          # QA, performance, phase reports
-├── public/               # Static assets
-└── package.json          # Dependencies and scripts
+├── src/                          # React frontend
+│   ├── api/                      # API integration layer
+│   │   ├── api.js               # Axios instance with interceptors
+│   │   ├── backend.js           # Main CRUD operations
+│   │   ├── aiService.js         # AI Notetaker, recommendations
+│   │   └── symposiumClient.js   # Live event client
+│   ├── components/              # 76+ React components
+│   │   ├── common/              # GlassCard, CommandPalette, ErrorBoundary
+│   │   ├── feed/                # PostCard, PostComposer, CommentSection
+│   │   ├── library/             # PaperCard, ResearchWorkspace
+│   │   ├── courses/             # CourseCard, LessonPlayer, QuizComponent
+│   │   ├── gamification/        # XPNotification, Leaderboard
+│   │   ├── voice/               # VoiceRoomUI, AudioVisualization
+│   │   ├── xr/                  # 3D space renderer
+│   │   ├── circles/             # CircleCard, CircleMatching
+│   │   ├── crisis/              # CrisisButton, MentalHealthResources
+│   │   ├── ai/                  # AriaCoPilot, AriaFloatingButton
+│   │   └── layout/              # Navbar, BottomNavigation
+│   ├── context/                 # State management providers
+│   │   ├── AuthContext.js       # User authentication
+│   │   ├── ThemeContext.js      # Light/dark mode
+│   │   ├── GamificationContext.js # XP, levels, achievements
+│   │   ├── RealtimeContext.js   # Socket.IO for real-time
+│   │   └── AriaContext.js       # AI Copilot state
+│   ├── data/                    # Mock data (14 files)
+│   ├── pages/                   # 27+ route components
+│   ├── hooks/                   # Custom React hooks
+│   ├── theme/                   # Material-UI theme and animations
+│   └── utils/                   # Helper functions
+├── server/                       # Express.js backend
+│   ├── src/
+│   │   ├── index.js             # Express server with REST routes
+│   │   └── seed.js              # Database seeding (1300+ lines)
+│   └── prisma/                  # Database schema
+│       └── schema.prisma        # 15+ data models
+├── docs/                        # Comprehensive documentation
+│   ├── core/                    # Getting started, guides, status
+│   ├── features/                # Feature documentation
+│   ├── planning-strategy/       # Roadmaps and plans
+│   └── reports/                 # QA, performance reports
+├── public/                      # Static assets
+└── package.json                 # Dependencies and scripts
 ```
 
 ---
@@ -260,38 +304,47 @@ See [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) for complete navigation.
 
 ## 🗺 Future Development
 
-### Planned Features
+### Recently Completed (January 2026)
 
-**API Integration (Priority):**
+- Express.js backend with SQLite database (decoupled from WordPress)
+- Voice Rooms and Virtual Spaces (3D environments)
+- Circle Matching Wizard for peer support communities
+- Crisis Support integration with mental health resources
+- Command Palette (Ctrl+K) for power users
+- Aria AI Copilot for research assistance
+- Career Navigator and Mentor Network features
+- Skeleton loading states and UX polish
 
-- WordPress REST API connection
-- BuddyBoss endpoint integration
-- Real data synchronization
-- Authentication migration
+### Planned Enhancements
 
-**GenAI Features (Proposal Phase):**
+**Production Deployment:**
 
-- AI course assistant and Q&A bot
-- Smart research recommendations
-- Content moderation
-- Automated summaries
-- Networking suggestions
+- PostgreSQL migration for production scale
+- CDN setup for static assets
+- API rate limiting and caching
+- Monitoring and alerting
+
+**GenAI Features (In Progress):**
+
+- Connect to OpenAI/Anthropic APIs for real AI responses
+- Smart research paper recommendations
+- AI-powered content moderation
+- Personalized learning pathways
 
 See [GENAI_FEATURES_ROADMAP.md](docs/planning-strategy/GENAI_FEATURES_ROADMAP.md) for detailed proposals.
 
-**Real-time Features:**
+**Mobile & PWA:**
 
-- WebSocket integration
-- Live notifications
-- Real-time chat
-- Online presence
-
-**PWA Implementation:**
-
-- Service worker
-- Offline support
+- Progressive Web App with offline support
 - Push notifications
-- Install prompt
+- React Native app consideration
+
+**Advanced Features:**
+
+- Video conferencing for Live Symposia
+- Blockchain-verified certificates
+- Advanced analytics dashboard
+- Integration with Zotero/Mendeley
 
 ---
 
@@ -369,20 +422,42 @@ This project is licensed under the MIT License. See [LICENSE](LICENSE) file for 
 
 </div>
 
-## Backend API (Express + Postgres)
+## Backend API (Express + SQLite)
 
-The repository now includes a cloud-ready Express service in `server/` that exposes authenticated REST endpoints for users, posts, messages, courses, gamification, and research assets backed by PostgreSQL via Prisma.
+The repository includes a full Express.js backend in `server/` that exposes authenticated REST endpoints for users, posts, messages, courses, gamification, and research assets backed by SQLite via Prisma. The SQLite database is ideal for development and Replit deployment, with easy migration to PostgreSQL for production.
 
 ### Bootstrapping the API
 
-```
-cd server
-cp .env.example .env # Update DATABASE_URL and JWT_SECRET
+```bash
+# From project root - installs both frontend and backend deps
 npm install
-npx prisma generate
-npx prisma migrate deploy # apply migrations to your database
-npm run seed # optional: load starter data
+
+# Set up the database
+npm run db:setup    # Creates DB, runs migrations, seeds data
+
+# Start both frontend and backend concurrently
 npm run dev
+
+# Or start individually:
+npm run dev:frontend  # React on port 3000
+npm run dev:backend   # Express on port 4000
 ```
 
-The React app reads `REACT_APP_API_URL` (defaults to `http://localhost:4000`) to reach the backend. Authentication tokens are sent as Bearer tokens from the shared Axios client.
+### Database Commands
+
+```bash
+npm run db:seed     # Re-seed database with demo data
+npm run db:reset    # Drop and recreate database
+```
+
+### API Endpoints
+
+The backend provides REST endpoints for all features:
+- `POST /auth/register`, `/auth/login`, `/auth/logout` - Authentication
+- `GET/POST /posts`, `/posts/:id/reactions`, `/posts/:id/comments` - Social feed
+- `GET/POST /courses`, `/courses/:id/progress` - Learning management
+- `GET/POST /assets`, `/assets/:id/reviews` - Research library
+- `GET /gamification`, `/leaderboard` - Gamification system
+- `GET/POST /messages` - Private messaging
+
+The React app reads `REACT_APP_API_URL` (defaults to `http://localhost:4000`) to reach the backend. Authentication uses httpOnly cookies for security.

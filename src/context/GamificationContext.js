@@ -8,16 +8,29 @@ const GamificationContext = createContext();
 export const useGamification = () => useContext(GamificationContext);
 
 export const XP_ACTIONS = {
+  // Social actions
   CREATE_POST: 10,
   POST_WITH_IMAGE: 15,
   POST_WITH_TAGS: 5,
   COMMENT: 5,
   SHARE_POST: 8,
-  ENROLL_COURSE: 10,
-  COMPLETE_LESSON: 20,
   ADD_REACTION: 3,
   MESSAGE_SENT: 1,
-  UPLOAD_PAPER: 50
+
+  // Course actions
+  ENROLL_COURSE: 10,
+  COMPLETE_LESSON: 20,
+
+  // Research Library actions
+  UPLOAD_PAPER: 50,
+  PAPER_APPROVED: 25,
+  WRITE_REVIEW: 20,
+  CREATE_COLLECTION: 15,
+  SHARE_COLLECTION: 10,
+  DISCUSSION_POST: 10,
+  DISCUSSION_REPLY: 5,
+  LIKE_COMMENT: 2,
+  SAVE_TO_COLLECTION: 5
 };
 
 // Rank system based on level progression

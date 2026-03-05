@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Container,
@@ -10,8 +10,6 @@ import {
   Stack,
   Button,
   IconButton,
-  Menu,
-  MenuItem,
   Snackbar,
   Alert,
   Fab,
@@ -27,11 +25,9 @@ import {
   AutoAwesome as AIIcon,
   PeopleAlt as FollowingIcon,
   TrendingUp as TrendingIcon,
-  FilterList as FilterIcon,
   Refresh as RefreshIcon,
   KeyboardArrowUp as KeyboardArrowUpIcon,
   Info as InfoIcon,
-  Visibility as ViewIcon,
   VisibilityOff as HideIcon
 } from '@mui/icons-material';
 import PostCard from './PostCard';
@@ -74,7 +70,6 @@ const SmartFeed = ({
     message: '',
     severity: 'info'
   });
-  const [filterMenuAnchor, setFilterMenuAnchor] = useState(null);
 
   // Refs for intersection observer
   const loadMoreRef = useRef(null);
@@ -108,12 +103,14 @@ const SmartFeed = ({
   // Load initial posts
   useEffect(() => {
     loadPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Update posts when feed mode or filter changes
   useEffect(() => {
     const filteredPosts = filterPosts(generateMockFeedPosts());
     setRawPosts(filteredPosts);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [feedMode, contentFilter]);
 
   // Intersection Observer for infinite scroll
@@ -212,7 +209,6 @@ const SmartFeed = ({
       setContentFilter(newFilter);
       showSnackbar(`Filtering by ${newFilter === 'all' ? 'all content' : newFilter}`, 'info');
     }
-    setFilterMenuAnchor(null);
   };
 
   const handleRefresh = async () => {

@@ -61,8 +61,6 @@ const calculateRelevance = (text, query) => {
   queryWords.forEach(word => {
     if (textLower.includes(word)) {
       score += 20;
-      // Title match bonus
-      if (text === title) score += 30;
     }
   });
 
@@ -271,8 +269,7 @@ const searchVirtualSpaces = async (query) => {
 export const globalSearch = async (query, options = {}) => {
   const {
     type = CONTENT_TYPES.ALL,
-    limit = 10,
-    includeMetadata = true
+    limit = 10
   } = options;
 
   if (!query || query.trim().length < 2) {
@@ -437,7 +434,7 @@ export const clearRecentSearches = () => {
   localStorage.removeItem('globalSearch_recent');
 };
 
-export default {
+const globalSearchService = {
   globalSearch,
   quickSearch,
   getTrendingSearches,
@@ -446,3 +443,5 @@ export default {
   clearRecentSearches,
   CONTENT_TYPES
 };
+
+export default globalSearchService;

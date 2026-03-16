@@ -11,7 +11,8 @@
     "prisma:migrate": "prisma migrate deploy",
     "prisma:push": "mkdir -p prisma/data && prisma db push",
     "seed": "node src/seed.js",
-    "setup": "npm run prisma:generate && npm run prisma:push && npm run seed"
+    "setup": "npm run prisma:generate && npm run prisma:push && npm run seed",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +28,14 @@
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.0",
     "prisma": "^5.15.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {},
+    "setupFiles": ["./src/__tests__/setup.js"],
+    "testPathIgnorePatterns": ["/node_modules/", "setup\\.js$"]
   }
 }

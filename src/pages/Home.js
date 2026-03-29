@@ -248,6 +248,25 @@ const Home = () => {
                   >
                     Browse Courses
                   </Button>
+                  <Button
+                    variant="outlined"
+                    size="large"
+                    component={RouterLink}
+                    to="/therapist-skills-dojo"
+                    sx={{
+                      borderColor: 'white',
+                      color: 'white',
+                      px: 4,
+                      py: 1.5,
+                      fontSize: '1.1rem',
+                      '&:hover': {
+                        borderColor: 'white',
+                        bgcolor: alpha('#fff', 0.1)
+                      }
+                    }}
+                  >
+                    Try Skills Dojo Demo
+                  </Button>
                 </Box>
               ) : (
                 <Button

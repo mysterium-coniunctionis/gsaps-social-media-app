@@ -54,6 +54,7 @@ const PrepAcademy = lazy(() => import('./pages/prep-academy/PrepAcademy'));
 const CareerNavigator = lazy(() => import('./pages/career/CareerNavigator'));
 const MentorNetwork = lazy(() => import('./pages/MentorNetwork'));
 const CETranscript = lazy(() => import('./pages/CETranscript'));
+const TherapistSkillsDojoDemo = lazy(() => import('./pages/TherapistSkillsDojoDemo'));
 
 // 2026 Killer Features
 const VoiceRooms = lazy(() => import('./pages/VoiceRooms'));
@@ -250,6 +251,7 @@ function App() {
                 } />
 
                 <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/therapist-skills-dojo" element={<TherapistSkillsDojoDemo />} />
 
                 <Route path="/circles" element={<IntegrationCircles />} />
 
